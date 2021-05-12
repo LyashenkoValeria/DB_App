@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">DB_App</string>
+    <string name="reg_str">Регистрация</string>
+    <string name="log_str">Логин</string>
+    <string name="pass_str">Пароль</string>
+    <string name="email_str">Электронная почта</string>
+    <string name="button_str">Зарегистрироваться</string>
+    <string name="in_str">Войти</string>
+    <string name="auth_str">Авторизация</string>
+</resources>
