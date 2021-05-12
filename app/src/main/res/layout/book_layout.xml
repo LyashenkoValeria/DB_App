@@ -28,17 +28,15 @@
                 tools:srcCompat="@tools:sample/avatars" />
 
             <TableLayout
-                android:id="@+id/tableLayout"
+                android:id="@+id/table_layout_book"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                android:layout_weight="1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/book_poster">
 
                 <TableRow>
-
                     <TextView
                         android:id="@+id/book_name"
                         android:layout_width="match_parent"
@@ -47,29 +45,22 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
                         android:gravity="center_horizontal"
-                        android:text="Название"
+                        android:text="@string/name_str"
                         android:textColor="#000000"
-                        android:textSize="20sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/book_poster"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="20sp"/>
 
                 </TableRow>
 
-
                 <TableRow>
-
                     <TextView
                         android:id="@+id/book_year_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Год"
+                        android:text="@string/year_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/book_year"
@@ -79,9 +70,7 @@
                         android:fontFamily="@font/lato"
                         android:text="2000"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/book_year_text"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
                 </TableRow>
 
                 <TableRow>
@@ -92,11 +81,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Автор"
+                        android:text="@string/author_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/book_author"
@@ -106,10 +93,7 @@
                         android:fontFamily="@font/lato"
                         android:text="Дж.К.Роулинг"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/book_author_text"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    />
+                        android:textSize="16sp"/>
                 </TableRow>
 
                 <TableRow>
@@ -120,11 +104,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Жанр"
+                        android:text="@string/genre_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/book_genre"
@@ -134,11 +116,7 @@
                         android:fontFamily="@font/lato"
                         android:text="Фэнтези"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/book_genre_text"
-
-                        app:layout_constraintTop_toTopOf="parent" />
-                    />
+                        android:textSize="16sp" />
                 </TableRow>
 
                 <TableRow>
@@ -149,15 +127,11 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Серия книг"
-
+                        android:text="@string/book_series_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
-
                         android:id="@+id/book_series"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -165,10 +139,7 @@
                         android:fontFamily="@font/lato"
                         android:text="Гарри Поттер"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/book_series_text"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    />
+                        android:textSize="16sp"/>
                 </TableRow>
 
                 <TableRow>
@@ -179,11 +150,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Топ"
+                        android:text="@string/top_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/book_top"
@@ -193,10 +162,7 @@
                         android:fontFamily="@font/lato"
                         android:text="250 лучших книг"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/book_top_text"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    />
+                        android:textSize="16sp"/>
                 </TableRow>
 
                 <TableRow>
@@ -207,11 +173,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Место"
+                        android:text="@string/pos_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/book_pos"
@@ -221,11 +185,8 @@
                         android:fontFamily="@font/lato"
                         android:text="1"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/book_pos_text"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
                 </TableRow>
-
             </TableLayout>
 
             <TextView
@@ -234,13 +195,12 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:fontFamily="@font/lato"
-                android:text="Описание"
+                android:text="@string/desc_str"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
-
+                app:layout_constraintTop_toBottomOf="@+id/table_layout_book" />
 
             <RatingBar
                 android:id="@+id/book_rating"
@@ -261,7 +221,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/book_rating"
                 app:layout_constraintTop_toBottomOf="@+id/book_desc" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

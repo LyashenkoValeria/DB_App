@@ -7,4 +7,30 @@
     <string name="button_str">Зарегистрироваться</string>
     <string name="in_str">Войти</string>
     <string name="auth_str">Авторизация</string>
+    <string name="name_str">Название</string>
+    <string name="author_str">Автор</string>
+    <string name="year_str">Год</string>
+    <string name="genre_str">Жанр</string>
+    <string name="book_series_str">Серия книг</string>
+    <string name="top_str">Топ</string>
+    <string name="pos_str">Место</string>
+    <string name="desc_str">Описание</string>
+    <string name="rating_str">Рейтинг</string>
+    <string name="dur_str">Время</string>
+    <string name="actor_str">Актёры</string>
+    <string name="maker_str">Съёмочная группа</string>
+    <string name="film_series_str">Серия фильмов</string>
+    <string name="book_film_str">Книга</string>
+    <string name="mus_film_str">Музыка</string>
+    <string name="choose_str">Выберите любимые жанры</string>
+    <string name="next_str">Далее</string>
+    <string name="album_str">Альбом</string>
+    <string name="prof_str">Профиль</string>
+    <string name="edit_button_str">Редактировать профиль</string>
+    <string name="change_genre_str">Изменить любимые жанры</string>
+    <string name="save_str">Сохранить</string>
+    <string name="out_str">Выйти</string>
+    <string name="books_str">Книги</string>
+    <string name="films_str">Фильмы</string>
+
 </resources>

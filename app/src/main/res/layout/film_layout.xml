@@ -28,7 +28,7 @@
                 tools:srcCompat="@tools:sample/avatars" />
 
             <TableLayout
-                android:id="@+id/tableLayout"
+                android:id="@+id/table_layout_film"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
@@ -47,15 +47,10 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
                         android:gravity="center_horizontal"
-                        android:text="Название"
+                        android:text="@string/name_str"
                         android:textColor="#000000"
-                        android:textSize="20sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/film_poster"
-                        app:layout_constraintTop_toTopOf="parent" />
-
+                        android:textSize="20sp"/>
                 </TableRow>
-
 
                 <TableRow>
 
@@ -65,11 +60,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Год"
+                        android:text="@string/year_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/film_year"
@@ -79,9 +72,7 @@
                         android:fontFamily="@font/lato"
                         android:text="2000"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/film_year_text"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
                 </TableRow>
 
                 <TableRow>
@@ -92,11 +83,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Время"
+                        android:text="@string/dur_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/film_dur"
@@ -106,9 +95,7 @@
                         android:fontFamily="@font/lato"
                         android:text="142 мин"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/film_dur_text"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
                 </TableRow>
 
                 <TableRow>
@@ -119,11 +106,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Актёры"
+                        android:text="@string/actor_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/film_actor"
@@ -133,10 +118,7 @@
                         android:fontFamily="@font/lato"
                         android:text="Дэниэл Рэдклифф"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/film_actor_text"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    />
+                        android:textSize="16sp" />
                 </TableRow>
 
                 <TableRow>
@@ -147,11 +129,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Съёмочная группа"
+                        android:text="@string/maker_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/film_maker"
@@ -161,10 +141,7 @@
                         android:fontFamily="@font/lato"
                         android:text="Альфонсо Куарон"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/film_maker_text"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    />
+                        android:textSize="16sp"/>
                 </TableRow>
 
                 <TableRow>
@@ -175,11 +152,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Жанр"
+                        android:text="@string/genre_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/film_genre"
@@ -189,10 +164,7 @@
                         android:fontFamily="@font/lato"
                         android:text="Фэнтези"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/film_genre_text"
-
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp" />
                 </TableRow>
 
                 <TableRow>
@@ -203,14 +175,11 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Серия фильмов"
+                        android:text="@string/film_series_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
-
                         android:id="@+id/film_series"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -218,9 +187,7 @@
                         android:fontFamily="@font/lato"
                         android:text="Гарри Поттер"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/film_series_text"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp" />
                 </TableRow>
 
                 <TableRow>
@@ -231,14 +198,11 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Книга"
+                        android:text="@string/book_film_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
-
                         android:id="@+id/film_book"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -246,9 +210,7 @@
                         android:fontFamily="@font/lato"
                         android:text="Гарри Поттер и узник Азкабана"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/film_book_text"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
                 </TableRow>
 
                 <TableRow>
@@ -259,14 +221,11 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Музыка"
+                        android:text="@string/mus_film_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
-
                         android:id="@+id/film_music"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -274,67 +233,55 @@
                         android:fontFamily="@font/lato"
                         android:text="John Williams — Lumos!"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/film_music_text"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
                 </TableRow>
 
 
                 <TableRow>
 
                     <TextView
-                        android:id="@+id/book_top_text"
+                        android:id="@+id/film_top_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Топ"
+                        android:text="@string/top_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
-                        android:id="@+id/book_top"
+                        android:id="@+id/film_top"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
                         android:fontFamily="@font/lato"
                         android:text="250 лучших фильмов"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/book_top_text"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    />
+                        android:textSize="16sp"/>
                 </TableRow>
 
                 <TableRow>
 
                     <TextView
-                        android:id="@+id/book_pos_text"
+                        android:id="@+id/film_pos_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Место"
+                        android:text="@string/pos_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
-                        android:id="@+id/book_pos"
+                        android:id="@+id/film_pos"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
                         android:fontFamily="@font/lato"
                         android:text="1"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/book_pos_text"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
                 </TableRow>
-
             </TableLayout>
 
             <TextView
@@ -343,13 +290,12 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:fontFamily="@font/lato"
-                android:text="Описание"
+                android:text="@string/desc_str"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
-
+                app:layout_constraintTop_toBottomOf="@+id/table_layout_film" />
 
             <RatingBar
                 android:id="@+id/film_rating"
@@ -370,7 +316,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/film_rating"
                 app:layout_constraintTop_toBottomOf="@+id/film_desc" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

@@ -28,7 +28,7 @@
                 tools:srcCompat="@tools:sample/avatars" />
 
             <TableLayout
-                android:id="@+id/tableLayout"
+                android:id="@+id/table_layout_music"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
@@ -47,15 +47,10 @@
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
                         android:gravity="center_horizontal"
-                        android:text="Название"
+                        android:text="@string/name_str"
                         android:textColor="#000000"
-                        android:textSize="20sp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/music_poster"
-                        app:layout_constraintTop_toTopOf="parent" />
-
+                        android:textSize="20sp"/>
                 </TableRow>
-
 
                 <TableRow>
 
@@ -65,11 +60,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Год"
+                        android:text="@string/year_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/music_year"
@@ -79,9 +72,7 @@
                         android:fontFamily="@font/lato"
                         android:text="2000"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/music_year_text"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
                 </TableRow>
 
                 <TableRow>
@@ -92,11 +83,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Время"
+                        android:text="@string/dur_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/music_dur"
@@ -106,9 +95,7 @@
                         android:fontFamily="@font/lato"
                         android:text="3 мин"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/music_dur_text"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
                 </TableRow>
 
                 <TableRow>
@@ -119,11 +106,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Автор"
+                        android:text="@string/author_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/music_author"
@@ -133,10 +118,7 @@
                         android:fontFamily="@font/lato"
                         android:text="Imagine Dragons"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/music_author_text"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    />
+                        android:textSize="16sp"/>
                 </TableRow>
 
                 <TableRow>
@@ -147,11 +129,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Жанр"
+                        android:text="@string/genre_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/music_genre"
@@ -161,10 +141,7 @@
                         android:fontFamily="@font/lato"
                         android:text="Рок"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/music_genre_text"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    />
+                        android:textSize="16sp"/>
                 </TableRow>
 
                 <TableRow>
@@ -175,11 +152,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Альбом"
+                        android:text="@string/album_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/music_album"
@@ -189,10 +164,7 @@
                         android:fontFamily="@font/lato"
                         android:text="Origins"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/music_album_text"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    />
+                        android:textSize="16sp"/>
                 </TableRow>
 
                 <TableRow>
@@ -203,11 +175,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Топ"
+                        android:text="@string/top_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/music_top"
@@ -217,10 +187,7 @@
                         android:fontFamily="@font/lato"
                         android:text="250 лучших песен"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/music_top_text"
-                        app:layout_constraintTop_toTopOf="parent" />
-                    />
+                        android:textSize="16sp"/>
                 </TableRow>
 
                 <TableRow>
@@ -231,11 +198,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/lato"
-                        android:text="Место"
+                        android:text="@string/pos_str"
                         android:textColor="#444b52"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/music_pos"
@@ -245,11 +210,8 @@
                         android:fontFamily="@font/lato"
                         android:text="1"
                         android:textColor="#000000"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/music_pos_text"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="16sp"/>
                 </TableRow>
-
             </TableLayout>
 
             <RatingBar
@@ -259,7 +221,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginStart="20dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/table_layout_music" />
 
             <Button
                 android:id="@+id/like_music"
@@ -270,8 +232,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/music_rating"
-                app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
-
+                app:layout_constraintTop_toBottomOf="@+id/table_layout_music" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

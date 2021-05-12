@@ -4,16 +4,16 @@
     <item
         android:id="@+id/navigation_songs"
         android:icon="@drawable/book_img"
-        android:title="Книги"/>
+        android:title="@string/books_str"/>
 
     <item
         android:id="@+id/navigation_albums"
         android:icon="@drawable/film_img"
-        android:title="Фильмы"/>
+        android:title="@string/films_str"/>
 
     <item
         android:id="@+id/navigation_artists"
         android:icon="@drawable/music_img"
-        android:title="Музыка"/>
+        android:title="@string/mus_film_str"/>
 
 </menu>
