@@ -6,5 +6,10 @@
         <item name="colorPrimaryDark">#2B41B8</item>
         <item name="colorAccent">#444B52</item>
     </style>
+    
+    <style name="lato">
+        <item name="fontFamily">@font/lato</item>
+
+    </style>
 
 </resources>

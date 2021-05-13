@@ -6,17 +6,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/film_poster"
+                android:id="@+id/content_poster"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
@@ -35,12 +34,11 @@
                 android:layout_weight="1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/film_poster">
+                app:layout_constraintTop_toBottomOf="@+id/content_poster">
 
                 <TableRow>
-
                     <TextView
-                        android:id="@+id/film_name"
+                        android:id="@+id/content_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
@@ -51,16 +49,13 @@
                         android:textColor="#000000"
                         android:textSize="20sp"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/film_poster"
+                        app:layout_constraintStart_toEndOf="@+id/content_poster"
                         app:layout_constraintTop_toTopOf="parent" />
-
                 </TableRow>
 
 
                 <TableRow>
-
                     <TextView
-                        android:id="@+id/film_year_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -72,7 +67,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/film_year"
+                        android:id="@+id/content_year"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
@@ -80,14 +75,39 @@
                         android:text="2000"
                         android:textColor="#000000"
                         android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="@+id/film_year_text"
+                        app:layout_constraintStart_toStartOf="@+id/content_year_text"
                         app:layout_constraintTop_toTopOf="parent" />
                 </TableRow>
 
                 <TableRow>
+                    <TextView
+                        android:id="@+id/book_music_author_row"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/lato"
+                        android:text="Автор"
+                        android:textColor="#444b52"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/film_dur_text"
+                        android:id="@+id/book_music_author"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:fontFamily="@font/lato"
+                        android:text="Дж.К.Роулинг"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="@+id/book_author_text"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/film_music_dur_row"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -99,7 +119,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/film_dur"
+                        android:id="@+id/film_music_dur"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
@@ -112,9 +132,8 @@
                 </TableRow>
 
                 <TableRow>
-
                     <TextView
-                        android:id="@+id/film_actor_text"
+                        android:id="@+id/film_actor_row"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -136,13 +155,11 @@
                         android:textSize="16sp"
                         app:layout_constraintStart_toStartOf="@+id/film_actor_text"
                         app:layout_constraintTop_toTopOf="parent" />
-                    />
                 </TableRow>
 
                 <TableRow>
-
                     <TextView
-                        android:id="@+id/film_maker_text"
+                        android:id="@+id/film_maker_row"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -164,13 +181,10 @@
                         android:textSize="16sp"
                         app:layout_constraintStart_toStartOf="@+id/film_maker_text"
                         app:layout_constraintTop_toTopOf="parent" />
-                    />
                 </TableRow>
 
                 <TableRow>
-
                     <TextView
-                        android:id="@+id/film_genre_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -182,7 +196,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/film_genre"
+                        android:id="@+id/content_genre"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
@@ -191,14 +205,12 @@
                         android:textColor="#000000"
                         android:textSize="16sp"
                         app:layout_constraintStart_toStartOf="@+id/film_genre_text"
-
                         app:layout_constraintTop_toTopOf="parent" />
                 </TableRow>
 
                 <TableRow>
-
                     <TextView
-                        android:id="@+id/film_series_text"
+                        android:id="@+id/film_series_row"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -210,7 +222,6 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-
                         android:id="@+id/film_series"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -224,9 +235,60 @@
                 </TableRow>
 
                 <TableRow>
+                    <TextView
+                        android:id="@+id/book_series_row"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/lato"
+                        android:text="Серия книг"
+                        android:textColor="#444b52"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/film_book_text"
+                        android:id="@+id/book_series"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:fontFamily="@font/lato"
+                        android:text="Гарри Поттер"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="@+id/book_series_text"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/music_album_row"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/lato"
+                        android:text="Альбом"
+                        android:textColor="#444b52"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/music_album"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:fontFamily="@font/lato"
+                        android:text="Origins"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="@+id/music_album_text"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/film_book_row"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -254,7 +316,7 @@
                 <TableRow>
 
                     <TextView
-                        android:id="@+id/film_music_text"
+                        android:id="@+id/film_music_row"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -266,7 +328,6 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-
                         android:id="@+id/film_music"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -283,7 +344,6 @@
                 <TableRow>
 
                     <TextView
-                        android:id="@+id/book_top_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -295,7 +355,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/book_top"
+                        android:id="@+id/content_top"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
@@ -311,7 +371,6 @@
                 <TableRow>
 
                     <TextView
-                        android:id="@+id/book_pos_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -323,7 +382,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/book_pos"
+                        android:id="@+id/content_pos"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
@@ -338,7 +397,7 @@
             </TableLayout>
 
             <TextView
-                android:id="@+id/film_desc"
+                android:id="@+id/book_film_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
@@ -352,24 +411,24 @@
 
 
             <RatingBar
-                android:id="@+id/film_rating"
+                android:id="@+id/content_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginStart="20dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/film_desc" />
+                app:layout_constraintTop_toBottomOf="@+id/book_film_desc" />
 
             <Button
-                android:id="@+id/like_film"
+                android:id="@+id/content_like"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/ic_baseline_favorite_24"
+                android:layout_marginTop="15dp"
+                android:background="@android:drawable/ic_menu_view"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/film_rating"
-                app:layout_constraintTop_toBottomOf="@+id/film_desc" />
+                app:layout_constraintStart_toEndOf="@+id/content_rating"
+                app:layout_constraintTop_toBottomOf="@+id/book_film_desc" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
