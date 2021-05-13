@@ -38,16 +38,10 @@ class ContentAdapter :
             val item = contentList[position]
             // TODO: 13.05.2021 poster
             name.text = item.getName()
+            year.text = item.getYear().toString()
+            genre.text = item.getGenreSting()
             rating.text = item.getRating().toString()
-            author.run {
-                visibility =
-                    if (type == Type.FILM)
-                        View.INVISIBLE
-                    else {
-                        text = item.getAuthor()
-                        View.VISIBLE
-                    }
-            }
+
         }
     }
 

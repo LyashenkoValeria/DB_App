@@ -30,9 +30,18 @@ class WebClient {
         val bookList = listOf(book1, book2, book3)
         val resultList = mutableListOf<Content>()
         for (book in bookList) {
-            val rating = 5.0 // TODO: 13.05.2021 Выдирать рейтинг
+            val rating = 5.0 // TODO: 13.05.2021 Выдирать рейтинг и постеры
             val poster = "poster"
-            resultList.add(Content(book.getId(), book.getName(), rating, book.getPeopleString(), poster))
+            resultList.add(
+                Content(
+                    book.getId(),
+                    book.getName(),
+                    rating,
+                    book.getYear(),
+                    book.getGenres(),
+                    poster
+                )
+            )
         }
         return resultList
     }
@@ -43,13 +52,16 @@ class WebClient {
         for (film in filmList) {
             val rating = 5.0 // TODO: 13.05.2021 Выдирать рейтинг
             val poster = "poster"
-            val author = StringBuilder()
-            film.getPeoples().forEach {
-                author.append(it.getFullName())
-                author.append(", ")
-            }
-            author.delete(author.length - 2, author.length - 1)
-            resultList.add(Content(film.getId(), film.getName(), rating, author.toString(), poster))
+            resultList.add(
+                Content(
+                    film.getId(),
+                    film.getName(),
+                    rating,
+                    film.getYear(),
+                    film.getGenres(),
+                    poster
+                )
+            )
         }
         return resultList
     }
@@ -60,13 +72,16 @@ class WebClient {
         for (music in musicList) {
             val rating = 5.0 // TODO: 13.05.2021 Выдирать рейтинг
             val poster = "poster"
-            val author = StringBuilder()
-            music.getArtists().forEach {
-                author.append(it.getName())
-                author.append(", ")
-            }
-            author.delete(author.length - 2, author.length - 1)
-            resultList.add(Content(music.getId(), music.getName(), rating, author.toString(), poster))
+            resultList.add(
+                Content(
+                    music.getId(),
+                    music.getName(),
+                    rating,
+                    music.getYear(),
+                    music.getGenres(),
+                    poster
+                )
+            )
         }
         return resultList
     }

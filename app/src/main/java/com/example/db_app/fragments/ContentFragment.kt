@@ -44,15 +44,15 @@ class ContentFragment : Fragment() {
 
     private fun drawBook(id: Int) {
         val book = WebClient().getBook(id)
-        content_name.text = book.getName()
-        content_year.text = book.getYear().toString()
+        name.text = book.getName()
+        year.text = book.getYear().toString()
         book_music_author.text = book.getPeopleString()
-        content_genre.text = book.getGenreSting()
+        genre.text = book.getGenreSting()
         book_series.text = book.getBookSeries().getName()
         content_top.text = "Топ 100 всего-всего"
         content_pos.text = "1"
         book_film_desc.text = book.getDesc()
-        content_rating.rating = WebClient().getRating(type, id).toFloat()
+        rating.rating = WebClient().getRating(type, id).toFloat()
         // скрываем не нужное
         film_music_dur_row.visibility = View.GONE
         film_music_dur.visibility = View.GONE
@@ -72,19 +72,19 @@ class ContentFragment : Fragment() {
 
     private fun drawFilm(id: Int) {
         val film = WebClient().getFilm(id)
-        content_name.text = film.getName()
-        content_year.text = film.getYear().toString()
+        name.text = film.getName()
+        year.text = film.getYear().toString()
         film_music_dur.text = film.getDuration().toString()
         film_actor.text = film.getActorsString()
         film_maker.text = film.getMakerString()
-        content_genre.text = film.getGenreSting()
+        genre.text = film.getGenreSting()
         film_series.text = film.getFilmSeries().getName()
         film_book.text = film.getBookName()
         film_music.text = film.getMusic().getName()
         content_top.text = "Топ 100 всего-всего"
         content_pos.text = "1"
         book_film_desc.text = film.getDesc()
-        content_rating.rating = WebClient().getRating(type, id).toFloat()
+        rating.rating = WebClient().getRating(type, id).toFloat()
         // скрываем не нужное
         book_music_author_row.visibility = View.GONE
         book_music_author.visibility = View.GONE
@@ -96,15 +96,15 @@ class ContentFragment : Fragment() {
 
     private fun drawMusic(id: Int) {
         val music = WebClient().getMusic(id)
-        content_name.text = music.getName()
-        content_year.text = music.getYear().toString()
+        name.text = music.getName()
+        year.text = music.getYear().toString()
         film_music_dur.text = music.getDuration().toString()
         book_music_author.text = music.getArtistString()
-        content_genre.text = music.getGenreSting()
+        genre.text = music.getGenreSting()
         music_album.text = music.getAlbumName()
         content_top.text = "Топ 100 всего-всего"
         content_pos.text = "1"
-        content_rating.rating = WebClient().getRating(type, id).toFloat()
+        rating.rating = WebClient().getRating(type, id).toFloat()
         // скрываем не нужное
         film_actor_row.visibility = View.GONE
         film_actor.visibility = View.GONE
