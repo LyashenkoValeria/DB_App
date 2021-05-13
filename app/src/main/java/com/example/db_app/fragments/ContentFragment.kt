@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.db_app.R
 import com.example.db_app.WebClient
-import com.example.db_app.ContentAdapter.Type
+import com.example.db_app.adapters.ContentAdapter.Type
 import kotlinx.android.synthetic.main.fragment_content.*
 
 class ContentFragment : Fragment() {

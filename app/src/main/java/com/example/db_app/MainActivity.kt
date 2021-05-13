@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.example.db_app.adapters.ContentAdapter
 
 class MainActivity : AppCompatActivity() {
 

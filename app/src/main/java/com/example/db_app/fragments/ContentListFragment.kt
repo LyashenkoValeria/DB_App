@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.db_app.MainActivity
 import com.example.db_app.R
-import com.example.db_app.ContentAdapter
+import com.example.db_app.adapters.ContentAdapter
 import kotlinx.android.synthetic.main.fragment_content_list.*
 
 class ContentListFragment: Fragment() {

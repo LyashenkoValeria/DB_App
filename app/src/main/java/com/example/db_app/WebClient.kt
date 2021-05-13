@@ -4,7 +4,7 @@
 
 package com.example.db_app
 
-import com.example.db_app.ContentAdapter.Type
+import com.example.db_app.adapters.ContentAdapter.Type
 import com.example.db_app.dataClasses.*
 
 class WebClient {

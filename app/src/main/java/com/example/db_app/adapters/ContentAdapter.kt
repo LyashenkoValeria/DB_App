@@ -2,13 +2,15 @@
  * Copyright (c) 2021. Code by Juniell.
  */
 
-package com.example.db_app
+package com.example.db_app.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.example.db_app.R
+import com.example.db_app.WebClient
 import com.example.db_app.dataClasses.Content
 import kotlinx.android.synthetic.main.content_item.view.*
 
