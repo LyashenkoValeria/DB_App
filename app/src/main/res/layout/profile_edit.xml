@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/profile_layout"
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/prof_text"
+        android:id="@+id/edit_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
         android:fontFamily="@font/lato"
         android:gravity="center_horizontal"
-        android:text="@string/prof_str"
+        android:text="@string/edit_button_str"
         android:textColor="#000000"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,18 +20,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TableLayout
-        android:id="@+id/table_layout_prof"
+        android:id="@+id/table_layout_prof_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/prof_text">
+        app:layout_constraintTop_toBottomOf="@+id/edit_text">
 
         <TableRow>
 
             <TextView
-                android:id="@+id/user_login_text"
+                android:id="@+id/edit_login_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -40,22 +40,24 @@
                 android:textColor="#000000"
                 android:textSize="20sp"/>
 
-            <TextView
-                android:id="@+id/user_login"
+            <EditText
+                android:id="@+id/edit_login"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/lato"
-                android:text="Cat123"
-                android:textColor="#000000"
-                android:textSize="20sp"/>
+                android:inputType="textPersonName"
+                android:hint="@string/log_str"
+                android:text="Логин"
+                android:textSize="20sp"
+                android:textColorHint="#808080"/>
         </TableRow>
 
         <TableRow
             android:layout_marginTop="10dp">
 
             <TextView
-                android:id="@+id/user_password_text"
+                android:id="@+id/edit_password_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -64,70 +66,59 @@
                 android:textColor="#000000"
                 android:textSize="20sp"/>
 
-            <TextView
-                android:id="@+id/user_password"
+            <EditText
+                android:id="@+id/edit_password"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/lato"
                 android:inputType="textPassword"
+                android:hint="@string/pass_str"
                 android:text="Cat123"
-                android:textColor="#000000"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                android:textColorHint="#808080" />
         </TableRow>
 
         <TableRow
             android:layout_marginTop="10dp">
 
             <TextView
-                android:id="@+id/user_email_text"
+                android:id="@+id/edit_email_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginBottom="30dp"
                 android:fontFamily="@font/lato"
                 android:text="Электронная  почта"
                 android:textColor="#000000"
                 android:textSize="20sp"/>
 
-            <TextView
-                android:id="@+id/user_email"
+            <EditText
+                android:id="@+id/edit_email"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginTop="15dp"
                 android:fontFamily="@font/lato"
+                android:inputType="textEmailAddress"
+                android:hint="@string/email_str"
                 android:text="user123@mail.ru"
-                android:textColor="#000000"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                android:textColorHint="#808080" />
         </TableRow>
     </TableLayout>
 
     <Button
-        android:id="@+id/edit_prof"
+        android:id="@+id/save_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
         android:background="#3F51B5"
         android:fontFamily="@font/lato"
-        android:text="@string/edit_button_str"
+        android:text="@string/save_str"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/table_layout_prof" />
-
-    <Button
-        android:id="@+id/button_change_genre"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginTop="20dp"
-        android:background="#3F51B5"
-        android:fontFamily="@font/lato"
-        android:text="@string/change_genre_str"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_prof"/>
+        app:layout_constraintTop_toBottomOf="@+id/table_layout_prof_edit" />
 </androidx.constraintlayout.widget.ConstraintLayout>

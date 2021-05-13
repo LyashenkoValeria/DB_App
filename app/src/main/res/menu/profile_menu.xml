@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:icon="@drawable/profile_img"
+        android:title="menu"
+        app:showAsAction="always">
+        <menu>
+
+            <item
+                android:id="@+id/menu_auth"
+                android:title="@string/auth_str" />
+
+            <item
+                android:id="@+id/menu_prof"
+                android:title="@string/prof_str" />
+
+        </menu>
+    </item>
+</menu>
