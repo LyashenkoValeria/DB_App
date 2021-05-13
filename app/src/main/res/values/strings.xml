@@ -24,6 +24,7 @@
     <string name="mus_film_str">Музыка</string>
     <string name="choose_str">Выберите любимые жанры</string>
     <string name="next_str">Далее</string>
+    <string name="back_str">Назад</string>
     <string name="album_str">Альбом</string>
     <string name="prof_str">Профиль</string>
     <string name="edit_button_str">Редактировать профиль</string>
