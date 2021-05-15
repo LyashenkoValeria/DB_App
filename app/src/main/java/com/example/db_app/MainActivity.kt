@@ -1,13 +1,14 @@
 package com.example.db_app
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.db_app.adapters.ContentAdapter
+import com.example.db_app.fragments.EditDialogFragment
+import kotlinx.android.synthetic.main.fragment_profile.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener {
 
     private lateinit var navController: NavController
 
@@ -19,12 +20,6 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_nav_host) as NavHostFragment
         navController = navHostFragment.navController
 
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.logout, menu)
-        return true
     }
 
     fun authToRegistration() {
@@ -43,6 +38,19 @@ class MainActivity : AppCompatActivity() {
         navController.popBackStack()
     }
 
+    fun listToProfile() {
+        navController.navigate(R.id.action_contentListFragment_to_profileFragment)
+    }
+
+    fun listToAuthorization() {
+        navController.navigate(R.id.action_contentListFragment_to_authorisationFragment)
+    }
+
+    fun profileToChooseList() {
+        navController.navigate(R.id.action_profileFragment_to_chooseGenreFragment)
+    }
+
+
     fun toContent(type: ContentAdapter.Type, id: Int) {
         val bundle = Bundle().apply {
             putInt("type", type.t)
@@ -51,7 +59,13 @@ class MainActivity : AppCompatActivity() {
         navController.navigate(R.id.action_contentList_to_content, bundle)
     }
 
-
+    override fun applyText(newValue: String, type: Int) {
+        when(type){
+            1 -> user_login.text = newValue
+            2 -> user_email.text = newValue
+            else -> user_password.text = newValue
+        }
+    }
 
 
 //    private fun kek (l:Content) = 1

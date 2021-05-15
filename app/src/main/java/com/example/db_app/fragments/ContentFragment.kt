@@ -1,14 +1,15 @@
 package com.example.db_app.fragments
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
+import com.example.db_app.MainActivity
 import com.example.db_app.R
 import com.example.db_app.WebClient
 import com.example.db_app.adapters.ContentAdapter.Type
 import kotlinx.android.synthetic.main.fragment_content.*
+
 
 class ContentFragment : Fragment() {
     private var type = Type.BOOK
@@ -39,6 +40,7 @@ class ContentFragment : Fragment() {
             }
         }
     }
+
 
     // TODO: 13.05.2021 Отмечать просмотренным
 

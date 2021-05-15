@@ -34,4 +34,5 @@
     <string name="books_str">Книги</string>
     <string name="films_str">Фильмы</string>
     <string name="reg_to_auth">Перейти к авторизации</string>
+    <string name="cancel">Отменить</string>
 </resources>

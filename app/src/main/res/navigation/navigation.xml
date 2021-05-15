@@ -34,12 +34,19 @@
         <action
             android:id="@+id/action_contentList_to_content"
             app:destination="@id/contentFragment" />
+        <action
+            android:id="@+id/action_contentListFragment_to_authorisationFragment"
+            app:destination="@id/authorisationFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.db_app.fragments.ProfileFragment"
-        android:label="ProfileFragment" />
+        android:label="ProfileFragment" >
+        <action
+            android:id="@+id/action_profileFragment_to_chooseGenreFragment"
+            app:destination="@id/chooseGenreFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/chooseGenreFragment"

@@ -7,12 +7,12 @@
         <menu>
 
             <item
-                android:id="@+id/menu_auth"
-                android:title="@string/auth_str" />
-
-            <item
                 android:id="@+id/menu_prof"
                 android:title="@string/prof_str" />
+
+            <item
+                android:id="@+id/menu_out"
+                android:title="@string/out_str" />
 
         </menu>
     </item>

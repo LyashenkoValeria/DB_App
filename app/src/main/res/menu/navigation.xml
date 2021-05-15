@@ -2,17 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_songs"
+        android:id="@+id/navigation_books"
         android:icon="@drawable/book_img"
         android:title="@string/books_str"/>
 
     <item
-        android:id="@+id/navigation_albums"
+        android:id="@+id/navigation_films"
         android:icon="@drawable/film_img"
         android:title="@string/films_str"/>
 
     <item
-        android:id="@+id/navigation_artists"
+        android:id="@+id/navigation_music"
         android:icon="@drawable/music_img"
         android:title="@string/mus_film_str"/>
 
