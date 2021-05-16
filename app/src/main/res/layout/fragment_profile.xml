@@ -53,7 +53,7 @@
 
             <Button
                 android:id="@+id/edit_login_button"
-                android:layout_width="50dp"
+                android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/ic_edit"
                 app:layout_constraintBottom_toBottomOf="parent"/>
@@ -85,7 +85,7 @@
 
             <Button
                 android:id="@+id/edit_password_button"
-                android:layout_width="50dp"
+                android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/ic_edit"
                 app:layout_constraintBottom_toBottomOf="parent" />
@@ -116,7 +116,7 @@
 
             <Button
                 android:id="@+id/edit_email_button"
-                android:layout_width="50dp"
+                android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/ic_edit"
                 app:layout_constraintBottom_toBottomOf="parent" />

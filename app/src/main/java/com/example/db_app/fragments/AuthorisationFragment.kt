@@ -48,6 +48,8 @@ class AuthorisationFragment : Fragment() {
 
     private fun checkUser(login: String, pass: String): Boolean {
         // TODO: 13.05.2021 Если данные подходят - true. Если нет - false
+
+
         return true
     }
 

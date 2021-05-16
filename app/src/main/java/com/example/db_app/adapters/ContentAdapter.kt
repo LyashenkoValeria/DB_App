@@ -1,9 +1,6 @@
-/*
- * Copyright (c) 2021. Code by Juniell.
- */
-
 package com.example.db_app.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,20 +11,21 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.db_app.R
 import com.example.db_app.WebClient
 import com.example.db_app.dataClasses.Content
+import com.example.db_app.dataClasses.Type
 import kotlinx.android.synthetic.main.content_item.view.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ContentAdapter :
     RecyclerView.Adapter<ContentAdapter.ContentViewHolder>(), Filterable{
 
+    private val webClient = WebClient().getApi()
+
     var type = Type.BOOK
-    var contentList: List<Content> = WebClient().getBookList()
-    var contentListFull: List<Content> = WebClient().getBookList()
+    private var contentList: List<Content> = listOf()
+    var contentListFull: List<Content> = listOf()
     private lateinit var listener: OnItemClickListener
-
-    enum class Type(val t: Int) {
-        BOOK(0), FILM(1), MUSIC(2) }
-
-
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
@@ -44,7 +42,7 @@ class ContentAdapter :
             // TODO: 13.05.2021 poster
             name.text = item.getName()
             year.text = item.getYear().toString()
-            genre.text = item.getGenreSting()
+            genre.text = item.getGenreString()
             rating.text = item.getRating().toString()
 
         }
@@ -54,23 +52,34 @@ class ContentAdapter :
 
     fun setContent(type: Type) {
         this.type = type
+//        contentList = WebClient().getContentList(type)
+//        notifyDataSetChanged()
 
-        when(type) {
-            Type.BOOK -> {
-                contentList = WebClient().getBookList()
-                contentListFull = WebClient().getBookList()
-            }
-            Type.FILM -> {
-                contentList = WebClient().getFilmList()
-                contentListFull = WebClient().getFilmList()
-            }
-            Type.MUSIC -> {
-                contentList = WebClient().getMusicList()
-                contentListFull = WebClient().getMusicList()
-            }
+        val call = when (type) {
+            Type.BOOK -> webClient.getBookList()
+            Type.FILM -> webClient.getFilmList()
+            Type.MUSIC -> webClient.getMusicList()
         }
-        notifyDataSetChanged()
+
+        call.enqueue(object : Callback<List<Content>> {
+            override fun onResponse(call: Call<List<Content>>, response: Response<List<Content>>) {
+                contentList = response.body()!!
+                contentListFull = response.body()!!
+                notifyDataSetChanged()
+            }
+
+            override fun onFailure(call: Call<List<Content>>, t: Throwable) {
+                Log.d("db", "Response = $t")
+            }
+        })
+//        contentList = when(type) {
+//            Type.BOOK -> WebClient().getBookList()!!
+//            Type.FILM -> WebClient().getFilmList()!!
+//            Type.MUSIC -> WebClient().getMusicList()!!
     }
+
+    fun getContentByPosition(position: Int) = contentList[position]
+
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.listener = listener
@@ -80,8 +89,7 @@ class ContentAdapter :
         ViewHolder(itemView) {
         init {
             itemView.apply {
-                setOnClickListener{
-
+                setOnClickListener {
                     val pos = adapterPosition
                     if (pos != RecyclerView.NO_POSITION)
                         listener.onItemClick(pos)

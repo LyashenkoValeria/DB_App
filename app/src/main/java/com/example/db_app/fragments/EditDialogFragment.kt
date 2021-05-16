@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import kotlinx.android.synthetic.main.dialog_fragment_layout.view.*
+import com.example.db_app.fragments.RegistrationFragment.Result
 
 
 class EditDialogFragment : DialogFragment() {
@@ -16,7 +17,6 @@ class EditDialogFragment : DialogFragment() {
 
     private lateinit var listener: EditDialogListener
 
-    enum class Result { LOGIN, MAIL, OK }
 
     interface EditDialogListener {
         fun applyText(newValue: String, type: Int)

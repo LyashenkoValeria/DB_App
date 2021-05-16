@@ -4,7 +4,7 @@ data class MusicAlbum(
     private val id: Int,
     private val name: String,
     private val year: Int,
-    private val description: String
+    private val description: String?
 ) {
     fun getId() = id
     fun getName() = name

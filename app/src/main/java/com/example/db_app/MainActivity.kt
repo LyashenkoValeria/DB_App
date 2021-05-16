@@ -4,9 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.example.db_app.adapters.ContentAdapter
+import com.example.db_app.dataClasses.Type
 import com.example.db_app.fragments.EditDialogFragment
-import kotlinx.android.synthetic.main.fragment_content_list.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener {
@@ -16,10 +15,11 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        // TODO: 13.05.2021 Проверка того, что пользватель уже вошёл в аккаунт
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_nav_host) as NavHostFragment
         navController = navHostFragment.navController
+        // TODO: 13.05.2021 Проверка того, что пользватель уже вошёл в аккаунт
+        //  и в зависимости от этого - открытие нужного фрагмента
     }
 
     fun authToRegistration() {
@@ -38,6 +38,14 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
         navController.popBackStack()
     }
 
+    fun toContent(type: Type, id: Int) {
+        val bundle = Bundle().apply {
+            putInt("type", type.t)
+            putInt("id", id)
+        }
+        navController.navigate(R.id.action_contentList_to_content, bundle)
+    }
+
     fun listToProfile() {
         navController.navigate(R.id.action_contentListFragment_to_profileFragment)
     }
@@ -48,15 +56,6 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
 
     fun profileToChooseList() {
         navController.navigate(R.id.action_profileFragment_to_chooseGenreFragment)
-    }
-
-
-    fun toContent(type: ContentAdapter.Type, id: Int) {
-        val bundle = Bundle().apply {
-            putInt("type", type.t)
-            putInt("id", id)
-        }
-        navController.navigate(R.id.action_contentList_to_content, bundle)
     }
 
     override fun applyText(newValue: String, type: Int) {

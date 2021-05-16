@@ -5,7 +5,7 @@ data class Content(
     private val name: String,
     private val rating: Double,
     private val year: Int,
-    private val genres: List<Genre>,
+    private val genres: List<String>,
     private val poster: String
 ) {
     fun getId() = id
@@ -14,14 +14,9 @@ data class Content(
     fun getRating() = rating
     fun getPoster() = poster
 
-    fun getGenreSting(): String {
-        val genre = StringBuilder()
-        genres.forEach {
-            genre.append(it.getName())
-            genre.append(", ")
-        }
-        genre.delete(genre.length - 2, genre.length - 1)
+    fun getGenreString() = genres.joinToString(separator = ", ")
+}
 
-        return genre.toString()
-    }
+enum class Type(val t: Int) {
+    BOOK(0), FILM(1), MUSIC(2)
 }

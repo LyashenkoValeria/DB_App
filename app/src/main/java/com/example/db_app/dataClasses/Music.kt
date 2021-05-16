@@ -5,7 +5,9 @@ data class Music(
     private val name: String,
     private val year: Int,
     private val duration: Int,
+    private val rating: Double,
     private val artists: List<Artist>,
+    private val album: MusicAlbum?,
     private val genres: List<Genre>
 ) {
 
@@ -14,32 +16,11 @@ data class Music(
     fun getYear() = year
     fun getDuration() = duration
     fun getArtists() = artists
+    fun getAlbum() = album
     fun getGenres() = genres
+    fun getRating() = rating
 
-    fun getAlbumName(): String {
-        // TODO: 13.05.2021
-        return "альбом"
-    }
+    fun getArtistString() = artists.joinToString(separator = ", ")
 
-    fun getArtistString(): String {
-        val artist = StringBuilder()
-        artists.forEach {
-            artist.append(it.getName())
-            artist.append(", ")
-        }
-        artist.delete(artist.length - 2, artist.length - 1)
-
-        return artist.toString()
-    }
-
-    fun getGenreSting(): String {
-        val genre = StringBuilder()
-        genres.forEach {
-            genre.append(it.getName())
-            genre.append(", ")
-        }
-        genre.delete(genre.length - 2, genre.length - 1)
-
-        return genre.toString()
-    }
+    fun getGenreString() = genres.joinToString(separator = ", ")
 }
