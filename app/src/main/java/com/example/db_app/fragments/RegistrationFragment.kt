@@ -41,8 +41,6 @@ class RegistrationFragment : Fragment() {
 
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
             }
-
-            // TODO: 13.05.2021 Добавить внопку возврата к авторизации
         }
 
         reg_to_auth.setOnClickListener {

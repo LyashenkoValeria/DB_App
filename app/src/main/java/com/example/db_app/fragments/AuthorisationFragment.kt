@@ -39,16 +39,14 @@ class AuthorisationFragment : Fragment() {
         auth_to_reg.setOnClickListener {
             (requireActivity() as MainActivity).authToRegistration()
         }
-
-        // TODO: 13.05.2021 Добавить кнопку перехода к регистрации
-
         super.onViewCreated(view, savedInstanceState)
 
     }
 
     private fun checkUser(login: String, pass: String): Boolean {
         // TODO: 13.05.2021 Если данные подходят - true. Если нет - false
-
+        val userId = 1 // TODO: 16.05.2021 client.getUserByLogPas(login, pass): Int
+        // и записывать в SharedPreferences
 
         return true
     }

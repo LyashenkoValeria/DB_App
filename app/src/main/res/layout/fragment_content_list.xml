@@ -36,9 +36,24 @@
         app:layout_constraintBottom_toTopOf="@+id/navigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_content"
+        app:layout_constraintTop_toBottomOf="@+id/scroll"
         tools:listitem="@layout/content_item"/>
 
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toTopOf="@+id/recycler"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

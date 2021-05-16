@@ -47,38 +47,26 @@ class ContentListFragment : Fragment() {
                     if (type != Type.BOOK) {
                         type = Type.BOOK
                         (recycler.adapter as ContentAdapter).setContent(type)
-                        search_content.setQuery("", false)
-                        search_content.clearFocus()
-                        true
-                    } else
-                        false
-
+                    }
                 }
                 R.id.navigation_film -> {
                     if (type != Type.FILM) {
                         type = Type.FILM
                         (recycler.adapter as ContentAdapter).setContent(type)
-                        search_content.setQuery("", false)
-                        search_content.clearFocus()
-                        true
-                    } else
-                        false
+                    }
                 }
                 R.id.navigation_music -> {
                     if (type != Type.MUSIC) {
                         type = Type.MUSIC
                         (recycler.adapter as ContentAdapter).setContent(type)
-                        search_content.setQuery("", false)
-                        search_content.clearFocus()
-                        true
-                    } else
-                        false
+                    }
                 }
-                else -> false
             }
+            search_content.setQuery("", false)
+            search_content.clearFocus()
+            true
         }
 
-        var query = ""
         search_content.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 return false
@@ -86,7 +74,6 @@ class ContentListFragment : Fragment() {
 
             override fun onQueryTextChange(newText: String): Boolean {
                 contentAdapter.filter.filter(newText)
-                query = newText
                 return false
             }
         })

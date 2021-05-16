@@ -66,7 +66,4 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
         }
     }
 
-
-//    private fun kek (l:Content) = 1
-
 }

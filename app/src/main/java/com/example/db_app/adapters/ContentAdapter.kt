@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.content_item.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
 
 class ContentAdapter :
     RecyclerView.Adapter<ContentAdapter.ContentViewHolder>(), Filterable{
@@ -52,8 +53,6 @@ class ContentAdapter :
 
     fun setContent(type: Type) {
         this.type = type
-//        contentList = WebClient().getContentList(type)
-//        notifyDataSetChanged()
 
         val call = when (type) {
             Type.BOOK -> webClient.getBookList()
@@ -72,10 +71,6 @@ class ContentAdapter :
                 Log.d("db", "Response = $t")
             }
         })
-//        contentList = when(type) {
-//            Type.BOOK -> WebClient().getBookList()!!
-//            Type.FILM -> WebClient().getFilmList()!!
-//            Type.MUSIC -> WebClient().getMusicList()!!
     }
 
     fun getContentByPosition(position: Int) = contentList[position]
@@ -106,13 +101,13 @@ class ContentAdapter :
         override fun performFiltering(constraint: CharSequence): FilterResults {
             val filterList = arrayListOf<Content>()
 
-            if (constraint == null || constraint.isEmpty()){
+            if (constraint.isEmpty()){
                 filterList.addAll(contentListFull)
             } else {
-                val filterPattern = constraint.toString().toLowerCase().trim()
+                val filterPattern = constraint.toString().toLowerCase(Locale.getDefault()).trim()
 
                 for (content in contentListFull) {
-                    if (content.getName().toLowerCase().contains(filterPattern))
+                    if (content.getName().toLowerCase(Locale.getDefault()).contains(filterPattern))
                         filterList.add(content)
                 }
             }
