@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.db_app.adapters.ContentAdapter
 import com.example.db_app.fragments.EditDialogFragment
+import kotlinx.android.synthetic.main.fragment_content_list.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener {
@@ -19,7 +20,6 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_nav_host) as NavHostFragment
         navController = navHostFragment.navController
-
     }
 
     fun authToRegistration() {

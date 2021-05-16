@@ -2,6 +2,7 @@ package com.example.db_app.fragments
 
 import android.os.Bundle
 import android.view.*
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.db_app.MainActivity
@@ -39,16 +40,37 @@ class ContentListFragment: Fragment(){
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = contentAdapter
 
+        var query = ""
+        search_content.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                contentAdapter.filter.filter(newText)
+                query = newText
+                return false
+            }
+        })
+
+
+
         navigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_books -> {
                     contentAdapter.setContent(ContentAdapter.Type.BOOK)
+                    search_content.setQuery("", false)
+                    search_content.clearFocus()
                 }
                 R.id.navigation_films -> {
                     contentAdapter.setContent(ContentAdapter.Type.FILM)
+                    search_content.setQuery("", false)
+                    search_content.clearFocus()
                 }
                 R.id.navigation_music -> {
                     contentAdapter.setContent(ContentAdapter.Type.MUSIC)
+                    search_content.setQuery("", false)
+                    search_content.clearFocus()
                 }
             }
             false

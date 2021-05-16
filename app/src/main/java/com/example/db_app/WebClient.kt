@@ -106,7 +106,7 @@ class WebClient {
     )
     val book2 = Book(
         2,
-        "book 2",
+        "test",
         2222,
         "Это book 2",
         "poster",
@@ -116,7 +116,7 @@ class WebClient {
     )
     val book3 = Book(
         3,
-        "book 3",
+        "text",
         3333,
         "Это book 3",
         "poster",
