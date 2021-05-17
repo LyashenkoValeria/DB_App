@@ -1,64 +1,62 @@
+/*
+ * Copyright (c) 2021. Code by Juniell.
+ */
+
 package com.example.db_app.adapters
 
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.db_app.R
 import com.example.db_app.WebClient
 import com.example.db_app.dataClasses.Content
 import com.example.db_app.dataClasses.ContentIdName
 import com.example.db_app.dataClasses.Type
 import kotlinx.android.synthetic.main.content_item.view.*
+import kotlinx.android.synthetic.main.content_item.view.genre
+import kotlinx.android.synthetic.main.content_item.view.name
+import kotlinx.android.synthetic.main.content_item.view.rating
+import kotlinx.android.synthetic.main.content_item.view.year
+import kotlinx.android.synthetic.main.top_content_item.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.*
 
-class ContentAdapter :
-    RecyclerView.Adapter<ContentAdapter.ContentViewHolder>(), Filterable
-{
+class TopContentAdapter(private val topId: Int, private val type: Type) : RecyclerView.Adapter<TopContentAdapter.TopContentViewHolder>() {
 
     private val webClient = WebClient().getApi()
-    var type = Type.BOOK
-//    private var contentList: List<Content> = listOf()
     private var contentList: List<ContentIdName> = listOf()
-//    var contentListFull: List<Content> = listOf()
-    var contentListFull: List<ContentIdName> = listOf()
     private lateinit var listener: OnItemClickListener
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContentViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.content_item, parent, false)
-        return ContentViewHolder(view, listener)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopContentViewHolder {
+        getContent()
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.fragment_top, parent, false)
+        return TopContentViewHolder(view, listener)
     }
 
-    override fun onBindViewHolder(holder: ContentViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: TopContentViewHolder, position: Int) {
         holder.updateViewElement(holder, position)
     }
 
     override fun getItemCount(): Int = contentList.size
 
-    fun setContent(type: Type) {
-        this.type = type
-
+    fun getContent() {
         val call = when (type) {
-            Type.BOOK -> webClient.getBookList()
-            Type.FILM -> webClient.getFilmList()
-            Type.MUSIC -> webClient.getMusicList()
+            Type.BOOK -> webClient.getBooksOfTop(topId)
+            Type.FILM -> webClient.getFilmOfTop(topId)
+            Type.MUSIC -> webClient.getMusicOfTop(topId)
         }
 
         call.enqueue(object : Callback<List<ContentIdName>> {
             override fun onResponse(call: Call<List<ContentIdName>>, response: Response<List<ContentIdName>>) {
                 contentList = response.body()!!
-                contentListFull = response.body()!!
                 notifyDataSetChanged()
             }
 
@@ -75,8 +73,8 @@ class ContentAdapter :
         this.listener = listener
     }
 
-    inner class ContentViewHolder(itemView: View, listener: OnItemClickListener) :
-        ViewHolder(itemView) {
+    inner class TopContentViewHolder(itemView: View, listener: OnItemClickListener) :
+        RecyclerView.ViewHolder(itemView) {
         init {
             itemView.apply {
                 setOnClickListener {
@@ -87,7 +85,7 @@ class ContentAdapter :
             }
         }
 
-        fun updateViewElement(holder: ContentViewHolder, position: Int) {
+        fun updateViewElement(holder: TopContentViewHolder, position: Int) {
             val contentId = contentList[position].getId()
             val call = when (type) {
                 Type.BOOK -> webClient.getBookContent(contentId)
@@ -100,11 +98,11 @@ class ContentAdapter :
                     holder.itemView.run {
                         val item = response.body()!!
                         // TODO: 13.05.2021 poster
-                        name.text = item.getName()
-                        year.text = item.getYear().toString()
-                        genre.text = item.getGenreString()
-                        rating.text = item.getRating().toString()
-
+                        top_content_place.text = "${position + 1} место"
+                        top_content_name.text = item.getName()
+                        top_content_year.text = item.getYear().toString()
+                        top_content_genre.text = item.getGenreString()
+                        top_content_rating.text = item.getRating().toString()
                     }
                 }
                 override fun onFailure(call: Call<Content>, t: Throwable) {
@@ -114,35 +112,5 @@ class ContentAdapter :
         }
     }
 
-    override fun getFilter(): Filter {
-        return contentFilter
-    }
-
-    private val contentFilter: Filter = object : Filter() {
-        override fun performFiltering(constraint: CharSequence): FilterResults {
-            val filterList = arrayListOf<ContentIdName>()
-
-            if (constraint.isEmpty()){
-                filterList.addAll(contentListFull)
-            } else {
-                val filterPattern = constraint.toString().toLowerCase(Locale.getDefault()).trim()
-
-                for (content in contentListFull) {
-                    if (content.getName().toLowerCase(Locale.getDefault()).contains(filterPattern))
-                        filterList.add(content)
-                }
-            }
-
-            val result = FilterResults()
-            result.values = filterList
-
-            return result
-        }
-
-        override fun publishResults(constraint: CharSequence, results: FilterResults) {
-            contentList = results.values as List<ContentIdName>
-            notifyDataSetChanged()
-        }
-    }
 
 }

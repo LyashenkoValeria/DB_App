@@ -1,25 +1,25 @@
+/*
+ * Copyright (c) 2021. Code by Juniell.
+ */
+
 package com.example.db_app.fragments
 
 import android.os.Bundle
-import android.view.*
-import android.widget.SearchView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.db_app.MainActivity
 import com.example.db_app.R
 import com.example.db_app.adapters.ContentAdapter
+import com.example.db_app.adapters.TopsAdapter
 import com.example.db_app.dataClasses.Type
 import kotlinx.android.synthetic.main.fragment_content_list.*
 
-class ContentListFragment : Fragment() {
+class TopListFragment : Fragment() {
 
     private var type = Type.BOOK
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,24 +30,20 @@ class ContentListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val contentAdapter = ContentAdapter()
-        contentAdapter.setOnItemClickListener(object : ContentAdapter.OnItemClickListener {
+
+        search_content.visibility = View.GONE
+
+        val topsAdapter = TopsAdapter()
+        topsAdapter.setOnItemClickListener(object : TopsAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
-                val content = contentAdapter.getContentByPosition(position)
-//                (requireActivity() as MainActivity).toContent(type, content.getId())
-                (requireActivity() as MainActivity).toContent(type, content.getId())
+                val content = topsAdapter.getContentByPosition(position)
+                (requireActivity() as MainActivity).toTop(type, content.getId())
             }
         })
 
         recycler.layoutManager = LinearLayoutManager(requireContext())
-        recycler.adapter = contentAdapter
+        recycler.adapter = topsAdapter
         (recycler.adapter as ContentAdapter).setContent(Type.BOOK)
-
-//        sidebar.listener
-
-//        navigationView.setItemOnTouchListener(R.id.navigation_music, object OnTo)
-
-//        navigationView.setItemOnTouchListener(R.id.navigation_music, object : View.OnTouchListener )
 
         navigationView.setOnNavigationItemReselectedListener {
             return@setOnNavigationItemReselectedListener
@@ -81,40 +77,12 @@ class ContentListFragment : Fragment() {
                     }
                 }
             }
-            search_content.setQuery("", false)
-            search_content.clearFocus()
             true
         }
 
-        search_content.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                return false
-            }
 
-            override fun onQueryTextChange(newText: String): Boolean {
-                contentAdapter.filter.filter(newText)
-                return false
-            }
-        })
 
         super.onViewCreated(view, savedInstanceState)
-    }
 
-    /** =================================    Работа с меню   ================================ **/
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.profile_menu, menu)
     }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menu_prof -> {
-                (requireActivity() as MainActivity).listToProfile()
-            }
-            R.id.menu_out -> {
-                (requireActivity() as MainActivity).listToAuthorization()
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
 }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2021. Code by Juniell.
+  -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/group1"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/catalog_menu"
+            android:checked="true"
+            android:icon="@drawable/ic_catalog"
+            android:title="Каталог медиа" />
+        <item
+            android:id="@+id/tops_menu"
+            android:checked="false"
+            android:icon="@drawable/ic_tops"
+            android:title="Топы" />
+        <item
+            android:id="@+id/recommend_menu"
+            android:checked="false"
+            android:icon="@drawable/ic_recommend"
+            android:title="Рекомендации" />
+        <item
+            android:id="@+id/viewed_menu"
+            android:checked="false"
+            android:icon="@drawable/ic_viewed"
+            android:title="Просмотренное" />
+        <item
+            android:id="@+id/profile_menu"
+            android:checked="false"
+            android:icon="@drawable/ic_profile"
+            android:title="Профиль" />
+    </group>
+    <group
+        android:id="@+id/group2"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/exit_menu"
+            android:checked="false"
+            android:icon="@drawable/ic_exit"
+            android:title="Выйти" />
+    </group>
+
+
+</menu>

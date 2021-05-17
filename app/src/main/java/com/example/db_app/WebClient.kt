@@ -6,6 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 class WebClient {
 
@@ -55,7 +56,7 @@ class WebClient {
 
     fun getBook(id: Int): Book? {
         val client = retrofit.create(WebClientService::class.java)
-        val call =  client.getBook(id)
+        val call = client.getBook(id)
         val result = null
         // TODO: 14.05.2021
         return null
@@ -126,7 +127,7 @@ class WebClient {
                 likeListDB.remove(it)
         }
 
-        likeListDB.forEach{
+        likeListDB.forEach {
             delLikeGenre(type, it.getId())
         }
     }
@@ -169,8 +170,32 @@ class WebClient {
 
 interface WebClientService {
 
+//    GET https://localhost:8080/api/user/auth?username=teacons&password=123321
+
+    // todo возвращает id пользователя или null, если такого нет
+    @GET("user/auth")
+    fun auth(@Query("username") username: String, @Query("password") password: String): Call<Int?>
+
+    //    https://api.fbear.ru:8080/api/user/reg?username=Juniell1&password=123321&email=juniell@fbear.ri
+    // TODO: 17.05.2021 написать дата класс? выход - этот класс? или мапа?
+    @GET("user/reg")
+    fun reg(
+        @Query("username") username: String,
+        @Query("password") password: String,
+        @Query("email") email: String
+    ): Call<Int?>
+
     @GET("book/{id}")
     fun getBook(@Path("id") id: Int): Call<Book>
+
+    @GET("book/{id}")
+    fun getBookContent(@Path("id") id: Int): Call<Content>
+
+    @GET("film/{id}")
+    fun getFilmContent(@Path("id") id: Int): Call<Content>
+
+    @GET("music/{id}")
+    fun getMusicContent(@Path("id") id: Int): Call<Content>
 
     @GET("film/{id}")
     fun getFilm(@Path("id") id: Int): Call<Film>
@@ -179,16 +204,15 @@ interface WebClientService {
     fun getMusic(@Path("id") id: Int): Call<Music>
 
     @GET("book")
-    fun getBookList(): Call<List<Content>>
+    fun getBookList(): Call<List<ContentIdName>>
 
     @GET("film")
-    fun getFilmList(): Call<List<Content>>
+    fun getFilmList(): Call<List<ContentIdName>>
 
     @GET("music")
-    fun getMusicList(): Call<List<Content>>
+    fun getMusicList(): Call<List<ContentIdName>>
 
 //    @GET("music_genre/{id}")
-//    fun getMusicGenreById(@Path("id") id: Int): Call<Genre>
 
     @GET("book_genre")
     fun getBookGenre(): Call<List<Genre>>
@@ -221,19 +245,28 @@ interface WebClientService {
 //    @SET("")
     fun changeLikeMusicGenre(userId: Int, likeMusicGenre: List<Genre>): Call<Boolean>
 
+    @GET("")
+    fun getTopsBook(): Call<List<Top>>
 
-//    fun getContentList(type: ContentAdapter.Type) =
-//        when (type) {
-//            ContentAdapter.Type.BOOK -> getBookList()
-//            ContentAdapter.Type.FILM -> getFilmList()
-//            ContentAdapter.Type.MUSIC -> getMusicList()
-//        }
+    @GET("")
+    fun getTopsFilm(): Call<List<Top>>
 
+    @GET("")
+    fun getTopsMusic(): Call<List<Top>>
 
+    //    val book = api.getBook(1).execute().body()
+//    fun getMusicGenreById(@Path("id") id: Int): Call<Genre>
+    @GET("book")
+    fun getBooksOfTop(topId: Int): Call<List<ContentIdName>>
+
+    @GET("film")
+    fun getFilmOfTop(topId: Int): Call<List<ContentIdName>>
+
+    @GET("music")
+    fun getMusicOfTop(topId: Int): Call<List<ContentIdName>>
 }
 
 //fun main() {
-//    val book = api.getBook(1).execute().body()
 //    print(book?.getName())
 //}
 

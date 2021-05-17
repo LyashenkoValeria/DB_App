@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/navigation"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
     app:startDestination="@id/authorisationFragment">
 
     <fragment
         android:id="@+id/authorisationFragment"
         android:name="com.example.db_app.fragments.AuthorisationFragment"
-        android:label="AuthorisationFragment" >
+        android:label="AuthorisationFragment"
+        tools:layout="@layout/fragment_authorization">
         <action
             android:id="@+id/action_to_contentListFragment"
             app:destination="@id/contentListFragment" />
@@ -18,7 +21,8 @@
     <fragment
         android:id="@+id/registrationFragment"
         android:name="com.example.db_app.fragments.RegistrationFragment"
-        android:label="RegistrationFragment" >
+        android:label="RegistrationFragment"
+        tools:layout="@layout/fragment_registration">
         <action
             android:id="@+id/action_registration_to_chooseGenre"
             app:destination="@id/chooseGenreFragment" />
@@ -27,7 +31,8 @@
     <fragment
         android:id="@+id/contentListFragment"
         android:name="com.example.db_app.fragments.ContentListFragment"
-        android:label="ContentListFragment" >
+        android:label="ContentListFragment"
+        tools:layout="@layout/fragment_content_list">
         <action
             android:id="@+id/action_contentListFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
@@ -42,7 +47,8 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.db_app.fragments.ProfileFragment"
-        android:label="ProfileFragment" >
+        android:label="ProfileFragment"
+        tools:layout="@layout/fragment_profile">
         <action
             android:id="@+id/action_profileFragment_to_chooseGenreFragment"
             app:destination="@id/chooseGenreFragment" />
@@ -51,7 +57,8 @@
     <fragment
         android:id="@+id/chooseGenreFragment"
         android:name="com.example.db_app.fragments.ChooseGenreFragment"
-        android:label="ChooseGenreFragment" >
+        android:label="ChooseGenreFragment"
+        tools:layout="@layout/fragment_choose_genre">
         <action
             android:id="@+id/action_to_contentListFragment"
             app:destination="@id/contentListFragment" />
@@ -60,5 +67,24 @@
     <fragment
         android:id="@+id/contentFragment"
         android:name="com.example.db_app.fragments.ContentFragment"
-        android:label="ContentFragment" />
+        android:label="ContentFragment"
+        tools:layout="@layout/fragment_content"/>
+
+    <fragment
+        android:id="@+id/topListFragment"
+        android:name="com.example.db_app.fragments.TopListFragment"
+        android:label="TopListFragment">
+        <action
+            android:id="@+id/action_topListFragment_to_topContentListFragment"
+            app:destination="@id/topContentListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/topContentListFragment"
+        android:name="com.example.db_app.fragments.TopContentListFragment"
+        android:label="TopContentListFragment"
+        tools:layout="@layout/fragment_top">
+        <action
+            android:id="@+id/action_topContentListFragment_to_contentFragment"
+            app:destination="@id/contentFragment" />
+    </fragment>
 </navigation>
