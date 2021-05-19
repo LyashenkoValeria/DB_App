@@ -34,7 +34,7 @@ class ChooseGenreFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        choose_text.text = "Выберите любимые жанры книг"
+        choose_text.text = resources.getString(R.string.choose_genre_book)
 
         val genreAdapter = GenreAdapter()
         genre_recycler.layoutManager = LinearLayoutManager(requireContext())
@@ -49,7 +49,7 @@ class ChooseGenreFragment : Fragment() {
                         bookGenreList = getLikeGenreList()
                         setGenreList(type)
                     }
-                    choose_text.text = "Выберите любимые жанры фильмов"
+                    choose_text.text = resources.getString(R.string.choose_genre_film)
                 }
                 Type.FILM -> {
                     type = Type.MUSIC
@@ -58,17 +58,16 @@ class ChooseGenreFragment : Fragment() {
                         filmGenreList = getLikeGenreList()
                         setGenreList(type)
                     }
-                    choose_text.text = "Выберите любимые жанры музыки"
+                    choose_text.text = resources.getString(R.string.choose_genre_music)
                 }
                 Type.MUSIC -> {
                     musicGenreList = (genre_recycler.adapter as GenreAdapter).getLikeGenreList()
 
                     // ОБновление данных в бд
-//                    WebClient().changeLikeGenre(Type.BOOK, bookGenreList)
                     val userId = 1 // TODO: 16.05.2021  Добавить сохранение и получение userId
-                    val call1 = webClient.changeLikeBookGenre(userId, bookGenreList)
+                    val callChangeBookGenre = webClient.changeLikeBookGenre(userId, bookGenreList)
 
-                    call1.enqueue(object : Callback<Boolean> {
+                    callChangeBookGenre.enqueue(object : Callback<Boolean> {
                         override fun onResponse(
                             call: Call<Boolean>,
                             response: Response<Boolean>
@@ -79,10 +78,10 @@ class ChooseGenreFragment : Fragment() {
                         }
                     })
 
-//                    WebClient().changeLikeGenre(Type.FILM, filmGenreList)
-                    val call2 = webClient.changeLikeFilmGenre(userId, filmGenreList)
 
-                    call2.enqueue(object : Callback<Boolean> {
+                    val callChangeFilmGenre = webClient.changeLikeFilmGenre(userId, filmGenreList)
+
+                    callChangeFilmGenre.enqueue(object : Callback<Boolean> {
                         override fun onResponse(
                             call: Call<Boolean>,
                             response: Response<Boolean>
@@ -93,10 +92,10 @@ class ChooseGenreFragment : Fragment() {
                         }
                     })
 
-//                    WebClient().changeLikeGenre(Type.MUSIC, musicGenreList)
-                    val call3 = webClient.changeLikeMusicGenre(userId, musicGenreList)
 
-                    call3.enqueue(object : Callback<Boolean> {
+                    val callChangeMusicGenre = webClient.changeLikeMusicGenre(userId, musicGenreList)
+
+                    callChangeMusicGenre.enqueue(object : Callback<Boolean> {
                         override fun onResponse(
                             call: Call<Boolean>,
                             response: Response<Boolean>
@@ -121,12 +120,12 @@ class ChooseGenreFragment : Fragment() {
                 Type.FILM -> {
                     type = Type.BOOK
                     (genre_recycler.adapter as GenreAdapter).setGenreList(type)
-                    choose_text.text = "Выберите любимые жанры книг"
+                    choose_text.text = resources.getString(R.string.choose_genre_book)
                 }
                 Type.MUSIC -> {
                     type = Type.FILM
                     (genre_recycler.adapter as GenreAdapter).setGenreList(type)
-                    choose_text.text = "Выберите любимые жанры фильмов"
+                    choose_text.text = resources.getString(R.string.choose_genre_film)
                 }
             }
         }

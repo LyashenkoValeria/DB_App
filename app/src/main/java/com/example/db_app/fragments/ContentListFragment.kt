@@ -4,17 +4,21 @@ import android.os.Bundle
 import android.view.*
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.db_app.MainActivity
 import com.example.db_app.R
 import com.example.db_app.adapters.ContentAdapter
 import com.example.db_app.dataClasses.Type
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_content_list.*
+import java.util.*
+
 
 class ContentListFragment : Fragment() {
 
     private var type = Type.BOOK
+    var changeList = MutableLiveData(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +38,6 @@ class ContentListFragment : Fragment() {
         contentAdapter.setOnItemClickListener(object : ContentAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 val content = contentAdapter.getContentByPosition(position)
-//                (requireActivity() as MainActivity).toContent(type, content.getId())
                 (requireActivity() as MainActivity).toContent(type, content.getId())
             }
         })
@@ -43,78 +46,80 @@ class ContentListFragment : Fragment() {
         recycler.adapter = contentAdapter
         (recycler.adapter as ContentAdapter).setContent(Type.BOOK)
 
-//        sidebar.listener
-
-//        navigationView.setItemOnTouchListener(R.id.navigation_music, object OnTo)
-
-//        navigationView.setItemOnTouchListener(R.id.navigation_music, object : View.OnTouchListener )
-
         navigationView.setOnNavigationItemReselectedListener {
             return@setOnNavigationItemReselectedListener
         }
 
         navigationView.setOnNavigationItemSelectedListener {
             when (it.title) {
-//                R.id.navigation_book ->
-                "Книги" ->
-                {
+                resources.getString(R.string.books_str) -> {
                     if (type != Type.BOOK) {
                         type = Type.BOOK
                         (recycler.adapter as ContentAdapter).setContent(type)
                     }
                 }
-//                R.id.navigation_film ->
-                "Фильмы" ->
-                {
+
+                resources.getString(R.string.films_str) -> {
                     if (type != Type.FILM) {
                         type = Type.FILM
                         (recycler.adapter as ContentAdapter).setContent(type)
                     }
                 }
-//                R.id.navigation_music ->
 
-                "Музыка" ->
-                {
+                resources.getString(R.string.mus_film_str) -> {
                     if (type != Type.MUSIC) {
                         type = Type.MUSIC
                         (recycler.adapter as ContentAdapter).setContent(type)
                     }
                 }
             }
-            search_content.setQuery("", false)
-            search_content.clearFocus()
+            changeList.value = true
             true
         }
-
-        search_content.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                contentAdapter.filter.filter(newText)
-                return false
-            }
-        })
 
         super.onViewCreated(view, savedInstanceState)
     }
 
     /** =================================    Работа с меню   ================================ **/
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.profile_menu, menu)
+        inflater.inflate(R.menu.toolbar_menu, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menu_prof -> {
-                (requireActivity() as MainActivity).listToProfile()
+        if (item.itemId == R.id.toolbar_search) {
+            val searchView = item.actionView as SearchView
+            // необходимо для того, чтобы SearchView не "сворачивался" в иконку
+            searchView.isIconified = false
+            searchView.queryHint = "Введите название" // TODO: 19.05.2021 Не работатет?
+
+            searchView.setOnCloseListener {
+                searchView.isIconified = false
+                true
             }
-            R.id.menu_out -> {
-                (requireActivity() as MainActivity).listToAuthorization()
+
+            // observer для очищения и скрытия searchView
+            changeList.observe(this) {
+                if (changeList.value == true) {
+
+                    searchView.setQuery("", false)
+                    searchView.clearFocus()
+                    changeList.value = false
+                    item.collapseActionView()
+                }
             }
+
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    searchView.clearFocus()
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String): Boolean {
+                    (recycler.adapter as ContentAdapter).filter.filter(newText)
+                    return false
+                }
+            })
         }
         return super.onOptionsItemSelected(item)
     }
-
 }

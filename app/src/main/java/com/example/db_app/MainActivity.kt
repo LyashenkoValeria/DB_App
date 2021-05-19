@@ -1,66 +1,115 @@
 package com.example.db_app
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.MenuItemCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.*
+import com.example.db_app.adapters.ContentAdapter
 import com.example.db_app.dataClasses.Type
-import com.example.db_app.fragments.AuthorisationFragment
-import com.example.db_app.fragments.ContentListFragment
 import com.example.db_app.fragments.EditDialogFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_content_list.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 
-class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener {
 
-    // TODO: 17.05.2021 Авторизация -> на fragmentContentList серый "фильтр"  
+class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener {
 
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setSupportActionBar(findViewById(R.id.toolbar))
+
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.main_nav_host) as NavHostFragment
         navController = navHostFragment.navController
 
-        drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-//        sidebar.setupWithNavController(navController)
-        sidebar.setNavigationItemSelectedListener {
-            if (!it.isChecked)
-                when (it.itemId) {
-                    R.id.catalog_menu -> navController.navigate(R.id.contentListFragment)
-                    R.id.tops_menu -> navController.navigate(R.id.topListFragment)
-                    R.id.profile_menu -> navController.navigate(R.id.profileFragment)
-                    R.id.exit_menu -> exit()
-                    // TODO: 17.05.2021  добавть другие фрагменты
+// Настройка toolBar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        val appBarConfiguration = AppBarConfiguration(navController.graph, drawer_layout)
+        NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration)
+
+// Настройка sidebar
+        sidebar.setupWithNavController(navController)
+
+// Настройка различного отображения toolbar и sidebar в разных фрагментах
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            // скрытие toolbar и sidebar
+            when (destination.id) {
+                R.id.authorisationFragment, R.id.registrationFragment -> {
+                    toolbar?.visibility = View.GONE
+                    drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
-            true
+                else -> {
+                    toolbar?.visibility = View.VISIBLE
+                    drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                }
+            }
+            // названия фрагментов
+            toolbar.title = when (destination.id) {
+                R.id.contentListFragment -> resources.getString(R.string.catalog_menu)
+                R.id.profileFragment -> resources.getString(R.string.prof_str)
+                R.id.topListFragment -> resources.getString(R.string.tops_menu)
+                // TODO: 19.05.2021 Добавить названия для остальных фрагментов
+                else -> ""
+            }
+            // отображение поисковой строки
+//            toolbar.menu.findItem(R.id.toolbar_search).isVisible =
+//                destination.id == R.id.contentListFragment
+
+//            if (destination.id == R.id.contentListFragment) {
+//                (toolbar.menu.findItem(R.id.toolbar_search).actionView as SearchView?)!!.setOnQueryTextListener(
+//                    object : SearchView.OnQueryTextListener {
+//                        override fun onQueryTextSubmit(query: String): Boolean {
+//                            return false
+//                        }
+//
+//                        override fun onQueryTextChange(newText: String): Boolean {
+//                            (recycler.adapter as ContentAdapter).filter.filter(newText)
+//                            return false
+//                        }
+//                    })
+//            }
         }
+
+//        val searchView = toolbar.menu.findItem(R.id.toolbar_search).actionView as SearchView
+//        searchView.queryHint = "Введите название" // TODO: 19.05.2021 Не работатет?
+//
+//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//            override fun onQueryTextSubmit(query: String): Boolean {
+//                return false
+//            }
+//
+//            override fun onQueryTextChange(newText: String): Boolean {
+//                (recycler.adapter as ContentAdapter).filter.filter(newText)
+//                return false
+//            }
+//        })
+
 
 //  Проверка того, что пользователь уже авторизован
-        // TODO: 17.05.2021 убрать авторизацию и регистрацию из navigationGraph и при необходимости
-        //  вызывать эти фрагменты отдельно
         val userId = getUserId()
         if (userId == -1) {
-            val fragmentManager = supportFragmentManager
-            fragmentManager.beginTransaction()
-                .replace(main_nav_host.id, AuthorisationFragment())
-//                .add(R.id.fragment_container, fragment2)
-//                .show(fragment3)
-//                .hide(fragment4)
-                .commit()
-//            navController.navigate(R.id.authorisationFragment)
-            // TODO: 17.05.2021 Удалять из стека предыдущие фрагменты
+            toAuthorization()
         }
-        else
-            toContentList()
     }
 
-    fun toast(message: String) {
+//    fun getSearchView() = toolbar.menu.findItem(R.id.toolbar_search) as SearchView
+
+
+    fun makeToast(message: String) {
         Toast.makeText(
             this,
             message,
@@ -68,22 +117,14 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
         ).show()
     }
 
-    private fun exit() {
+    @Suppress("UNUSED_PARAMETER")
+    fun exit(item: MenuItem) {
         val sp = this.getSharedPreferences("settings", MODE_PRIVATE)
         val editor = sp.edit()
         editor.putInt("userId", -1)
         editor.apply()
 
-        drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-        val fragmentManager = supportFragmentManager
-        fragmentManager.beginTransaction()
-            .replace(main_nav_host.id, AuthorisationFragment())
-//                .add(R.id.fragment_container, fragment2)
-//                .show(fragment3)
-//                .hide(fragment4)
-            .disallowAddToBackStack()
-            .commit()
-//        navController.navigate(R.id.authorisationFragment)
+        toAuthorization()
     }
 
     private fun getUserId(): Int {
@@ -98,28 +139,26 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
         editor.apply()
     }
 
-    fun authToRegistration() {
-        drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+    private fun toAuthorization() {
+        navController.navigate(R.id.authorisationFragment)
+        collapsing_toolbar_layout.visibility = View.GONE
+    }
+
+    fun authToReg() {
         navController.navigate(R.id.action_auth_to_reg)
+    }
+
+    fun authToContentList() {
+        navController.navigate(R.id.contentListFragment)
+        collapsing_toolbar_layout.visibility = View.VISIBLE
     }
 
     fun toContentList() {
         navController.navigate(R.id.contentListFragment)
-        drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-    }
-
-    fun authToContentList() {
-        drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-        val fragmentManager = supportFragmentManager
-        fragmentManager.beginTransaction()
-            .replace(main_nav_host.id, ContentListFragment())
-            .disallowAddToBackStack()
-            .commit()
-
     }
 
     fun toChooseGenre() {
-        navController.navigate(R.id.action_registration_to_chooseGenre)
+        navController.navigate(R.id.chooseGenreFragment)
     }
 
     fun back() {
@@ -134,19 +173,11 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
         navController.navigate(R.id.action_contentList_to_content, bundle)
     }
 
-    fun listToProfile() {
-        navController.navigate(R.id.action_contentListFragment_to_profileFragment)
-    }
-
-    fun listToAuthorization() {
-        drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-        navController.navigate(R.id.action_contentListFragment_to_authorisationFragment)
-    }
 
     fun profileToChooseList() {
         navController.navigate(R.id.action_profileFragment_to_chooseGenreFragment)
     }
-    
+
     fun toTop(type: Type, id: Int) {
         val bundle = Bundle().apply {
             putInt("type", type.t)
@@ -162,5 +193,65 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
             else -> user_password.text = newValue
         }
     }
+
+    // Обработчик нажатия кнопки назад
+    override fun onBackPressed() {
+        val fragmentId = navController.currentBackStackEntry!!.destination.id
+        val previousId = navController.previousBackStackEntry?.destination?.id
+
+        when (fragmentId) {
+            R.id.contentListFragment ->
+                if (previousId == R.id.authorisationFragment)
+                    finish()
+                else
+                    super.onBackPressed()
+
+            R.id.authorisationFragment ->
+                if (previousId == R.id.contentListFragment)
+                    finish()
+                else
+                    super.onBackPressed()
+
+            else -> super.onBackPressed()
+        }
+    }
+
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        menuInflater.inflate(R.menu.toolbar_menu, menu)
+////        val searchView = menu!!.getItem(R.id.toolbar_search).actionView as SearchView
+////        searchView.queryHint = "Введите название" // TODO: 19.05.2021 Не работатет?
+////
+////        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+////            override fun onQueryTextSubmit(query: String): Boolean {
+////                return false
+////            }
+////
+////            override fun onQueryTextChange(newText: String): Boolean {
+////                (recycler.adapter as ContentAdapter).filter.filter(newText)
+////                return false
+////            }
+////        })
+//        return true
+//    }
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        toolbar.setOnMenuItemClickListener {
+//            if (it.itemId == R.id.toolbar_search)
+//
+//        }
+//        searchView = menu.findItem(R.id.toolbar_search) as SearchView
+//        searchView.queryHint = "Введите название" // TODO: 19.05.2021 Не работатет?
+//
+//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//            override fun onQueryTextSubmit(query: String): Boolean {
+//                return false
+//            }
+//
+//            override fun onQueryTextChange(newText: String): Boolean {
+//                (recycler.adapter as ContentAdapter).filter.filter(newText)
+//                return false
+//            }
+//        })
+//    }
+
 
 }

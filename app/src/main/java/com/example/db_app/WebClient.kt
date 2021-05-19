@@ -174,7 +174,7 @@ interface WebClientService {
 
     // todo возвращает id пользователя или null, если такого нет
     @GET("user/auth")
-    fun auth(@Query("username") username: String, @Query("password") password: String): Call<Int?>
+    fun auth(@Query("username") username: String, @Query("password") password: String): Call<Map<String, Int?>>
 
     //    https://api.fbear.ru:8080/api/user/reg?username=Juniell1&password=123321&email=juniell@fbear.ri
     // TODO: 17.05.2021 написать дата класс? выход - этот класс? или мапа?

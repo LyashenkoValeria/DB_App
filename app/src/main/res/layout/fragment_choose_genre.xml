@@ -13,7 +13,7 @@
         android:layout_margin="20dp"
         android:fontFamily="@font/lato"
         android:gravity="center_horizontal"
-        android:text="@string/choose_str"
+        tools:text="@string/choose_genre_book"
         android:textColor="#000000"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"

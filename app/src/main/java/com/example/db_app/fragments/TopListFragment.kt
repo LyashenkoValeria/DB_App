@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.db_app.MainActivity
 import com.example.db_app.R
-import com.example.db_app.adapters.ContentAdapter
 import com.example.db_app.adapters.TopsAdapter
 import com.example.db_app.dataClasses.Type
 import kotlinx.android.synthetic.main.fragment_content_list.*
@@ -31,7 +30,7 @@ class TopListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        search_content.visibility = View.GONE
+//        search_content.visibility = View.GONE
 
         val topsAdapter = TopsAdapter()
         topsAdapter.setOnItemClickListener(object : TopsAdapter.OnItemClickListener {
@@ -43,7 +42,7 @@ class TopListFragment : Fragment() {
 
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = topsAdapter
-        (recycler.adapter as ContentAdapter).setContent(Type.BOOK)
+        (recycler.adapter as TopsAdapter).setContent(Type.BOOK)
 
         navigationView.setOnNavigationItemReselectedListener {
             return@setOnNavigationItemReselectedListener
@@ -51,29 +50,27 @@ class TopListFragment : Fragment() {
 
         navigationView.setOnNavigationItemSelectedListener {
             when (it.title) {
-//                R.id.navigation_book ->
-                "Книги" ->
+                resources.getString(R.string.books_str) ->
                 {
                     if (type != Type.BOOK) {
                         type = Type.BOOK
-                        (recycler.adapter as ContentAdapter).setContent(type)
+                        (recycler.adapter as TopsAdapter).setContent(type)
                     }
                 }
-//                R.id.navigation_film ->
-                "Фильмы" ->
+
+                resources.getString(R.string.films_str) ->
                 {
                     if (type != Type.FILM) {
                         type = Type.FILM
-                        (recycler.adapter as ContentAdapter).setContent(type)
+                        (recycler.adapter as TopsAdapter).setContent(type)
                     }
                 }
-//                R.id.navigation_music ->
 
-                "Музыка" ->
+                resources.getString(R.string.mus_film_str) ->
                 {
                     if (type != Type.MUSIC) {
                         type = Type.MUSIC
-                        (recycler.adapter as ContentAdapter).setContent(type)
+                        (recycler.adapter as TopsAdapter).setContent(type)
                     }
                 }
             }

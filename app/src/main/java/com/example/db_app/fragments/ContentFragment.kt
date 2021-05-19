@@ -49,6 +49,8 @@ class ContentFragment : Fragment() {
     }
 
     // TODO: 13.05.2021 Отмечать просмотренным
+    // TODO: 19.05.2021 Ставить оценку
+    // TODO: 19.05.2021 Переходить на связанный контент
 
     private fun drawBook(id: Int) {
         val call = webClient.getBook(id)

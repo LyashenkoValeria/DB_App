@@ -1,17 +1,27 @@
 <resources>
     <string name="app_name">DB_App</string>
+    <string name="app_developers">Juniell, LeoValdez, Teacons</string>
+
     <string name="reg_str">Регистрация</string>
+    <string name="auth_str">Авторизация</string>
+    <string name="button_str">Зарегистрироваться</string>
+    <string name="reg_to_auth">Перейти к авторизации</string>
     <string name="log_str">Логин</string>
     <string name="pass_str">Пароль</string>
     <string name="email_str">Электронная почта</string>
-    <string name="button_str">Зарегистрироваться</string>
+    <string name="next_str">Далее</string>
+    <string name="back_str">Назад</string>
     <string name="in_str">Войти</string>
-    <string name="auth_str">Авторизация</string>
+    <string name="out_str">Выйти</string>
+
     <string name="name_str">Название</string>
     <string name="author_str">Автор</string>
+    <string name="author_top">Автор:</string>
     <string name="year_str">Год</string>
     <string name="genre_str">Жанр</string>
     <string name="book_series_str">Серия книг</string>
+    <string name="film_series_str">Серия фильмов</string>
+    <string name="album_str">Альбом</string>
     <string name="top_str">Топ</string>
     <string name="pos_str">Место</string>
     <string name="desc_str">Описание</string>
@@ -19,31 +29,34 @@
     <string name="dur_str">Время</string>
     <string name="actor_str">Актёры</string>
     <string name="maker_str">Съёмочная группа</string>
-    <string name="film_series_str">Серия фильмов</string>
     <string name="book_film_str">Книга</string>
     <string name="mus_film_str">Музыка</string>
-    <string name="choose_str">Выберите любимые жанры</string>
-    <string name="next_str">Далее</string>
-    <string name="back_str">Назад</string>
-    <string name="album_str">Альбом</string>
+
+    <string name="choose_genre_book">Выберите любимые жанры книг</string>
+    <string name="choose_genre_film">Выберите любимые жанры фильмов</string>
+    <string name="choose_genre_music">Выберите любимые жанры музыки</string>
+
     <string name="prof_str">Профиль</string>
     <string name="edit_button_str">Редактировать профиль</string>
     <string name="change_genre_str">Изменить любимые жанры</string>
     <string name="save_str">Сохранить</string>
-    <string name="out_str">Выйти</string>
+    <string name="cancel">Отменить</string>
     <string name="books_str">Книги</string>
     <string name="films_str">Фильмы</string>
-    <string name="reg_to_auth">Перейти к авторизации</string>
-    <string name="cancel">Отменить</string>
-    <string name="title_activity_main2">MainActivity</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="catalog_menu">Каталог медиа</string>
+    <string name="tops_menu">Топы</string>
+    <string name="recommend_menu">Рекомендации</string>
+    <string name="viewed_menu">Просмотренное</string>
+
+    <string name="current_pass">Текущий пароль</string>
+    <string name="new_pass">Новый пароль</string>
+    <string name="confirm_new_pass">Повторите новый пароль</string>
+
+    <string name="err_auth_empty">Введите логин и пароль, а затем повторите попытку.</string>
+    <string name="err_auth_data">Введён неверный логин или пароль. Повторите попытку.</string>
+    <string name="err_reg_username">Пользователь с таким именем уже существует.</string>
+    <string name="err_reg_email">Указанный email уже занят.</string>
+
+
 </resources>

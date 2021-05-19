@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.db_app.MainActivity
 import com.example.db_app.R
-import com.example.db_app.adapters.ContentAdapter
 import com.example.db_app.adapters.TopContentAdapter
 import com.example.db_app.dataClasses.Type
 import kotlinx.android.synthetic.main.fragment_top.*
@@ -47,6 +46,5 @@ class TopContentListFragment : Fragment() {
 
         top_recycler.layoutManager = LinearLayoutManager(requireContext())
         top_recycler.adapter = topContentAdapter
-        (top_recycler.adapter as ContentAdapter).setContent(Type.BOOK)
     }
 }

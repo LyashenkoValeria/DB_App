@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.fragment_registration.*
 
 class RegistrationFragment : Fragment() {
 
-    enum class Result { LOGIN, MAIL, OK }
+    enum class Result { LOGIN, EMAIL, OK }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,9 +35,9 @@ class RegistrationFragment : Fragment() {
 
             else {
                 val message = if (check == Result.LOGIN)
-                    "Пользователь с таким именем уже существует"
+                    resources.getString(R.string.err_reg_username)
                 else
-                    "Указанный mail уже занят"
+                    resources.getString(R.string.err_reg_email)
 
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
             }

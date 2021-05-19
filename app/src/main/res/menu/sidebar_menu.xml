@@ -7,30 +7,30 @@
         android:id="@+id/group1"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/catalog_menu"
+            android:id="@+id/contentListFragment"
             android:checked="true"
             android:icon="@drawable/ic_catalog"
-            android:title="Каталог медиа" />
+            android:title="@string/catalog_menu" />
         <item
-            android:id="@+id/tops_menu"
+            android:id="@+id/topListFragment"
             android:checked="false"
             android:icon="@drawable/ic_tops"
-            android:title="Топы" />
+            android:title="@string/tops_menu" />
         <item
             android:id="@+id/recommend_menu"
             android:checked="false"
             android:icon="@drawable/ic_recommend"
-            android:title="Рекомендации" />
+            android:title="@string/recommend_menu" />
         <item
             android:id="@+id/viewed_menu"
             android:checked="false"
             android:icon="@drawable/ic_viewed"
-            android:title="Просмотренное" />
+            android:title="@string/viewed_menu" />
         <item
-            android:id="@+id/profile_menu"
+            android:id="@+id/profileFragment"
             android:checked="false"
             android:icon="@drawable/ic_profile"
-            android:title="Профиль" />
+            android:title="@string/prof_str" />
     </group>
     <group
         android:id="@+id/group2"
@@ -39,7 +39,8 @@
             android:id="@+id/exit_menu"
             android:checked="false"
             android:icon="@drawable/ic_exit"
-            android:title="Выйти" />
+            android:onClick="exit"
+            android:title="@string/out_str" />
     </group>
 
 

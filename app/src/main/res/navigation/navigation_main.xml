@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/authorisationFragment">
+    app:startDestination="@id/contentListFragment">
 
     <fragment
         android:id="@+id/authorisationFragment"
@@ -12,7 +12,8 @@
         tools:layout="@layout/fragment_authorization">
         <action
             android:id="@+id/action_to_contentListFragment"
-            app:destination="@id/contentListFragment" />
+            app:destination="@id/contentListFragment"
+            app:popUpToInclusive="false" />
         <action
             android:id="@+id/action_auth_to_reg"
             app:destination="@id/registrationFragment" />
@@ -34,14 +35,8 @@
         android:label="ContentListFragment"
         tools:layout="@layout/fragment_content_list">
         <action
-            android:id="@+id/action_contentListFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
-        <action
             android:id="@+id/action_contentList_to_content"
             app:destination="@id/contentFragment" />
-        <action
-            android:id="@+id/action_contentListFragment_to_authorisationFragment"
-            app:destination="@id/authorisationFragment" />
     </fragment>
 
     <fragment
@@ -52,6 +47,9 @@
         <action
             android:id="@+id/action_profileFragment_to_chooseGenreFragment"
             app:destination="@id/chooseGenreFragment" />
+        <action
+            android:id="@+id/action_profileFragment_self"
+            app:destination="@id/profileFragment" />
     </fragment>
 
     <fragment

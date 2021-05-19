@@ -4,8 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginStart="5dp"
-    android:layout_marginEnd="5dp">
+    android:elevation="5dp"
+    app:cardCornerRadius="5dp"
+    android:backgroundTint="@color/cardViewBackground"
+
+    android:layout_marginHorizontal="5dp"
+    android:layout_marginVertical="2.5dp">
 
 <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/content_for_recycler_layout"
@@ -16,7 +20,7 @@
         android:id="@+id/poster"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:layout_marginEnd="5dp"
         android:src="@drawable/film_def"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,53 +30,73 @@
         android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="5dp"
         android:fontFamily="@font/lato"
-        android:text="@string/name_str"
         android:textColor="#000000"
         android:textSize="20sp"
+        android:maxLines="3"
+        android:ellipsize="end"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/poster"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/poster"
+        tools:text="Кровный безоговорочный коренастость. Изумительной мыто" />
 
     <TextView
         android:id="@+id/year"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginTop="5dp"
         android:fontFamily="@font/lato"
-        tools:text="2000"
         android:textColor="#000000"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/poster"
-        app:layout_constraintTop_toBottomOf="@+id/name" />
+        app:layout_constraintStart_toStartOf="@+id/name"
+        app:layout_constraintTop_toBottomOf="@+id/name"
+        tools:text="2000" />
 
     <TextView
         android:id="@+id/genre"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="5dp"
+        android:ellipsize="end"
         android:fontFamily="@font/lato"
-        android:text="@string/genre_str"
+        android:maxLines="3"
         android:textColor="#000000"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/poster"
-        app:layout_constraintTop_toBottomOf="@+id/year" />
+        app:layout_constraintStart_toStartOf="@+id/name"
+        app:layout_constraintTop_toBottomOf="@+id/year"
+        tools:text="Фэнтези, Утопия, Научная фантастика, Психологический роман" />
 
     <TextView
         android:id="@+id/rating"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="12dp"
         android:fontFamily="@font/lato"
         android:text="@string/rating_str"
         android:textColor="#000000"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/poster"
+        app:layout_constraintStart_toEndOf="@+id/ratingBar"
+        app:layout_constraintTop_toBottomOf="@+id/genre" />
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        style="@style/Widget.AppCompat.RatingBar.Small"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:isIndicator="true"
+        android:layout_marginTop="15dp"
+        android:progressTint="#EDBD0E"
+        android:secondaryProgressTint="@color/white"
+
+        android:rating="3"
+        app:layout_constraintStart_toStartOf="@+id/name"
         app:layout_constraintTop_toBottomOf="@+id/genre" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
