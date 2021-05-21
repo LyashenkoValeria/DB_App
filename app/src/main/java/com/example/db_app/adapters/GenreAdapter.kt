@@ -18,7 +18,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class GenreAdapter : RecyclerView.Adapter<GenreAdapter.GenreViewHolder>() {
+class GenreAdapter(private val userToken: String) : RecyclerView.Adapter<GenreAdapter.GenreViewHolder>() {
 
     private var type = Type.BOOK
     private var genreList: List<Genre> = listOf()
@@ -34,7 +34,8 @@ class GenreAdapter : RecyclerView.Adapter<GenreAdapter.GenreViewHolder>() {
     override fun onBindViewHolder(holder: GenreViewHolder, position: Int) {
         holder.itemView.run {
             val item = genreList[position]
-            check_box.text = item.getName()
+            check_box.text = item.name
+            genre_desc.text = item.description
             check_box.isChecked = likeGenreList.contains(item)
             check_box.setOnClickListener {
                 check_box.isChecked = !check_box.isChecked
@@ -53,9 +54,9 @@ class GenreAdapter : RecyclerView.Adapter<GenreAdapter.GenreViewHolder>() {
         this.type = type
 
         val call = when (type) {
-            Type.BOOK -> webClient.getBookGenre()
-            Type.FILM -> webClient.getFilmGenre()
-            Type.MUSIC -> webClient.getMusicGenre()
+            Type.BOOK -> webClient.getBookGenre(userToken)
+            Type.FILM -> webClient.getFilmGenre(userToken)
+            Type.MUSIC -> webClient.getMusicGenre(userToken)
         }
         call.enqueue(object : Callback<List<Genre>> {
             override fun onResponse(call: Call<List<Genre>>, response: Response<List<Genre>>) {
@@ -68,9 +69,9 @@ class GenreAdapter : RecyclerView.Adapter<GenreAdapter.GenreViewHolder>() {
         })
 
         val call2 = when (type) {
-            Type.BOOK -> webClient.getBookLikeGenre()
-            Type.FILM -> webClient.getFilmLikeGenre()
-            Type.MUSIC -> webClient.getMusicLikeGenre()
+            Type.BOOK -> webClient.getBookLikeGenre(userToken)
+            Type.FILM -> webClient.getFilmLikeGenre(userToken)
+            Type.MUSIC -> webClient.getMusicLikeGenre(userToken)
         }
         call2.enqueue(object : Callback<List<Genre>> {
             override fun onResponse(call: Call<List<Genre>>, response: Response<List<Genre>>) {
@@ -81,9 +82,6 @@ class GenreAdapter : RecyclerView.Adapter<GenreAdapter.GenreViewHolder>() {
                 Log.d("db", "Response = $t")
             }
         })
-
-//        likeGenreList = WebClient().getLikeGenre(type)!!.toMutableList()
-//        notifyDataSetChanged()
     }
 
     fun getLikeGenreList() = likeGenreList

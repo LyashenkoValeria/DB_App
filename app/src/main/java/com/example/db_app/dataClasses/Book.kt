@@ -1,28 +1,27 @@
 package com.example.db_app.dataClasses
 
 data class Book(
-    private val id: Int,
-    private val name: String,
-    private val year: Int,
-    private val description: String,
-    private val poster: String?,
-    private val rating: Double,
-    private val bookSeries: BookSeries?,
-    private val authors: List<People>,
-    private val bookGenres: List<Genre>
+    val id: Int,
+    val name: String,
+    val year: Int,
+    val description: String,
+    val poster: String?,
+    val rating: Double,
+    val bookSeries: ContentIdName?,
+    val authors: List<People>,
+    val genres: List<String>,
+    val viewed: Boolean,
+    val ratingUser: Double?,
+    val top: ContentIdName?,
+    val topPosition: Int?
 ) {
+    fun getAuthorsString() = authors.joinToString(separator = ",\n")  { it.fullname }
 
-    fun getId() = id
-    fun getName() = name
-    fun getYear() = year
-    fun getDesc() = description
-    fun getPoster() = poster
-    fun getBookSeries() = bookSeries
-    fun getAuthors() = authors
-    fun getGenres() = bookGenres
-    fun getRating() = rating
-
-    fun getAuthorsString() = authors.joinToString(separator = ", ")
-
-    fun getGenreString() = bookGenres.joinToString(separator = ", ")
+    fun getGenreString() = genres.joinToString(separator = ", ")
 }
+
+data class BookSeries(
+    val id: Int,
+    val name: String,
+    val description: String
+)

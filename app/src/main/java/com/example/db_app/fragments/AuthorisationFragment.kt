@@ -15,7 +15,6 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class AuthorisationFragment : Fragment() {
-
     private val webClient = WebClient().getApi()
 
     override fun onCreateView(
@@ -37,18 +36,18 @@ class AuthorisationFragment : Fragment() {
             else {
 
                 val call = webClient.auth(username, pass)
-                call.enqueue(object : Callback<Map<String,Int?>> {
-                    override fun onResponse(call: Call<Map<String,Int?>>, response: Response<Map<String,Int?>>) {
-                        val userId = response.body()?.get("uid")
-                        if (userId == null)
+                call.enqueue(object : Callback<Map<String, String?>> {
+                    override fun onResponse(call: Call<Map<String, String?>>, response: Response<Map<String, String?>>) {
+                        val userToken = response.body()?.get("token")
+                        if (userToken == null)
                             (requireActivity() as MainActivity).makeToast(resources.getString(R.string.err_auth_data))
                         else {
-                            (requireActivity() as MainActivity).saveUserId(userId)
+                            (requireActivity() as MainActivity).saveUserToken("Bearer $userToken")
                             (requireActivity() as MainActivity).authToContentList()
                         }
                     }
 
-                    override fun onFailure(call: Call<Map<String,Int?>>, t: Throwable) {
+                    override fun onFailure(call: Call<Map<String, String?>>, t: Throwable) {
                         // TODO: 19.05.2021 Ошибка при верном логине, но неверном пароле
 //                        (requireActivity() as MainActivity).makeToast(resources.getString(R.string.err_auth_data))
                         Log.d("db", "Response = $t")

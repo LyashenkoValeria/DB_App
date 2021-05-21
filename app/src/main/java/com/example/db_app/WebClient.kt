@@ -1,12 +1,13 @@
 package com.example.db_app
 
+import android.provider.ContactsContract
 import com.example.db_app.dataClasses.*
+import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 class WebClient {
 
@@ -18,220 +19,136 @@ class WebClient {
     private val api: WebClientService = retrofit.create(WebClientService::class.java)
 
     fun getApi() = api
-
-//    fun getContentList(type: Type): List<Content> {
-//        val client = retrofit.create(WebClientService::class.java)
-//        val call = when (type) {
-//            Type.BOOK -> client.getBookList()
-//            Type.FILM -> client.getFilmList()
-//            Type.MUSIC -> client.getMusicList()
-//        }
-//
-//        var contentList = listOf<Content>(Content(1, "kek", 5.0, 1, listOf("k"), "f"))
-//
-//        call.enqueue(object : Callback<List<Content>> {
-//            override fun onResponse(call: Call<List<Content>>, response: Response<List<Content>>) {
-//                contentList = response.body()!!
-//            }
-//
-//            override fun onFailure(call: Call<List<Content>>, t: Throwable) {
-//                Log.d("db", "Response = $t")
-//            }
-//        })
-//        return contentList
-//    }
-
-//    fun getContentList(type: ContentAdapter.Type) =
-//        when (type) {
-//            ContentAdapter.Type.BOOK -> getBookList()
-//            ContentAdapter.Type.FILM -> getFilmList()
-//            ContentAdapter.Type.MUSIC -> getMusicList()
-//        }
-
-//    fun getBookList(): List<Content>? = api.getBookList().execute().body()
-//
-//    fun getFilmList(): List<Content>? = api.getFilmList().execute().body()
-//
-//    fun getMusicList(): List<Content>? = api.getMusicList().execute().body()
-
-    fun getBook(id: Int): Book? {
-        val client = retrofit.create(WebClientService::class.java)
-        val call = client.getBook(id)
-        val result = null
-        // TODO: 14.05.2021
-        return null
-    }
-
-    fun getFilm(id: Int): Film? = api.getFilm(id).execute().body()
-
-    fun getMusic(id: Int): Music? = api.getMusic(id).execute().body()
-
-//    fun getMusicGenreById(id: Int): Genre? = api.getMusicGenreById(id).execute().body()
-
-
-    fun getMusicViewed(id: Int): Boolean? {
-        return true         // TODO: 14.05.2021
-    }
-
-    fun getGenreList(type: Type) =
-        when (type) {
-            Type.BOOK -> getBookGenre()
-            Type.FILM -> getFilmGenre()
-            Type.MUSIC -> getMusicGenre()
-        }
-
-    private fun getBookGenre(): List<Genre> {
-        return listOf(genre) // TODO: 14.05.2021
-    }
-
-    private fun getFilmGenre(): List<Genre> {
-        return listOf(genre) // TODO: 14.05.2021
-    }
-
-    private fun getMusicGenre(): List<Genre> {
-        return listOf(genre) // TODO: 14.05.2021
-    }
-
-    fun getLikeGenre(type: Type) =
-        when (type) {
-            Type.BOOK -> getLikeBookGenre()
-            Type.FILM -> getLikeFilmGenre()
-            Type.MUSIC -> getLikeMusicGenre()
-        }
-
-    private fun getLikeBookGenre(): List<Genre>? {
-        return listOf(genre) // TODO: 14.05.2021
-    }
-
-    private fun getLikeFilmGenre(): List<Genre>? {
-        return listOf(genre) // TODO: 14.05.2021
-    }
-
-    private fun getLikeMusicGenre(): List<Genre>? {
-        return listOf(genre) // TODO: 14.05.2021
-    }
-
-    fun addLikeGenre(type: Type, id: Int) {
-        when (type) {
-            Type.BOOK -> addLikeBookGenre(id)
-            Type.FILM -> addLikeFilmGenre(id)
-            Type.MUSIC -> addLikeMusicGenre(id)
-        }
-    }
-
-    fun changeLikeGenre(type: Type, genreList: List<Genre>) {
-        val likeListDB = getLikeGenre(type)!!.toMutableList()
-        genreList.forEach {
-            addLikeGenre(type, it.getId())
-            if (likeListDB.contains(it))
-                likeListDB.remove(it)
-        }
-
-        likeListDB.forEach {
-            delLikeGenre(type, it.getId())
-        }
-    }
-
-    private fun addLikeBookGenre(idGenre: Int) {
-        // TODO: 14.05.2021
-    }
-
-    private fun addLikeFilmGenre(idGenre: Int) {
-        // TODO: 14.05.2021
-    }
-
-    private fun addLikeMusicGenre(idGenre: Int) {
-        // TODO: 14.05.2021
-    }
-
-
-    fun delLikeGenre(type: Type, idGenre: Int) {
-        when (type) {
-            Type.BOOK -> delLikeBookGenre(idGenre)
-            Type.FILM -> delLikeFilmGenre(idGenre)
-            Type.MUSIC -> delLikeMusicGenre(idGenre)
-        }
-    }
-
-    private fun delLikeBookGenre(idGenre: Int) {
-
-    }
-
-    private fun delLikeFilmGenre(idGenre: Int) {
-
-    }
-
-    private fun delLikeMusicGenre(idGenre: Int) {
-
-    }
-
 }
 
 
 interface WebClientService {
 
-//    GET https://localhost:8080/api/user/auth?username=teacons&password=123321
+    @GET("book/{id}")
+    fun getBookForUser(
+        @Path("id") bookId: Int,
+        @Header("Authorization") token: String,
+        @Query("expanded") expanded: Boolean = true
+    ): Call<Book>
 
-    // todo возвращает id пользователя или null, если такого нет
+    @GET("book/{id}")
+    fun getBookContent(@Path("id") id: Int, @Header("Authorization") token: String): Call<Content>
+
+    @GET("film/{id}")
+    fun getFilmContent(@Path("id") id: Int, @Header("Authorization") token: String): Call<Content>
+
+    @GET("music/{id}")
+    fun getMusicContent(@Path("id") id: Int, @Header("Authorization") token: String): Call<Content>
+
+    @GET("film/{id}")
+    fun getFilmForUser(
+        @Path("id") filmId: Int,
+        @Header("Authorization") token: String,
+        @Query("expanded") expanded: Boolean = true
+    ): Call<Film>
+
+    @GET("music/{id}")
+    fun getMusicForUser(
+        @Path("id") musicId: Int,
+        @Header("Authorization") token: String,
+        @Query("expanded") expanded: Boolean = true,
+    ): Call<Music>
+
+    @GET("book")
+    fun getBookList(@Header("Authorization") token: String): Call<List<ContentIdName>>
+
+    @GET("film")
+    fun getFilmList(@Header("Authorization") token: String): Call<List<ContentIdName>>
+
+    @GET("music")
+    fun getMusicList(@Header("Authorization") token: String): Call<List<ContentIdName>>
+
+
+    @GET("book_genre")
+    fun getBookGenre(@Header("Authorization") token: String): Call<List<Genre>>
+
+    @GET("music_genre")
+    fun getMusicGenre(@Header("Authorization") token: String): Call<List<Genre>>
+
+    @GET("film_genre")
+    fun getFilmGenre(@Header("Authorization") token: String): Call<List<Genre>>
+
+    /** ------------------------------ Работа с топами ------------------------------ **/
+
+    // Получение списка топов по типу контента
+    @GET("top/{type}")
+    fun getTopsByType(
+        @Path("type") type: String,
+        @Header("Authorization") token: String
+    ): Call<List<ContentIdName>>
+
+
+    /** ------------------------------ Работа с юзером ------------------------------ **/
+
+    // Авторизация пользователя (возврат - токен пользователя или null, если такого нет)
     @GET("user/auth")
-    fun auth(@Query("username") username: String, @Query("password") password: String): Call<Map<String, Int?>>
+    fun auth(
+        @Query("username") username: String,
+        @Query("password") password: String
+    ): Call<Map<String, String?>>
 
-    //    https://api.fbear.ru:8080/api/user/reg?username=Juniell1&password=123321&email=juniell@fbear.ri
-    // TODO: 17.05.2021 написать дата класс? выход - этот класс? или мапа?
-    @GET("user/reg")
+    // Регистрация пользователя
+    @POST("user/reg")
     fun reg(
         @Query("username") username: String,
         @Query("password") password: String,
         @Query("email") email: String
-    ): Call<Int?>
+    ): Call<Map<String, Int>>
 
-    @GET("book/{id}")
-    fun getBook(@Path("id") id: Int): Call<Book>
+    // Изменение отметки просмотренного и рейтинга контента
+    @POST("user/update/{type}/{content_id}")
+    fun changeViewedContent(
+        @Path("type") type: String,
+        @Path("content_id") contentId: Int,
+        @Header("Authorization") token: String,
+        @Query("viewed") viewed: Boolean,
+        @Query("rating") rating: Int? = null
+    ): Call<ResponseBody>
 
-    @GET("book/{id}")
-    fun getBookContent(@Path("id") id: Int): Call<Content>
+    // Получение информации о пользователе
+    @GET("user/info")
+    fun getUserInfo(@Header("Authorization") token: String): Call<User>
 
-    @GET("film/{id}")
-    fun getFilmContent(@Path("id") id: Int): Call<Content>
+    // Обновление username
+    @POST("user/update/username")
+    fun updateUsername(
+        @Query("new_username") newUsername: String,
+        @Header("Authorization") token: String
+    ): Call<Map<String, Int>>
 
-    @GET("music/{id}")
-    fun getMusicContent(@Path("id") id: Int): Call<Content>
+    // Обновление email
+    @POST("user/update/email")
+    fun updateEmail(
+        @Query("new_email") newEmail: String,
+        @Header("Authorization") token: String
+    ): Call<Map<String, Int>>
 
-    @GET("film/{id}")
-    fun getFilm(@Path("id") id: Int): Call<Film>
+    // Обновление пароля
+    @POST("user/update/password")
+    fun updatePass(
+        @Query("old_password") oldPass: String,
+        @Query("new_password") newPass: String,
+        @Header("Authorization") token: String
+    ): Call<Map<String, Int>>
 
-    @GET("music/{id}")
-    fun getMusic(@Path("id") id: Int): Call<Music>
 
-    @GET("book")
-    fun getBookList(): Call<List<ContentIdName>>
 
-    @GET("film")
-    fun getFilmList(): Call<List<ContentIdName>>
 
-    @GET("music")
-    fun getMusicList(): Call<List<ContentIdName>>
-
-//    @GET("music_genre/{id}")
-
-    @GET("book_genre")
-    fun getBookGenre(): Call<List<Genre>>
-
-    @GET("music_genre")
-    fun getMusicGenre(): Call<List<Genre>>
-
-    @GET("film_genre")
-    fun getFilmGenre(): Call<List<Genre>>
 
     // TODO: 14.05.2021
     @GET("")
-    fun getBookLikeGenre(): Call<List<Genre>>
+    fun getBookLikeGenre(@Header("Authorization") token: String): Call<List<Genre>>
 
     @GET("")
-    fun getFilmLikeGenre(): Call<List<Genre>>
+    fun getFilmLikeGenre(@Header("Authorization") token: String): Call<List<Genre>>
 
     @GET("")
-    fun getMusicLikeGenre(): Call<List<Genre>>
+    fun getMusicLikeGenre(@Header("Authorization") token: String): Call<List<Genre>>
 
     // TODO: 16.05.2021 Как это вообще оформить?
 //    @SET("")
@@ -245,24 +162,17 @@ interface WebClientService {
 //    @SET("")
     fun changeLikeMusicGenre(userId: Int, likeMusicGenre: List<Genre>): Call<Boolean>
 
-    @GET("")
-    fun getTopsBook(): Call<List<Top>>
-
-    @GET("")
-    fun getTopsFilm(): Call<List<Top>>
-
-    @GET("")
-    fun getTopsMusic(): Call<List<Top>>
 
     //    val book = api.getBook(1).execute().body()
 //    fun getMusicGenreById(@Path("id") id: Int): Call<Genre>
-    @GET("book")
+
+//    @GET("book")
     fun getBooksOfTop(topId: Int): Call<List<ContentIdName>>
 
-    @GET("film")
+//    @GET("film")
     fun getFilmOfTop(topId: Int): Call<List<ContentIdName>>
 
-    @GET("music")
+//    @GET("music")
     fun getMusicOfTop(topId: Int): Call<List<ContentIdName>>
 }
 
@@ -271,98 +181,98 @@ interface WebClientService {
 //}
 
 
-val people = People(1, "Человек Первый", 1111, null)
+//val people = People(1, "Человек Первый", 1111, null)
 val genre = Genre(1, "genre 1", "Это genre 1")
-val peopleList = listOf(people)
-val genreList = listOf(genre)
-
-// -------------------------------------------------------------------------------------------------
-val bookSeries = BookSeries(1, "book series 1", "Это book series 1")
-val book1 = Book(
-    1,
-    "book 1",
-    1111,
-    "Это book 1",
-    "poster",
-    5.0,
-    bookSeries,
-    peopleList,
-    genreList
-)
-val book2 = Book(
-    2,
-    "book 2",
-    2222,
-    "Это book 2",
-    "poster",
-    5.0,
-    bookSeries,
-    peopleList,
-    genreList
-)
-val book3 = Book(
-    3,
-    "book 3",
-    3333,
-    "Это book 3",
-    "poster",
-    5.0,
-    bookSeries,
-    peopleList,
-    genreList
-)
-
-// -------------------------------------------------------------------------------------------------
-val artist = Artist(1, "artist 1", "Это artist 1")
-val album = MusicAlbum(1, "music album 1", 1111, null)
-val artistList = listOf(artist)
-
-val music1 = Music(1, "music 1", 1111, 1, 5.0, artistList, album, genreList)
-val music2 = Music(2, "music 2", 1111, 2, 5.0, artistList, album, genreList)
-val music3 = Music(3, "music 2", 1111, 3, 5.0, artistList, album, genreList)
-
-// -------------------------------------------------------------------------------------------------
-val filmSeries = FilmSeries(1, "film series 1", "Это film series 1")
-val listMusic = listOf(music1)
-val film1 = Film(
-    1,
-    "film 1",
-    1111,
-    10,
-    "Это film 1",
-    "poster",
-    5.0,
-    filmSeries,
-    book1,
-    listMusic,
-    peopleList,
-    genreList
-)
-val film2 = Film(
-    2,
-    "film 2",
-    2222,
-    20,
-    "Это film 2",
-    "poster",
-    5.0,
-    filmSeries,
-    book2,
-    listMusic,
-    peopleList,
-    genreList
-)
-val film3 = Film(
-    3,
-    "film 3",
-    3333,
-    30,
-    "Это film 3",
-    "poster",
-    5.0,
-    filmSeries,
-    book2,
-    listMusic,
-    peopleList,
-    genreList
-)
+//val peopleList = listOf(people)
+//val genreList = listOf(genre)
+//
+//// -------------------------------------------------------------------------------------------------
+//val bookSeries = BookSeries(1, "book series 1", "Это book series 1")
+//val book1 = Book(
+//    1,
+//    "book 1",
+//    1111,
+//    "Это book 1",
+//    "poster",
+//    5.0,
+//    bookSeries,
+//    peopleList,
+//    genreList
+//)
+//val book2 = Book(
+//    2,
+//    "book 2",
+//    2222,
+//    "Это book 2",
+//    "poster",
+//    5.0,
+//    bookSeries,
+//    peopleList,
+//    genreList
+//)
+//val book3 = Book(
+//    3,
+//    "book 3",
+//    3333,
+//    "Это book 3",
+//    "poster",
+//    5.0,
+//    bookSeries,
+//    peopleList,
+//    genreList
+//)
+//
+//// -------------------------------------------------------------------------------------------------
+//val artist = Artist(1, "artist 1", "Это artist 1")
+//val album = MusicAlbum(1, "music album 1", 1111, null)
+//val artistList = listOf(artist)
+//
+//val music1 = Music(1, "music 1", 1111, 1, 5.0, artistList, album, genreList)
+//val music2 = Music(2, "music 2", 1111, 2, 5.0, artistList, album, genreList)
+//val music3 = Music(3, "music 2", 1111, 3, 5.0, artistList, album, genreList)
+//
+//// -------------------------------------------------------------------------------------------------
+//val filmSeries = FilmSeries(1, "film series 1", "Это film series 1")
+//val listMusic = listOf(music1)
+//val film1 = Film(
+//    1,
+//    "film 1",
+//    1111,
+//    10,
+//    "Это film 1",
+//    "poster",
+//    5.0,
+//    filmSeries,
+//    book1,
+//    listMusic,
+//    peopleList,
+//    genreList
+//)
+//val film2 = Film(
+//    2,
+//    "film 2",
+//    2222,
+//    20,
+//    "Это film 2",
+//    "poster",
+//    5.0,
+//    filmSeries,
+//    book2,
+//    listMusic,
+//    peopleList,
+//    genreList
+//)
+//val film3 = Film(
+//    3,
+//    "film 3",
+//    3333,
+//    30,
+//    "Это film 3",
+//    "poster",
+//    5.0,
+//    filmSeries,
+//    book2,
+//    listMusic,
+//    peopleList,
+//    genreList
+//)

@@ -29,6 +29,7 @@
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
+                    app:title="@string/catalog_menu"
                     android:elevation="10dp"
                     style="@style/Toolbar" >
                 </androidx.appcompat.widget.Toolbar>
@@ -57,6 +58,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        android:background="@color/background"
         app:headerLayout="@layout/sidebar_header"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

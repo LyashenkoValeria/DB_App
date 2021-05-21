@@ -36,7 +36,9 @@ class ChooseGenreFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         choose_text.text = resources.getString(R.string.choose_genre_book)
 
-        val genreAdapter = GenreAdapter()
+        val userToken = (requireActivity() as MainActivity).getUserToken()!!
+
+        val genreAdapter = GenreAdapter(userToken)
         genre_recycler.layoutManager = LinearLayoutManager(requireContext())
         genre_recycler.adapter = genreAdapter
         (genre_recycler.adapter as GenreAdapter).setGenreList(type)

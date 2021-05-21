@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.db_app.R
 import com.example.db_app.WebClient
+import com.example.db_app.dataClasses.ContentIdName
 import com.example.db_app.dataClasses.Top
 import com.example.db_app.dataClasses.Type
 import kotlinx.android.synthetic.main.top_item.view.*
@@ -18,11 +19,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class TopsAdapter : RecyclerView.Adapter<TopsAdapter.TopsViewHolder>() {
+class TopsAdapter (private val userToken: String): RecyclerView.Adapter<TopsAdapter.TopsViewHolder>() {
 
     private val webClient = WebClient().getApi()
     private var type = Type.BOOK
-    private var topsList = listOf<Top>()
+    private var typeDB = "book"
+    private var topsList = listOf<ContentIdName>()
 
     private lateinit var listener: OnItemClickListener
 
@@ -38,8 +40,8 @@ class TopsAdapter : RecyclerView.Adapter<TopsAdapter.TopsViewHolder>() {
     override fun onBindViewHolder(holder: TopsAdapter.TopsViewHolder, position: Int) {
         holder.itemView.run {
             val top = topsList[position]
-            top_item_name.text = top.getName()
-            top_item_author.text = top.getAuthor()
+            top_item_name.text = top.getTopName()
+            top_item_author.text = top.getTopAuthor()
 //            val l = resources.getDrawable(R.drawable.nav_header_backgroud, context.theme) as ShapeDrawable
 //            l.mutate().s
 //            val g = GradientDrawable()
@@ -53,20 +55,21 @@ class TopsAdapter : RecyclerView.Adapter<TopsAdapter.TopsViewHolder>() {
 
     fun setContent(type: Type) {
         this.type = type
-
-        val call = when (type) {
-            Type.BOOK -> webClient.getTopsBook()
-            Type.FILM -> webClient.getTopsFilm()
-            Type.MUSIC -> webClient.getTopsMusic()
+        typeDB = when (this.type) {
+            Type.BOOK   -> "book"
+            Type.FILM   -> "film"
+            Type.MUSIC  -> "music"
         }
 
-        call.enqueue(object : Callback<List<Top>> {
-            override fun onResponse(call: Call<List<Top>>, response: Response<List<Top>>) {
+        val call = webClient.getTopsByType(typeDB, userToken)
+
+        call.enqueue(object : Callback<List<ContentIdName>> {
+            override fun onResponse(call: Call<List<ContentIdName>>, response: Response<List<ContentIdName>>) {
                 topsList = response.body()!!
                 notifyDataSetChanged()
             }
 
-            override fun onFailure(call: Call<List<Top>>, t: Throwable) {
+            override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
                 Log.d("db", "Response = $t")
             }
         })

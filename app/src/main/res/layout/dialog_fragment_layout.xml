@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dialog_fragment_login"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/background">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dialog_title_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/dialog_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="40dp"
+            android:gravity="center_horizontal"
+            android:paddingVertical="15dp"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Изменение почты" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/enter_old"
@@ -11,20 +37,22 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:fontFamily="@font/lato"
-        android:text="@string/current_pass"
+        tools:text="@string/current_pass"
         android:textColor="#000000"
-        android:textSize="24sp"
+        android:textSize="23sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/dialog_title_container" />
 
     <EditText
         android:id="@+id/edit_line"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginVertical="5dp"
         android:fontFamily="@font/lato"
         android:inputType="textPersonName"
+        android:maxLength="20"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,23 +60,26 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/old_pass_layout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:passwordToggleEnabled="true"
+        android:layout_marginHorizontal="15dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="32"
+        app:counterOverflowTextColor="@color/error"
+        app:counterTextAppearance="@style/CounterOverflow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_line">
+        app:layout_constraintTop_toBottomOf="@+id/edit_line"
+        app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/old_pass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
             android:fontFamily="@font/lato"
             android:inputType="textPassword"
-            android:textSize="20sp"/>
+            android:maxLength="32"
+            android:textSize="20sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -56,34 +87,37 @@
         android:id="@+id/enter_new"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginHorizontal="20dp"
         android:fontFamily="@font/lato"
         android:text="@string/new_pass"
         android:textColor="#000000"
-        android:textSize="24sp"
+        android:textSize="23sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/old_pass_layout"/>
+        app:layout_constraintTop_toBottomOf="@+id/old_pass_layout" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/new_pass_layout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:passwordToggleEnabled="true"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginVertical="5dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="32"
+        app:counterOverflowTextColor="@color/error"
+        app:counterTextAppearance="@style/CounterOverflow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/enter_new">
+        app:layout_constraintTop_toBottomOf="@+id/enter_new"
+        app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/new_pass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
             android:fontFamily="@font/lato"
             android:inputType="textPassword"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -91,64 +125,62 @@
         android:id="@+id/enter_new_confirm"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginHorizontal="20dp"
         android:fontFamily="@font/lato"
         android:text="@string/confirm_new_pass"
         android:textColor="#000000"
-        android:textSize="24sp"
+        android:textSize="23sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/new_pass_layout" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/new_pass_confirm_layout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:passwordToggleEnabled="true"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginVertical="5dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="32"
+        app:counterOverflowTextColor="@color/error"
+        app:counterTextAppearance="@style/CounterOverflow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/enter_new_confirm">
+        app:layout_constraintTop_toBottomOf="@+id/enter_new_confirm"
+        app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/new_pass_confirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
             android:fontFamily="@font/lato"
             android:inputType="textPassword"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
 
     <Button
         android:id="@+id/save_button"
-        android:layout_width="0dp"
+        style="@style/Button"
+        android:layout_width="130dp"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:background="#3F51B5"
-        android:fontFamily="@font/lato"
+        android:layout_marginVertical="20dp"
+        android:layout_marginEnd="20dp"
         android:text="@string/save_str"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/new_pass_confirm_layout" />
 
     <Button
         android:id="@+id/cancel_button"
-        android:layout_width="0dp"
+        style="@style/Button"
+        android:layout_width="130dp"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:background="#3F51B5"
-        android:fontFamily="@font/lato"
+        android:layout_marginHorizontal="20dp"
         android:text="@string/cancel"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/save_button"
-        app:layout_constraintTop_toBottomOf="@+id/new_pass_confirm_layout" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/save_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

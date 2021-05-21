@@ -2,9 +2,9 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#3F51B5</item>
-        <item name="colorPrimaryDark">#2B41B8</item>
-        <item name="colorAccent">#444B52</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="lato">
@@ -34,4 +34,20 @@
         <item name="itemTextColor">@color/white</item>
     </style>
 
+    <style name="CounterOverflow">
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="Button" parent="TextAppearance.AppCompat.Button">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/lato</item>
+        <item name="android:background">@color/colorAccent</item>
+    </style>
+
+    <style name="ToolbarTitle">
+        <item name="android:maxLines">3</item>
+        <item name="android:ellipsize">end</item>
+    </style>
 </resources>

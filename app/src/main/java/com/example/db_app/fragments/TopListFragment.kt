@@ -29,20 +29,19 @@ class TopListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val userToken = (requireActivity() as MainActivity).getUserToken()!!
 
-//        search_content.visibility = View.GONE
-
-        val topsAdapter = TopsAdapter()
+        val topsAdapter = TopsAdapter(userToken)
         topsAdapter.setOnItemClickListener(object : TopsAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
-                val content = topsAdapter.getContentByPosition(position)
-                (requireActivity() as MainActivity).toTop(type, content.getId())
+                val top = topsAdapter.getContentByPosition(position)
+                (requireActivity() as MainActivity).toTop(type, top.id)
             }
         })
 
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = topsAdapter
-        (recycler.adapter as TopsAdapter).setContent(Type.BOOK)
+        topsAdapter.setContent(Type.BOOK)
 
         navigationView.setOnNavigationItemReselectedListener {
             return@setOnNavigationItemReselectedListener
@@ -54,7 +53,7 @@ class TopListFragment : Fragment() {
                 {
                     if (type != Type.BOOK) {
                         type = Type.BOOK
-                        (recycler.adapter as TopsAdapter).setContent(type)
+                        topsAdapter.setContent(type)
                     }
                 }
 
@@ -62,7 +61,7 @@ class TopListFragment : Fragment() {
                 {
                     if (type != Type.FILM) {
                         type = Type.FILM
-                        (recycler.adapter as TopsAdapter).setContent(type)
+                        topsAdapter.setContent(type)
                     }
                 }
 
@@ -70,7 +69,7 @@ class TopListFragment : Fragment() {
                 {
                     if (type != Type.MUSIC) {
                         type = Type.MUSIC
-                        (recycler.adapter as TopsAdapter).setContent(type)
+                        topsAdapter.setContent(type)
                     }
                 }
             }

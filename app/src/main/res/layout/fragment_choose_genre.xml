@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/genre_layout"
+    android:background="@color/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,26 +11,35 @@
         android:id="@+id/choose_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_margin="10dp"
         android:fontFamily="@font/lato"
         android:gravity="center_horizontal"
         tools:text="@string/choose_genre_book"
         android:textColor="#000000"
-        android:textSize="24sp"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/genre_recycler"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/button_next"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/choose_text"
+        tools:listitem="@layout/genre_item"/>
 
     <Button
         android:id="@+id/button_next"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:background="#3F51B5"
-        android:fontFamily="@font/lato"
         android:text="@string/next_str"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
+        style="@style/Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -40,24 +50,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:background="#3F51B5"
-        android:fontFamily="@font/lato"
         android:text="@string/back_str"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
+        style="@style/Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button_next"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/genre_recycler"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/button_next"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/choose_text"
-        tools:listitem="@layout/genre_item"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

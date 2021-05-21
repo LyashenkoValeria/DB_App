@@ -5,14 +5,13 @@
 package com.example.db_app.dataClasses
 
 data class Top(
-    private val id: Int,
-    private val name: String,
-    private val contentList: List<Content>
+    val id: Int,
+    val name: String,
+    val contentList: List<Content>
 ) {
+    private val nameTop = name.split('(')[0]
+    private val authorTop = name.split("- ")[1].dropLast(1)
 
-    fun getId() = id
-    fun getName() = name // TODO: 17.05.2021 Распарсить, чтобы name - чисто назвние, а getAuthor - автора.
-    fun getAuthor() = "author"
-    fun getContentList() = contentList
-
+    fun getNameTop() = nameTop
+    fun getAuthorTop() = authorTop
 }

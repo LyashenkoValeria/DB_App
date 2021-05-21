@@ -12,8 +12,7 @@
         tools:layout="@layout/fragment_authorization">
         <action
             android:id="@+id/action_to_contentListFragment"
-            app:destination="@id/contentListFragment"
-            app:popUpToInclusive="false" />
+            app:destination="@id/contentListFragment" />
         <action
             android:id="@+id/action_auth_to_reg"
             app:destination="@id/registrationFragment" />

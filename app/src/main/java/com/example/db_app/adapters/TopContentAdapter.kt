@@ -14,17 +14,12 @@ import com.example.db_app.WebClient
 import com.example.db_app.dataClasses.Content
 import com.example.db_app.dataClasses.ContentIdName
 import com.example.db_app.dataClasses.Type
-import kotlinx.android.synthetic.main.content_item.view.*
-import kotlinx.android.synthetic.main.content_item.view.genre
-import kotlinx.android.synthetic.main.content_item.view.name
-import kotlinx.android.synthetic.main.content_item.view.rating
-import kotlinx.android.synthetic.main.content_item.view.year
 import kotlinx.android.synthetic.main.top_content_item.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class TopContentAdapter(private val topId: Int, private val type: Type) : RecyclerView.Adapter<TopContentAdapter.TopContentViewHolder>() {
+class TopContentAdapter(private val topId: Int, private val type: Type, private val userToken: String) : RecyclerView.Adapter<TopContentAdapter.TopContentViewHolder>() {
 
     private val webClient = WebClient().getApi()
     private var contentList: List<ContentIdName> = listOf()
@@ -37,7 +32,7 @@ class TopContentAdapter(private val topId: Int, private val type: Type) : Recycl
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopContentViewHolder {
         getContent()
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.fragment_top, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.top_content_item, parent, false)
         return TopContentViewHolder(view, listener)
     }
 
@@ -86,11 +81,11 @@ class TopContentAdapter(private val topId: Int, private val type: Type) : Recycl
         }
 
         fun updateViewElement(holder: TopContentViewHolder, position: Int) {
-            val contentId = contentList[position].getId()
+            val contentId = contentList[position].id
             val call = when (type) {
-                Type.BOOK -> webClient.getBookContent(contentId)
-                Type.FILM -> webClient.getFilmContent(contentId)
-                Type.MUSIC -> webClient.getMusicContent(contentId)
+                Type.BOOK -> webClient.getBookContent(contentId, userToken)
+                Type.FILM -> webClient.getFilmContent(contentId, userToken)
+                Type.MUSIC -> webClient.getMusicContent(contentId, userToken)
             }
 
             call.enqueue(object : Callback<Content> {
@@ -99,10 +94,10 @@ class TopContentAdapter(private val topId: Int, private val type: Type) : Recycl
                         val item = response.body()!!
                         // TODO: 13.05.2021 poster
                         top_content_place.text = "${position + 1} место"
-                        top_content_name.text = item.getName()
-                        top_content_year.text = item.getYear().toString()
+                        top_content_name.text = item.name
+                        top_content_year.text = item.year.toString()
                         top_content_genre.text = item.getGenreString()
-                        top_content_rating.text = item.getRating().toString()
+                        top_content_rating.text = item.rating.toString()
                     }
                 }
                 override fun onFailure(call: Call<Content>, t: Throwable) {

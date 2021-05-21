@@ -49,14 +49,41 @@
     <string name="recommend_menu">Рекомендации</string>
     <string name="viewed_menu">Просмотренное</string>
 
-    <string name="current_pass">Текущий пароль</string>
-    <string name="new_pass">Новый пароль</string>
+    <string name="change_login">Изменение логина</string>
+    <string name="change_email">Изменение почты</string>
+    <string name="change_pass">Изменение пароля</string>
+    <string name="new_login">Введите новый логин</string>
+    <string name="new_email">Введите новую почту</string>
+    <string name="current_pass">Введите текущий пароль</string>
+    <string name="new_pass">Введите новый пароль</string>
     <string name="confirm_new_pass">Повторите новый пароль</string>
+    <string name="change_login_complete">Имя пользователя успешно изменено.</string>
+    <string name="change_email_complete">Email успешно изменён.</string>
+    <string name="change_pass_complete">Пароль успешно изменён.</string>
+
+    <string name="err_edit_empty">Введите данные и повторите попытку.</string>
+    <string name="err_edit_incorrect">Введённые данные некорректны.</string>
+    <string name="err_edit_confirm_incorrect">Пароль для подтверждения не совпадает с новым паролем.</string>
+    <string name="err_username_length">Имя пользователя должно быть не больше 20 символов.</string>
+    <string name="err_pass_length_max">Пароль должен быть не больше 32 символов.</string>
+    <string name="err_pass_length_min">Пароль должен быть не менее 6 символов.</string>
+    <string name="err_curr_pass_incorrect">Введён неверный текущий пароль.</string>
 
     <string name="err_auth_empty">Введите логин и пароль, а затем повторите попытку.</string>
     <string name="err_auth_data">Введён неверный логин или пароль. Повторите попытку.</string>
-    <string name="err_reg_username">Пользователь с таким именем уже существует.</string>
-    <string name="err_reg_email">Указанный email уже занят.</string>
+    <string name="err_username">Пользователь с таким именем уже существует.</string>
+    <string name="err_email">Указанный email уже занят.</string>
+    <string name="edit_pass">Изменить пароль</string>
+    <string name="rating">Рейтинг</string>
 
+    <string name="duration">%1$d мин</string>
+    <string name="book_not_viewed">Вы ещё не прочитали эту книгу.</string>
+    <string name="film_not_viewed">Вы ещё не посмотрели этот фильм.</string>
+    <string name="music_not_viewed">Вы ещё не слушали эту песню.</string>
+    <string name="book_not_rated">Вы ещё не оценили эту книгу. Вы можете сделать это ниже.</string>
+    <string name="film_not_rated">Вы ещё не оценили этот фильм. Вы можете сделать это ниже.</string>
+    <string name="music_not_rated">Вы ещё не оценили эту песню. Вы можете сделать это ниже.</string>
+    <string name="your_rating">"Ваша оценка: %1$s. Вы можете изменить свою оценку ниже.</string>
+    <string name="err_unknown">Упс! Кажется, что-то пошло не так. Повторите попытку позже.</string>
 
 </resources>

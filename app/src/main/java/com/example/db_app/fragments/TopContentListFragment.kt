@@ -35,12 +35,16 @@ class TopContentListFragment : Fragment() {
             else -> Type.BOOK
         }
 
-        val topContentAdapter = TopContentAdapter(topId, type)
+        val userToken = (requireActivity() as MainActivity).getUserToken()!!
+        // TODO: 21.05.2021 Привести топы на сервере к одинаковому виду!!!
+
+        // TODO: 21.05.2021 Получать сам топ тут, а потом отдавать в адаптер?
+        val topContentAdapter = TopContentAdapter(topId, type, userToken)
 
         topContentAdapter.setOnItemClickListener(object : TopContentAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 val content = topContentAdapter.getContentByPosition(position)
-                (requireActivity() as MainActivity).toContent(type, content.getId())
+                (requireActivity() as MainActivity).toContent(type, content.id)
             }
         })
 

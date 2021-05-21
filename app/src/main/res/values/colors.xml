@@ -17,12 +17,17 @@
 <!--    <color name="cardViewBackground">@color/white</color>-->
 
     <color name="colorPrimary">#523634</color>
-    <color name="colorPrimaryDark">#523634</color>
-    <color name="colorAccent">#03DAC5</color>
-    <color name="appBottomBackground">#523634</color>
-    <color name="background">#DDC5A2</color>
-    <color name="white">#FFFFFF</color>
+    <color name="colorPrimaryDark">@color/colorPrimary</color>
+    <color name="colorAccent">#B6452C</color>
+    <color name="appBottomBackground">@color/colorPrimary</color>
+<!--    <color name="background">#DDC5A2</color>-->
+<!--    <color name="background">#F7EEDF</color>-->
+    <color name="background">#F7F4CB</color>
     <color name="cardViewBackground">@color/white</color>
+    <color name="error">#FF0800</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="gray">#A5A9AD</color>
 
 <!--    <color name="colorPrimary">#523634</color>-->
 <!--    <color name="colorPrimaryDark">#523634</color>-->

@@ -18,7 +18,7 @@ import java.util.*
 class ContentListFragment : Fragment() {
 
     private var type = Type.BOOK
-    var changeList = MutableLiveData(false)
+    private var changeList = MutableLiveData(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,18 +34,37 @@ class ContentListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val contentAdapter = ContentAdapter()
+        val userToken = (requireActivity() as MainActivity).getUserToken()!!
+        type = (requireActivity() as MainActivity).typeContentList ?: Type.BOOK
+//        val position = (requireActivity() as MainActivity).posContentList ?: 0
+        // TODO: 21.05.2021 Сохранять позицию? Или как-нибудь перенести в адаптер? Прыгает на 0 при возврате
+
+        val contentAdapter = ContentAdapter(userToken)
+
         contentAdapter.setOnItemClickListener(object : ContentAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 val content = contentAdapter.getContentByPosition(position)
-                (requireActivity() as MainActivity).toContent(type, content.getId())
+                (requireActivity() as MainActivity).typeContentList = type
+//                (requireActivity() as MainActivity).posContentList =
+//                    (recycler.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+                (requireActivity() as MainActivity).toContent(type, content.id)
             }
         })
 
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = contentAdapter
-        (recycler.adapter as ContentAdapter).setContent(Type.BOOK)
+        (recycler.adapter as ContentAdapter).setContent(type)
+//        (recycler.layoutManager as LinearLayoutManager).scrollToPosition(position)
 
+        // Установка листенера на toolbar
+        val toolbarListener = View.OnClickListener {
+            if ((requireActivity() as MainActivity).navController.currentDestination?.id == R.id.contentListFragment)
+                (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+        }
+        (requireActivity() as MainActivity).setToolbarListener(toolbarListener)
+
+
+        // Установка листенеров ни нижную навигацию
         navigationView.setOnNavigationItemReselectedListener {
             return@setOnNavigationItemReselectedListener
         }
@@ -56,6 +75,7 @@ class ContentListFragment : Fragment() {
                     if (type != Type.BOOK) {
                         type = Type.BOOK
                         (recycler.adapter as ContentAdapter).setContent(type)
+                        (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
                     }
                 }
 
@@ -63,6 +83,7 @@ class ContentListFragment : Fragment() {
                     if (type != Type.FILM) {
                         type = Type.FILM
                         (recycler.adapter as ContentAdapter).setContent(type)
+                        (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
                     }
                 }
 
@@ -70,6 +91,7 @@ class ContentListFragment : Fragment() {
                     if (type != Type.MUSIC) {
                         type = Type.MUSIC
                         (recycler.adapter as ContentAdapter).setContent(type)
+                        (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
                     }
                 }
             }
@@ -80,7 +102,7 @@ class ContentListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
-    /** =================================    Работа с меню   ================================ **/
+    /** =================================    Работа с toolbar   ================================ **/
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.toolbar_menu, menu)
     }
@@ -88,10 +110,9 @@ class ContentListFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.toolbar_search) {
             val searchView = item.actionView as SearchView
+            searchView.queryHint = "Введите название"
             // необходимо для того, чтобы SearchView не "сворачивался" в иконку
             searchView.isIconified = false
-            searchView.queryHint = "Введите название" // TODO: 19.05.2021 Не работатет?
-
             searchView.setOnCloseListener {
                 searchView.isIconified = false
                 true
@@ -100,7 +121,6 @@ class ContentListFragment : Fragment() {
             // observer для очищения и скрытия searchView
             changeList.observe(this) {
                 if (changeList.value == true) {
-
                     searchView.setQuery("", false)
                     searchView.clearFocus()
                     changeList.value = false

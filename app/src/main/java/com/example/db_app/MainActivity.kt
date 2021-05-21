@@ -1,30 +1,26 @@
 package com.example.db_app
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.MenuItemCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.*
-import com.example.db_app.adapters.ContentAdapter
 import com.example.db_app.dataClasses.Type
 import com.example.db_app.fragments.EditDialogFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_content_list.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 
-class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener {
+class MainActivity : AppCompatActivity() {
 
-    private lateinit var navController: NavController
+    lateinit var navController: NavController
+    var typeContentList: Type? = null
+//    var posContentList: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,48 +61,31 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
                 // TODO: 19.05.2021 Добавить названия для остальных фрагментов
                 else -> ""
             }
-            // отображение поисковой строки
-//            toolbar.menu.findItem(R.id.toolbar_search).isVisible =
-//                destination.id == R.id.contentListFragment
-
-//            if (destination.id == R.id.contentListFragment) {
-//                (toolbar.menu.findItem(R.id.toolbar_search).actionView as SearchView?)!!.setOnQueryTextListener(
-//                    object : SearchView.OnQueryTextListener {
-//                        override fun onQueryTextSubmit(query: String): Boolean {
-//                            return false
-//                        }
-//
-//                        override fun onQueryTextChange(newText: String): Boolean {
-//                            (recycler.adapter as ContentAdapter).filter.filter(newText)
-//                            return false
-//                        }
-//                    })
-//            }
         }
-
-//        val searchView = toolbar.menu.findItem(R.id.toolbar_search).actionView as SearchView
-//        searchView.queryHint = "Введите название" // TODO: 19.05.2021 Не работатет?
-//
-//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String): Boolean {
-//                return false
-//            }
-//
-//            override fun onQueryTextChange(newText: String): Boolean {
-//                (recycler.adapter as ContentAdapter).filter.filter(newText)
-//                return false
-//            }
-//        })
 
 
 //  Проверка того, что пользователь уже авторизован
-        val userId = getUserId()
-        if (userId == -1) {
+        val userId = getUserToken()
+        if (userId == null || userId == "")
             toAuthorization()
-        }
+//        else
+//            setToolbarTitle(resources.getString(R.string.catalog_menu))
     }
 
-//    fun getSearchView() = toolbar.menu.findItem(R.id.toolbar_search) as SearchView
+    fun setToolbarListener(listener: View.OnClickListener) {
+        toolbar.setOnClickListener(listener)
+    }
+
+    fun setToolbarTitle(title: String) {
+        toolbar.title = title
+        toolbar.setTitleTextAppearance(this, R.style.ToolbarTitle)
+    }
+
+    fun saveContentListType(type: Type) {
+        typeContentList = type
+    }
+
+
 
 
     fun makeToast(message: String) {
@@ -119,6 +98,10 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
 
     @Suppress("UNUSED_PARAMETER")
     fun exit(item: MenuItem) {
+        exit()
+    }
+
+    fun exit() {
         val sp = this.getSharedPreferences("settings", MODE_PRIVATE)
         val editor = sp.edit()
         editor.putInt("userId", -1)
@@ -127,15 +110,15 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
         toAuthorization()
     }
 
-    private fun getUserId(): Int {
+    fun getUserToken(): String? {
         val sp = this.getSharedPreferences("settings", MODE_PRIVATE)
-        return sp.getInt("userId", -1)
+        return sp.getString("userToken", "")
     }
 
-    fun saveUserId(userId: Int) {
+    fun saveUserToken(userToken: String) {
         val sp = this.getSharedPreferences("settings", MODE_PRIVATE)
         val editor = sp.edit()
-        editor.putInt("userId", userId)
+        editor.putString("userToken", userToken)
         editor.apply()
     }
 
@@ -170,7 +153,8 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
             putInt("type", type.t)
             putInt("id", id)
         }
-        navController.navigate(R.id.action_contentList_to_content, bundle)
+//        navController.navigate(R.id.action_contentList_to_content, bundle)
+        navController.navigate(R.id.contentFragment, bundle)
     }
 
 
@@ -186,14 +170,6 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
         navController.navigate(R.id.topContentListFragment, bundle)
     }
 
-    override fun applyText(newValue: String, type: Int) {
-        when (type) {
-            1 -> user_login.text = newValue
-            2 -> user_email.text = newValue
-            else -> user_password.text = newValue
-        }
-    }
-
     // Обработчик нажатия кнопки назад
     override fun onBackPressed() {
         val fragmentId = navController.currentBackStackEntry!!.destination.id
@@ -201,7 +177,7 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
 
         when (fragmentId) {
             R.id.contentListFragment ->
-                if (previousId == R.id.authorisationFragment)
+                if (previousId == R.id.authorisationFragment || previousId == R.id.registrationFragment)
                     finish()
                 else
                     super.onBackPressed()
@@ -216,42 +192,12 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
         }
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        menuInflater.inflate(R.menu.toolbar_menu, menu)
-////        val searchView = menu!!.getItem(R.id.toolbar_search).actionView as SearchView
-////        searchView.queryHint = "Введите название" // TODO: 19.05.2021 Не работатет?
-////
-////        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-////            override fun onQueryTextSubmit(query: String): Boolean {
-////                return false
-////            }
-////
-////            override fun onQueryTextChange(newText: String): Boolean {
-////                (recycler.adapter as ContentAdapter).filter.filter(newText)
-////                return false
-////            }
-////        })
-//        return true
-//    }
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        toolbar.setOnMenuItemClickListener {
-//            if (it.itemId == R.id.toolbar_search)
-//
-//        }
-//        searchView = menu.findItem(R.id.toolbar_search) as SearchView
-//        searchView.queryHint = "Введите название" // TODO: 19.05.2021 Не работатет?
-//
-//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String): Boolean {
-//                return false
-//            }
-//
-//            override fun onQueryTextChange(newText: String): Boolean {
-//                (recycler.adapter as ContentAdapter).filter.filter(newText)
-//                return false
-//            }
-//        })
-//    }
-
+    fun onSubmitClicked(typeOfDialog: EditDialogFragment.DialogType, newValue: String) {
+        // TODO: 21.05.2021 Для повторной скрытой авторизации надо знать пароль
+        if (typeOfDialog == EditDialogFragment.DialogType.USERNAME)
+            exit()
+        if (typeOfDialog == EditDialogFragment.DialogType.EMAIL)
+            user_email.setText(newValue)
+    }
 
 }
