@@ -24,11 +24,6 @@ class EditDialogFragment(
     private lateinit var viewRoot: View
     private val webClient = WebClient().getApi()
 
-
-    interface OnSubmitClickListener {
-        fun onSubmitClicked(typeOfDialog: DialogType, newValue: String)
-    }
-
     enum class DialogType { USERNAME, EMAIL, PASSWORD }
 
     override fun onCreateView(

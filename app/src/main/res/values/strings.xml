@@ -86,4 +86,6 @@
     <string name="your_rating">"Ваша оценка: %1$s. Вы можете изменить свою оценку ниже.</string>
     <string name="err_unknown">Упс! Кажется, что-то пошло не так. Повторите попытку позже.</string>
 
+    <string name="place_in_top">%1$d место</string>
+
 </resources>

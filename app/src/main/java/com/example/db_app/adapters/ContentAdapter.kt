@@ -10,11 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.db_app.R
 import com.example.db_app.WebClient
-import com.example.db_app.dataClasses.Content
-import com.example.db_app.dataClasses.ContentIdName
-import com.example.db_app.dataClasses.Type
+import com.example.db_app.dataClasses.*
 import kotlinx.android.synthetic.main.content_item.view.*
-import kotlinx.android.synthetic.main.fragment_content.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,20 +23,16 @@ class ContentAdapter(private val userToken: String) :
 
     private val webClient = WebClient().getApi()
     var type = Type.BOOK
+    private var typeDB = "book"
     private var contentList: List<ContentIdName> = listOf()
     var contentListFull: List<ContentIdName> = listOf()
     private lateinit var listener: OnItemClickListener
 
-    var filterGenre = arrayListOf<Genre>()
+    var filterGenre = listOf<String>()
     var filterMakers = arrayListOf<People>()
     var filterArtists = arrayListOf<Artist>()
     var filterSeekBars = intArrayOf()
     var filterChanges = true
-
-    enum class Type(val t: Int) {
-        BOOK(0), FILM(1), MUSIC(2)
-    }
-
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
@@ -60,9 +53,18 @@ class ContentAdapter(private val userToken: String) :
         this.type = type
 
         val call = when (type) {
-            Type.BOOK -> webClient.getBookList(userToken)
-            Type.FILM -> webClient.getFilmList(userToken)
-            Type.MUSIC -> webClient.getMusicList(userToken)
+            Type.BOOK -> {
+                typeDB = "book"
+                webClient.getBookList(userToken)
+            }
+            Type.FILM -> {
+                typeDB = "film"
+                webClient.getFilmList(userToken)
+            }
+            Type.MUSIC -> {
+                typeDB = "music"
+                webClient.getMusicList(userToken)
+            }
         }
 
         call.enqueue(object : Callback<List<ContentIdName>> {
@@ -102,18 +104,13 @@ class ContentAdapter(private val userToken: String) :
 
         fun updateViewElement(holder: ContentViewHolder, position: Int) {
             val contentId = contentList[position].id
-            val call = when (type) {
-                Type.BOOK -> webClient.getBookContent(contentId, userToken)
-                Type.FILM -> webClient.getFilmContent(contentId, userToken)
-                Type.MUSIC -> webClient.getMusicContent(contentId, userToken)
-            }
+            val call = webClient.getContentById(typeDB, contentId, userToken)
 
             call.enqueue(object : Callback<Content> {
                 override fun onResponse(call: Call<Content>, response: Response<Content>) {
                     holder.itemView.run {
                         val item = response.body()
                         if (item != null) { // TODO: 20.05.2021 Удалить или обрабатывать по-другому
-                            // TODO: 13.05.2021 poster
                             poster.setImageResource(
                                 when (type) {
                                     Type.BOOK -> R.drawable.book_poster
@@ -121,7 +118,6 @@ class ContentAdapter(private val userToken: String) :
                                     Type.MUSIC -> R.drawable.music_poster
                                 }
                             )
-
                             content_name.text = item.name
                             content_year.text = item.year.toString()
                             content_genre.text = item.getGenreString()
@@ -144,23 +140,36 @@ class ContentAdapter(private val userToken: String) :
 
     private val contentFilter: Filter = object : Filter() {
         override fun performFiltering(constraint: CharSequence): FilterResults {
+            val result = FilterResults()
+
             val filterList = arrayListOf<ContentIdName>()
 
-            if ((constraint == null || constraint.isEmpty()) && filterChanges) {
+            if (constraint.isEmpty() && filterChanges)
                 filterList.addAll(contentListFull)
             else {
                 val filterPattern = constraint.toString().toLowerCase(Locale.getDefault()).trim()
 
-                for (content in contentListFull) {
-                    if (content.name.toLowerCase(Locale.getDefault())
-                            .startsWith(filterPattern) && checkFilter(content)
-                        filterList.add(content)
+                for (content1 in contentListFull) {
+                    val callContent = webClient.getContentById(typeDB, content1.id, userToken)
+
+                    callContent.enqueue(object : Callback<Content> {
+                        override fun onResponse(call: Call<Content>, response: Response<Content>) {
+                            val content = response.body()!!
+                            if (content.name.toLowerCase(Locale.getDefault())
+                                    .startsWith(filterPattern) && checkFilter(content)) {
+                                filterList.add(content.toContentIdName())
+                                result.values = filterList
+                            }
+                        }
+
+                        override fun onFailure(call: Call<Content>, t: Throwable) {
+                            Log.d("db", "Response = $t")
+                        }
+                    })
                 }
             }
 
-            val result = FilterResults()
-            result.values = filterList
-
+            // todo подумать над возвратом result
             return result
         }
 
@@ -173,7 +182,7 @@ class ContentAdapter(private val userToken: String) :
     }
 
     fun setFilter(
-        genres: ArrayList<Genre>,
+        genres: List<String>,
         makers: ArrayList<People>,
         artists: ArrayList<Artist>,
         rangeBars: IntArray,
@@ -192,79 +201,81 @@ class ContentAdapter(private val userToken: String) :
 
     //TODO: Поправить получение из базы в соответствии с новым кодом
     fun checkFilter(content: Content): Boolean {
-        var addToFilter = true
-
         val existGenre = if (filterGenre.isNotEmpty()) {
-            val contentGenres = content.getGenres().toMutableList()
+            val contentGenres = content.genres.toMutableList()
             contentGenres.retainAll(filterGenre)
             contentGenres.isNotEmpty()
-        } else {
+        } else
             true
-        }
-
         val boundYears =
-            filterSeekBars[0] <= content.getYear() && content.getYear() <= filterSeekBars[1]
+            filterSeekBars[0] <= content.year && content.year <= filterSeekBars[1]
         val boundRating =
-            filterSeekBars[4] <= content.getRating() && content.getRating() <= filterSeekBars[5]
-        val boundDur = checkDuration(content)
+            filterSeekBars[4] <= content.rating && content.rating <= filterSeekBars[5]
+        var addToFilter = existGenre && boundYears && boundRating
 
         when (type) {
             Type.FILM -> {
-                val existMakers = checkMakers(content)
-                addToFilter = addToFilter && existMakers
+                if (filterMakers.isNotEmpty()) {
+                    val callFilm = webClient.getFilmForUser(content.id, userToken)
+
+                    callFilm.enqueue(object : Callback<Film> {
+                        override fun onResponse(call: Call<Film>, response: Response<Film>) {
+                            val film = response.body()!!
+                            //checkDur
+                            val checkDur = filterSeekBars[2] <= film.duration && film.duration <= filterSeekBars[3]
+                            //checkMakers
+                            val contentMakers = film.peoples.toMutableList()
+                            contentMakers.retainAll(filterMakers)
+                            addToFilter = addToFilter && contentMakers.isNotEmpty() && checkDur
+                        }
+                        override fun onFailure(call: Call<Film>, t: Throwable) {
+                            Log.d("db", "Response = $t")
+                        }
+                    })
+                }
             }
 
             Type.MUSIC -> {
-                val existArtist = if (filterArtists.isNotEmpty()) {
-                    //TODO: Получить из базы артистов конкретной песни
-                    val contentArtists =
-                        WebClient().getMusic(content.getId()).getArtists().toMutableList()
-                    contentArtists.retainAll(filterArtists)
-                    contentArtists.isNotEmpty()
-                } else {
-                    true
+                if (filterArtists.isNotEmpty()) {
+                    val callMusic = webClient.getMusicForUser(content.id, userToken)
+
+                    callMusic.enqueue(object : Callback<Music> {
+                        override fun onResponse(call: Call<Music>, response: Response<Music>) {
+                            val music = response.body()!!
+                            //checkDur
+                            val checkDur =  filterSeekBars[2] <= music.duration && music.duration <= filterSeekBars[3]
+                            //checkMakers
+                            val contentArtists = music.artists.toMutableList()
+                            contentArtists.retainAll(filterArtists)
+                            addToFilter = addToFilter && contentArtists.isNotEmpty() && checkDur
+                        }
+                        override fun onFailure(call: Call<Music>, t: Throwable) {
+                            Log.d("db", "Response = $t")
+                        }
+                    })
                 }
-                addToFilter = addToFilter && existArtist
             }
 
             Type.BOOK -> {
-                val existMakers = checkMakers(content)
-                addToFilter = addToFilter && existMakers
+                if (filterMakers.isNotEmpty()) {
+                    val callBook = webClient.getBookForUser(content.id, userToken)
+
+                    callBook.enqueue(object : Callback<Book> {
+                        override fun onResponse(call: Call<Book>, response: Response<Book>) {
+                            val book = response.body()!!
+                            val contentMakers = book.authors.toMutableList()
+                            contentMakers.retainAll(filterMakers)
+                            addToFilter = addToFilter && contentMakers.isNotEmpty()
+                        }
+                        override fun onFailure(call: Call<Book>, t: Throwable) {
+                            Log.d("db", "Response = $t")
+                        }
+                    })
+                }
             }
         }
 
-        addToFilter = addToFilter && existGenre && boundYears
-                && boundRating && boundDur
-
+        // todo: подумать над return
         return addToFilter
-    }
-
-    private fun checkMakers(content: Content): Boolean {
-        return if (filterMakers.isNotEmpty()) {
-            //TODO: Получить из базы пиплов конкретного фильма/книги
-            val contentMakers = if (type == Type.FILM)
-                WebClient().getFilm(content.getId()).getPeoples().toMutableList()
-            else WebClient().getBook(content.getId()).getPeoples().toMutableList()
-            contentMakers.retainAll(filterMakers)
-            contentMakers.isNotEmpty()
-        } else {
-            true
-        }
-    }
-
-    private fun checkDuration(content: Content): Boolean {
-        return when (type) {
-            Type.FILM -> {
-                //TODO: Получить из базы продолжительность фильма
-                val filmDuration = WebClient().getFilm(content.getId()).getDuration()
-                filterSeekBars[2] <= filmDuration && filmDuration <= filterSeekBars[3]
-            }
-            Type.MUSIC -> {
-                //TODO: Получить из базы продолжительность песни
-                var musicDuration = WebClient().getMusic(content.getId()).getDuration()
-                filterSeekBars[2] <= musicDuration && musicDuration <= filterSeekBars[3]
-            }
-            else -> true
-        }
     }
 }

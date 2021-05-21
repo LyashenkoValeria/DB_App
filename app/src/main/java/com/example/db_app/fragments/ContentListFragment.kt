@@ -115,30 +115,35 @@ class ContentListFragment : Fragment() {
 
 
         if (arguments?.getBoolean("fromFilter") != null && arguments?.getBoolean("fromFilter") == true) {
-            var filterGenre = arguments?.getParcelableArrayList<Genre>("genresList")!!
+            val filterGenre = arguments?.getParcelableArrayList<Genre>("genresList")!!
+            val filterGenreStrings = mutableListOf<String>()
+            filterGenre.forEach {
+                filterGenreStrings.add(it.name)
+            }
+
             var filterMakers = arrayListOf<People>()
             var filterArtists = arrayListOf<Artist>()
 
             when (arguments?.getInt("typeFromFilter")) {
                 1 -> {
-                    type = ContentAdapter.Type.FILM
+                    type = Type.FILM
                     filterMakers = arguments?.getParcelableArrayList("makersList")!!
                 }
                 2 -> {
-                    type = ContentAdapter.Type.MUSIC
+                    type = Type.MUSIC
                     filterArtists = arguments?.getParcelableArrayList("artistsList")!!
                 }
                 else -> {
-                    type = ContentAdapter.Type.BOOK
+                    type = Type.BOOK
                     filterMakers = arguments?.getParcelableArrayList("makersList")!!
                 }
             }
-            var filterSeekBars = arguments?.getIntArray("seekBars")!!
+            val filterSeekBars = arguments?.getIntArray("seekBars")!!
             val notChanged = arguments?.getBoolean("notChanged")!!
 
             contentAdapter.setContent(type)
-            contentAdapter.setFilter(filterGenre, filterMakers, filterArtists, filterSeekBars, notChanged)
-            search_content.setQuery("", false)
+            contentAdapter.setFilter(filterGenreStrings.toList(), filterMakers, filterArtists, filterSeekBars, notChanged)
+            changeList.value = true
         }
 
         super.onViewCreated(view, savedInstanceState)

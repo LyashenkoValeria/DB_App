@@ -21,6 +21,7 @@ import retrofit2.Response
 class GenreAdapter(private val userToken: String) : RecyclerView.Adapter<GenreAdapter.GenreViewHolder>() {
 
     private var type = Type.BOOK
+    private var typeDB = "book"
     private var genreList: List<Genre> = listOf()
     private var likeGenreList = mutableListOf<Genre>()
     private val webClient = WebClient().getApi()
@@ -52,12 +53,13 @@ class GenreAdapter(private val userToken: String) : RecyclerView.Adapter<GenreAd
 
     fun setGenreList(type: Type) {
         this.type = type
-
-        val call = when (type) {
-            Type.BOOK -> webClient.getBookGenre(userToken)
-            Type.FILM -> webClient.getFilmGenre(userToken)
-            Type.MUSIC -> webClient.getMusicGenre(userToken)
+        typeDB = when (type) {
+            Type.BOOK -> "book"
+            Type.FILM -> "film"
+            Type.MUSIC -> "music"
         }
+
+        val call = webClient.getGenreByType(typeDB, userToken)
         call.enqueue(object : Callback<List<Genre>> {
             override fun onResponse(call: Call<List<Genre>>, response: Response<List<Genre>>) {
                 genreList = response.body()!!

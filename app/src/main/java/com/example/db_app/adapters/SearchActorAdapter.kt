@@ -32,7 +32,7 @@ class SearchActorAdapter(ctx: Context, allPeople: List<People>) : ArrayAdapter<P
                 val filterPattern = constraint.toString().toLowerCase(Locale.getDefault()).trim()
 
                 for (people in fullPeopleList) {
-                    if (people.getFullName().toLowerCase(Locale.getDefault()).startsWith(
+                    if (people.fullname.toLowerCase(Locale.getDefault()).startsWith(
                             filterPattern
                         ) && !selectedPeople.contains(people))
                         filterList.add(people)
@@ -52,39 +52,45 @@ class SearchActorAdapter(ctx: Context, allPeople: List<People>) : ArrayAdapter<P
         }
 
         override fun convertResultToString(resultValue: Any?): CharSequence {
-            return (resultValue as People).getFullName()
+            return (resultValue as People).fullname
         }
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var convertView = convertView
-        if (convertView == null) {
-            convertView =
+        var viewRoot = convertView
+        if (viewRoot == null) {
+            viewRoot =
                 LayoutInflater.from(context).inflate(
                     android.R.layout.simple_list_item_1,
                     parent,
                     false
                 )
         }
-        var textLine = super.getView(position, convertView, parent) as TextView
+        val textLine = super.getView(position, viewRoot, parent) as TextView
 
         val people = getItem(position)
 
         people?.let {
-            textLine.text = people.getFullName()
+            textLine.text = people.fullname
         }
 
-        textLine.setOnTouchListener { v, event ->
+//        textLine.setOnTouchListener { v, event ->
+//            selectedPeople.add(people!!)
+//            false
+//        }
+
+        // todo: проверить (если что, вернуть то, то выше)
+        textLine.setOnClickListener {
             selectedPeople.add(people!!)
-            false
         }
 
         return textLine
     }
 
-    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-        return super.getDropDownView(position, convertView, parent)
-    }
+    // todo: проверить, если что - вернуть
+//    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+//        return super.getDropDownView(position, convertView, parent)
+//    }
 
     fun getSelectedPeople(): ArrayList<People>{
         return selectedPeople

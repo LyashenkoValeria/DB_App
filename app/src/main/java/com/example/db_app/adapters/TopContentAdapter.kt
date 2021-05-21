@@ -22,6 +22,11 @@ import retrofit2.Response
 class TopContentAdapter(private val topId: Int, private val type: Type, private val userToken: String) : RecyclerView.Adapter<TopContentAdapter.TopContentViewHolder>() {
 
     private val webClient = WebClient().getApi()
+    private var typeDB = when (type) {
+        Type.BOOK -> "book"
+        Type.FILM -> "film"
+        Type.MUSIC -> "music"
+    }
     private var contentList: List<ContentIdName> = listOf()
     private lateinit var listener: OnItemClickListener
 
@@ -82,18 +87,14 @@ class TopContentAdapter(private val topId: Int, private val type: Type, private 
 
         fun updateViewElement(holder: TopContentViewHolder, position: Int) {
             val contentId = contentList[position].id
-            val call = when (type) {
-                Type.BOOK -> webClient.getBookContent(contentId, userToken)
-                Type.FILM -> webClient.getFilmContent(contentId, userToken)
-                Type.MUSIC -> webClient.getMusicContent(contentId, userToken)
-            }
+            val call =  webClient.getContentById(typeDB, contentId, userToken)
 
             call.enqueue(object : Callback<Content> {
                 override fun onResponse(call: Call<Content>, response: Response<Content>) {
                     holder.itemView.run {
                         val item = response.body()!!
                         // TODO: 13.05.2021 poster
-                        top_content_place.text = "${position + 1} место"
+                        top_content_place.text =  resources.getString(R.string.place_in_top, position + 1)
                         top_content_name.text = item.name
                         top_content_year.text = item.year.toString()
                         top_content_genre.text = item.getGenreString()

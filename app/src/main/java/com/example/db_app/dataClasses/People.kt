@@ -10,11 +10,6 @@ data class People(
     val function: String?   // только для фильмов
 ): Parcelable {
 
-    fun getId() = id
-    fun getFullName() = fullName
-    fun getOfBirth() = year
-    fun getFunction() = function
-
     constructor(parcel: Parcel):this(
         parcel.readInt(),
         parcel.readString()?: "",
@@ -24,8 +19,8 @@ data class People(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(id)
-        parcel.writeString(fullName)
-        parcel.writeInt(year)
+        parcel.writeString(fullname)
+        parcel.writeInt(yearOfBirth)
         parcel.writeString(function)
     }
 

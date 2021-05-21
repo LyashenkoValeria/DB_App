@@ -171,7 +171,7 @@ class MainActivity : AppCompatActivity() {
         navController.navigate(R.id.topContentListFragment, bundle)
     }
 
-    fun toFilter(type: ContentAdapter.Type, needRestore: Boolean) {
+    fun toFilter(type: Type, needRestore: Boolean) {
         val bundle = Bundle().apply {
             putInt("type", type.t)
             putBoolean("restore", needRestore)
@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity() {
         makers: ArrayList<People>,
         artists: ArrayList<Artist>,
         rangeBars: IntArray,
-        type: ContentAdapter.Type,
+        type: Type,
         dir: Boolean,
         filterChanges: Boolean
     ) {
@@ -193,15 +193,15 @@ class MainActivity : AppCompatActivity() {
             putParcelableArrayList("genresList", genres)
 
             when(type){
-                ContentAdapter.Type.FILM ->{
+                Type.FILM ->{
                     val allMakers = actors
                     allMakers.addAll(makers)
                     putParcelableArrayList("makersList", makers)
                 }
-                ContentAdapter.Type.BOOK -> {
+                Type.BOOK -> {
                     putParcelableArrayList("makersList", makers)
                 }
-                ContentAdapter.Type.MUSIC ->{
+                Type.MUSIC ->{
                     putParcelableArrayList("artistsList", artists)
                 }
             }

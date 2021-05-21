@@ -9,21 +9,17 @@ import com.example.db_app.dataClasses.Genre
 import kotlinx.android.synthetic.main.genre_item.view.*
 
 
-class SpinnerAdapter(ctx: Context, genres: ArrayList<Genre>) : ArrayAdapter<Genre>(ctx, 0, genres) {
+class SpinnerAdapter(ctx: Context, genres: List<Genre>) : ArrayAdapter<Genre>(ctx, 0, genres) {
 
     private var selectedList = arrayListOf<Genre>()
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var convertView = convertView
-        if (convertView == null) {
-            convertView =
-                LayoutInflater.from(context).inflate(
-                    com.example.db_app.R.layout.spinner_text_layout,
-                    parent,
-                    false
-                )
-        }
-        return convertView!!
+        val viewRoot = convertView ?: LayoutInflater.from(context).inflate(
+            com.example.db_app.R.layout.spinner_text_layout,
+            parent,
+            false
+        )
+        return viewRoot!!
     }
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -35,10 +31,12 @@ class SpinnerAdapter(ctx: Context, genres: ArrayList<Genre>) : ArrayAdapter<Genr
             false
         )
 
+        view.genre_desc.visibility = View.GONE
+
         val checkBox = view.check_box
 
         genre?.let {
-            checkBox.text = genre.getName()
+            checkBox.text = genre.name
         }
 
         checkBox.isChecked = selectedList.contains(genre)
@@ -60,7 +58,7 @@ class SpinnerAdapter(ctx: Context, genres: ArrayList<Genre>) : ArrayAdapter<Genr
         selectedList.clear()
     }
 
-    fun setGenreList(list: ArrayList<Genre>){
+    fun setGenreList(list: ArrayList<Genre>) {
         this.selectedList = list
     }
 

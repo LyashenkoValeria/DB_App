@@ -24,6 +24,23 @@ class WebClient {
 
 interface WebClientService {
 
+    @GET("{type}/{id}")
+    fun getContentById(
+        @Path("type") type: String,
+        @Path("id") id: Int,
+        @Header("Authorization") token: String
+    ): Call<Content>
+
+
+//    @GET("book/{id}")
+//    fun getBookContent(@Path("id") id: Int, @Header("Authorization") token: String): Call<Content>
+//
+//    @GET("film/{id}")
+//    fun getFilmContent(@Path("id") id: Int, @Header("Authorization") token: String): Call<Content>
+//
+//    @GET("music/{id}")
+//    fun getMusicContent(@Path("id") id: Int, @Header("Authorization") token: String): Call<Content>
+
     @GET("book/{id}")
     fun getBookForUser(
         @Path("id") bookId: Int,
@@ -31,14 +48,6 @@ interface WebClientService {
         @Query("expanded") expanded: Boolean = true
     ): Call<Book>
 
-    @GET("book/{id}")
-    fun getBookContent(@Path("id") id: Int, @Header("Authorization") token: String): Call<Content>
-
-    @GET("film/{id}")
-    fun getFilmContent(@Path("id") id: Int, @Header("Authorization") token: String): Call<Content>
-
-    @GET("music/{id}")
-    fun getMusicContent(@Path("id") id: Int, @Header("Authorization") token: String): Call<Content>
 
     @GET("film/{id}")
     fun getFilmForUser(
@@ -64,14 +73,19 @@ interface WebClientService {
     fun getMusicList(@Header("Authorization") token: String): Call<List<ContentIdName>>
 
 
-    @GET("book_genre")
-    fun getBookGenre(@Header("Authorization") token: String): Call<List<Genre>>
+    @GET("{type}_genre")
+    fun getGenreByType(
+        @Path("type") type: String,
+        @Header("Authorization") token: String): Call<List<Genre>>
 
-    @GET("music_genre")
-    fun getMusicGenre(@Header("Authorization") token: String): Call<List<Genre>>
-
-    @GET("film_genre")
-    fun getFilmGenre(@Header("Authorization") token: String): Call<List<Genre>>
+//    @GET("book_genre")
+//    fun getBookGenre(@Header("Authorization") token: String): Call<List<Genre>>
+//
+//    @GET("music_genre")
+//    fun getMusicGenre(@Header("Authorization") token: String): Call<List<Genre>>
+//
+//    @GET("film_genre")
+//    fun getFilmGenre(@Header("Authorization") token: String): Call<List<Genre>>
 
     /** ------------------------------ Работа с топами ------------------------------ **/
 

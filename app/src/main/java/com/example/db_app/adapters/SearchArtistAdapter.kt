@@ -13,7 +13,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class SearchArtistAdapter(ctx: Context, allArtist: List<Artist>) : ArrayAdapter<Artist>(ctx, 0, allArtist), Filterable {
+class SearchArtistAdapter(ctx: Context, allArtist: List<Artist>) :
+    ArrayAdapter<Artist>(ctx, 0, allArtist), Filterable {
 
     private val fullArtistList = ArrayList(allArtist)
     private var selectedArtists = arrayListOf<Artist>()
@@ -26,15 +27,16 @@ class SearchArtistAdapter(ctx: Context, allArtist: List<Artist>) : ArrayAdapter<
         override fun performFiltering(constraint: CharSequence?): FilterResults {
             val filterList = arrayListOf<Artist>()
 
-            if ((constraint == null || constraint.isEmpty()) && selectedArtists.size == 0){
+            if ((constraint == null || constraint.isEmpty()) && selectedArtists.size == 0) {
                 filterList.addAll(fullArtistList)
             } else {
                 val filterPattern = constraint.toString().toLowerCase(Locale.getDefault()).trim()
 
                 for (artist in fullArtistList) {
-                    if (artist.getName().toLowerCase(Locale.getDefault()).startsWith(
+                    if (artist.name.toLowerCase(Locale.getDefault()).startsWith(
                             filterPattern
-                        ) && !selectedArtists.contains(artist))
+                        ) && !selectedArtists.contains(artist)
+                    )
                         filterList.add(artist)
                 }
             }
@@ -52,52 +54,57 @@ class SearchArtistAdapter(ctx: Context, allArtist: List<Artist>) : ArrayAdapter<
         }
 
         override fun convertResultToString(resultValue: Any?): CharSequence {
-            return (resultValue as Artist).getName()
+            return (resultValue as Artist).name
         }
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var convertView = convertView
-        if (convertView == null) {
-            convertView =
+        var viewRoot = convertView
+        if (viewRoot == null) {
+            viewRoot =
                 LayoutInflater.from(context).inflate(
                     android.R.layout.simple_list_item_1,
                     parent,
                     false
                 )
         }
-        var textLine = super.getView(position, convertView, parent) as TextView
+        val textLine = super.getView(position, viewRoot, parent) as TextView
 
         val artist = getItem(position)
 
         artist?.let {
-            textLine.text = artist.getName()
+            textLine.text = artist.name
         }
 
-        textLine.setOnTouchListener { v, event ->
+        // todo: проверить (если что, вернуть то, то выше)
+//        textLine.setOnTouchListener { v, event ->
+//            selectedArtists.add(artist!!)
+//            false
+//        }
+        textLine.setOnClickListener {
             selectedArtists.add(artist!!)
-            false
         }
 
         return textLine
     }
 
-    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-        return super.getDropDownView(position, convertView, parent)
-    }
+    // todo: проверить, если что - вернуть
+//    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+//        return super.getDropDownView(position, convertView, parent)
+//    }
 
-    fun getSelectedArtists(): ArrayList<Artist>{
+    fun getSelectedArtists(): ArrayList<Artist> {
         return selectedArtists
     }
 
-    fun resetSelectedArtists(){
-        with(selectedArtists){
+    fun resetSelectedArtists() {
+        with(selectedArtists) {
             clear()
         }
     }
 
-    fun setSelectedArtists(newList: ArrayList<Artist>){
-        this.selectedArtists= newList
+    fun setSelectedArtists(newList: ArrayList<Artist>) {
+        this.selectedArtists = newList
     }
 
 }

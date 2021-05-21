@@ -1,6 +1,7 @@
 package com.example.db_app.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,26 +11,28 @@ import androidx.lifecycle.ViewModelProviders
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
 import com.example.db_app.FilterViewModel
 import com.example.db_app.MainActivity
-import com.example.db_app.adapters.ContentAdapter
+import com.example.db_app.WebClient
 import com.example.db_app.adapters.SearchActorAdapter
 import com.example.db_app.adapters.SearchArtistAdapter
 import com.example.db_app.adapters.SpinnerAdapter
-import com.example.db_app.dataClasses.Artist
-import com.example.db_app.dataClasses.Genre
-import com.example.db_app.dataClasses.People
+import com.example.db_app.dataClasses.*
 import com.hootsuite.nachos.NachoTextView
 import com.hootsuite.nachos.chip.Chip
 import com.hootsuite.nachos.chip.ChipInfo
 import com.hootsuite.nachos.terminator.ChipTerminatorHandler
 import kotlinx.android.synthetic.main.fragment_filter.*
 import kotlinx.android.synthetic.main.fragment_filter.view.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class FilterFragment : Fragment() {
 
     private lateinit var viewModel: FilterViewModel
-
-    var type = ContentAdapter.Type.BOOK
+    private val webClient = WebClient().getApi()
+    var type = Type.BOOK
+    var typeDB = "book"
     var selectedGenre = arrayListOf<Genre>()
     var selectedActors = arrayListOf<People>()
     var selectedMakers = arrayListOf<People>()
@@ -71,24 +74,34 @@ class FilterFragment : Fragment() {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val userToken = (requireActivity() as MainActivity).getUserToken()!!
 
         val listType = when (arguments?.getInt("type")) {
-            1 -> ContentAdapter.Type.FILM
-            2 -> ContentAdapter.Type.MUSIC
-            else -> ContentAdapter.Type.BOOK
+            1 -> {
+                typeDB = "film"
+                Type.FILM
+            }
+            2 -> {
+                typeDB = "music"
+                Type.MUSIC
+            }
+            else -> {
+                typeDB = "book"
+                Type.BOOK
+            }
         }
 
-        val genreList = arrayListOf<Genre>()
+//        val genreList = arrayListOf<Genre>()
         val peopleListTest = arrayListOf<People>()
         val artistListTest = arrayListOf<Artist>()
 
         //Тестовые данные. Дропнуть позже
-        genreList.add(Genre(1, "genre 1", "Это genre 1"))
-        genreList.add(Genre(2, "genre 2", "Это genre 2"))
-        genreList.add(Genre(3, "genre 3", "Это genre 3"))
-        genreList.add(Genre(4, "genre 4", "Это genre 4"))
-        genreList.add(Genre(5, "genre 5", "Это genre 5"))
-        genreList.add(Genre(6, "genre 6", "Это genre 6"))
+//        genreList.add(Genre(1, "genre 1", "Это genre 1"))
+//        genreList.add(Genre(2, "genre 2", "Это genre 2"))
+//        genreList.add(Genre(3, "genre 3", "Это genre 3"))
+//        genreList.add(Genre(4, "genre 4", "Это genre 4"))
+//        genreList.add(Genre(5, "genre 5", "Это genre 5"))
+//        genreList.add(Genre(6, "genre 6", "Это genre 6"))
 
         peopleListTest.add(People(1, "Author 1", 2000, "Режиссёр"))
         peopleListTest.add(People(2, "Author 2", 2000, "Сценарист"))
@@ -110,11 +123,11 @@ class FilterFragment : Fragment() {
 
         type = listType
         when (type) {
-            ContentAdapter.Type.FILM -> {
+            Type.FILM -> {
                 view.artists_filter_text.visibility = View.GONE
                 view.search_artists_for_filter.visibility = View.GONE
             }
-            ContentAdapter.Type.MUSIC -> {
+            Type.MUSIC -> {
                 view.actors_filter_text.visibility = View.GONE
                 view.search_actors_for_filter.visibility = View.GONE
                 view.makers_filter_text.visibility = View.GONE
@@ -136,18 +149,26 @@ class FilterFragment : Fragment() {
         }
 
         //Запись начальных значений слайдеров для сброса
-        var listOfSliders = intArrayOf(
+        val listOfSliders = intArrayOf(
             yearBar.selectedMinValue.toInt(), yearBar.selectedMaxValue.toInt(),
             durationBar.selectedMinValue.toInt(), durationBar.selectedMaxValue.toInt(),
             ratingBar.selectedMinValue.toInt(), ratingBar.selectedMaxValue.toInt()
         )
 
         //Заполняем спиннер жанрами
-        // TODO: Достать из базы все жанры
-        //  val genreList = WebClient.getGenreList?
+        val callGenre = webClient.getGenreByType(typeDB, userToken)
+        callGenre.enqueue(object : Callback<List<Genre>> {
+            override fun onResponse(call: Call<List<Genre>>, response: Response<List<Genre>>) {
+                val genreList = response.body()!!
+                val spinnerAdapter = SpinnerAdapter(requireActivity(), genreList)
+                spinner_for_genre_filter.adapter = spinnerAdapter
+            }
 
-        val spinnerAdapter = SpinnerAdapter(requireActivity(), genreList)
-        spinner_for_genre_filter.adapter = spinnerAdapter
+            override fun onFailure(call: Call<List<Genre>>, t: Throwable) {
+                Log.d("db", "Response = $t")
+            }
+        })
+
 
         //Формирование списка для выбора актёров/создателей
         search_actors_for_filter.addChipTerminator('\n', ChipTerminatorHandler.BEHAVIOR_CHIPIFY_ALL)
@@ -157,17 +178,16 @@ class FilterFragment : Fragment() {
             ChipTerminatorHandler.BEHAVIOR_CHIPIFY_ALL
         )
 
-        var peopleList: MutableList<People>
-        var allActors = mutableListOf<People>()
+        val allActors = mutableListOf<People>()
         var allMakers = mutableListOf<People>()
         var allArtists = mutableListOf<Artist>()
 
         when (type) {
-            ContentAdapter.Type.FILM -> {
+            Type.FILM -> {
                 //TODO: Достать из базы все пиплов для фильмов
-                peopleList = peopleListTest
+                val peopleList = peopleListTest
                 for (people in peopleList) {
-                    if (people.getFunction() != null && !people.getFunction().toString()
+                    if (people.function != null && !people.function.toString()
                             .contains("Актёр")
                     ) {
                         allActors.add(people)
@@ -176,15 +196,14 @@ class FilterFragment : Fragment() {
                     }
                 }
             }
-            ContentAdapter.Type.BOOK -> {
+            Type.BOOK -> {
                 //TODO: Достать из базы все пиплов для книг
                 allMakers = peopleListTest
             }
 
-            ContentAdapter.Type.MUSIC -> {
+            Type.MUSIC -> {
                 //TODO: Достать из базы всех артистов
                 allArtists = artistListTest
-
             }
         }
 
@@ -202,10 +221,10 @@ class FilterFragment : Fragment() {
 
         //Восстановаление данных, если повторно открыта фильтрация для того же листа
         if (arguments?.getBoolean("restore")!!) {
-            spinnerAdapter.setGenreList(selectedGenre)
+            (spinner_for_genre_filter.adapter as SpinnerAdapter).setGenreList(selectedGenre)
 
             when (type) {
-                ContentAdapter.Type.FILM -> {
+                Type.FILM -> {
                     viewModel.getActors().observe(requireActivity(), {
                         selectedActors = it
                     })
@@ -221,14 +240,14 @@ class FilterFragment : Fragment() {
                     adapterMakers.setSelectedPeople(selectedMakers)
                     setChips(selectedMakers, search_makers_for_filter)
                 }
-                ContentAdapter.Type.MUSIC -> {
+                Type.MUSIC -> {
                     viewModel.getArtists().observe(requireActivity(), {
                         selectedArtists = it
                     })
                     adapterArtists.setSelectedArtists(selectedArtists)
                     setChipsArtists(selectedArtists, search_artists_for_filter)
                 }
-                ContentAdapter.Type.BOOK -> {
+                Type.BOOK -> {
                     viewModel.getMakers().observe(requireActivity(), {
                         selectedMakers = it
                     })
@@ -292,7 +311,7 @@ class FilterFragment : Fragment() {
 
         //Кнопка фильтрации
         button_choose_filter.setOnClickListener {
-            selectedGenre = spinnerAdapter.getSelectedItems()
+            selectedGenre = (spinner_for_genre_filter.adapter as SpinnerAdapter).getSelectedItems()
             selectedActors = adapterActors.getSelectedPeople()
             selectedMakers = adapterMakers.getSelectedPeople()
             selectedArtists = adapterArtists.getSelectedArtists()
@@ -335,7 +354,7 @@ class FilterFragment : Fragment() {
 
         //Кнопка очистки
         button_clear_filter.setOnClickListener {
-            spinnerAdapter.resetGenre()
+            (spinner_for_genre_filter.adapter as SpinnerAdapter).resetGenre()
 
             search_actors_for_filter.setText("")
             search_makers_for_filter.setText("")
@@ -387,36 +406,39 @@ class FilterFragment : Fragment() {
         seekBarsOld: IntArray
     ): Boolean {
         return when (type) {
-            ContentAdapter.Type.FILM -> {
+            Type.FILM -> {
                 actors.isEmpty() && makers.isEmpty()
             }
-            ContentAdapter.Type.BOOK -> {
+            Type.BOOK -> {
                 makers.isEmpty()
             }
 
-            ContentAdapter.Type.MUSIC -> {
+            Type.MUSIC -> {
                 artists.isEmpty()
             }
-        } && genres.isEmpty() && seekBarsCurrent == (seekBarsOld)
+            //todo: проверить
+//        } && genres.isEmpty() && seekBarsCurrent == (seekBarsOld)
+        } && genres.isEmpty() && seekBarsCurrent.contentEquals((seekBarsOld))
+
     }
 
-    fun setChips(listOfChips: ArrayList<People>, viewWithChips: NachoTextView) {
+    private fun setChips(listOfChips: ArrayList<People>, viewWithChips: NachoTextView) {
         val saveChips = mutableListOf<ChipInfo>()
         for (chip in listOfChips) {
-            saveChips.add(ChipInfo(chip.getFullName(), chip))
+            saveChips.add(ChipInfo(chip.fullname, chip))
         }
         viewWithChips.setTextWithChips(saveChips)
     }
 
-    fun setChipsArtists(listOfChips: ArrayList<Artist>, viewWithChips: NachoTextView) {
+    private fun setChipsArtists(listOfChips: ArrayList<Artist>, viewWithChips: NachoTextView) {
         val saveChips = mutableListOf<ChipInfo>()
         for (chip in listOfChips) {
-            saveChips.add(ChipInfo(chip.getName(), chip))
+            saveChips.add(ChipInfo(chip.name, chip))
         }
         viewWithChips.setTextWithChips(saveChips)
     }
 
-    fun removeChip(filter: NachoTextView, chip: Chip, adapter: SearchActorAdapter) {
+    private fun removeChip(filter: NachoTextView, chip: Chip, adapter: SearchActorAdapter) {
         val pos = filter.allChips.indexOf(chip)
         val delChipList = adapter.getSelectedPeople()
 
@@ -426,7 +448,7 @@ class FilterFragment : Fragment() {
         setChips(delChipList, filter)
     }
 
-    fun removeChipArtists(filter: NachoTextView, chip: Chip, adapter: SearchArtistAdapter) {
+    private fun removeChipArtists(filter: NachoTextView, chip: Chip, adapter: SearchArtistAdapter) {
         val pos = filter.allChips.indexOf(chip)
         val delChipList = adapter.getSelectedArtists()
 
