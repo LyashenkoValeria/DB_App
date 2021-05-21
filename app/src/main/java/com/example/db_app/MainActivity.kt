@@ -5,9 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.db_app.adapters.ContentAdapter
+import com.example.db_app.dataClasses.Artist
+import com.example.db_app.dataClasses.Genre
+import com.example.db_app.dataClasses.People
 import com.example.db_app.fragments.EditDialogFragment
-import kotlinx.android.synthetic.main.fragment_content_list.*
 import kotlinx.android.synthetic.main.fragment_profile.*
+
 
 class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener {
 
@@ -18,7 +21,8 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
         setContentView(R.layout.activity_main)
         // TODO: 13.05.2021 Проверка того, что пользватель уже вошёл в аккаунт
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_nav_host) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.main_nav_host) as NavHostFragment
         navController = navHostFragment.navController
     }
 
@@ -50,6 +54,49 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
         navController.navigate(R.id.action_profileFragment_to_chooseGenreFragment)
     }
 
+    fun toFilter(type: ContentAdapter.Type, needRestore: Boolean) {
+        val bundle = Bundle().apply {
+            putInt("type", type.t)
+            putBoolean("restore", needRestore)
+        }
+        navController.navigate(R.id.action_contentListFragment_to_filterFragment, bundle)
+    }
+
+    fun fromFilter(
+        genres: ArrayList<Genre>,
+        actors: ArrayList<People>,
+        makers: ArrayList<People>,
+        artists: ArrayList<Artist>,
+        rangeBars: IntArray,
+        type: ContentAdapter.Type,
+        dir: Boolean,
+        filterChanges: Boolean
+    ) {
+        val bundle = Bundle().apply {
+            putParcelableArrayList("genresList", genres)
+
+            when(type){
+                ContentAdapter.Type.FILM ->{
+                    val allMakers = actors
+                    allMakers.addAll(makers)
+                    putParcelableArrayList("makersList", makers)
+                }
+                ContentAdapter.Type.BOOK -> {
+                    putParcelableArrayList("makersList", makers)
+                }
+                ContentAdapter.Type.MUSIC ->{
+                    putParcelableArrayList("artistsList", artists)
+                }
+            }
+
+            putIntArray("seekBars", rangeBars)
+            putInt("typeFromFilter", type.t)
+            putBoolean("fromFilter", dir)
+            putBoolean("notChanged", filterChanges)
+        }
+        navController.navigate(R.id.action_filterFragment_to_contentListFragment, bundle)
+    }
+
 
     fun toContent(type: ContentAdapter.Type, id: Int) {
         val bundle = Bundle().apply {
@@ -60,7 +107,7 @@ class MainActivity : AppCompatActivity(), EditDialogFragment.EditDialogListener 
     }
 
     override fun applyText(newValue: String, type: Int) {
-        when(type){
+        when (type) {
             1 -> user_login.text = newValue
             2 -> user_email.text = newValue
             else -> user_password.text = newValue

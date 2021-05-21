@@ -24,4 +24,6 @@ data class Content(
 
         return genre.toString()
     }
+
+    fun getGenres() = genres
 }
