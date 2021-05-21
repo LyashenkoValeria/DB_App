@@ -19,6 +19,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ContentAdapter(private val userToken: String) :
     RecyclerView.Adapter<ContentAdapter.ContentViewHolder>(), Filterable {
@@ -28,6 +29,17 @@ class ContentAdapter(private val userToken: String) :
     private var contentList: List<ContentIdName> = listOf()
     var contentListFull: List<ContentIdName> = listOf()
     private lateinit var listener: OnItemClickListener
+
+    var filterGenre = arrayListOf<Genre>()
+    var filterMakers = arrayListOf<People>()
+    var filterArtists = arrayListOf<Artist>()
+    var filterSeekBars = intArrayOf()
+    var filterChanges = true
+
+    enum class Type(val t: Int) {
+        BOOK(0), FILM(1), MUSIC(2)
+    }
+
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
@@ -134,13 +146,14 @@ class ContentAdapter(private val userToken: String) :
         override fun performFiltering(constraint: CharSequence): FilterResults {
             val filterList = arrayListOf<ContentIdName>()
 
-            if (constraint.isEmpty())
+            if ((constraint == null || constraint.isEmpty()) && filterChanges) {
                 filterList.addAll(contentListFull)
             else {
                 val filterPattern = constraint.toString().toLowerCase(Locale.getDefault()).trim()
 
                 for (content in contentListFull) {
-                    if (content.name.toLowerCase(Locale.getDefault()).contains(filterPattern))
+                    if (content.name.toLowerCase(Locale.getDefault())
+                            .startsWith(filterPattern) && checkFilter(content)
                         filterList.add(content)
                 }
             }
@@ -151,10 +164,107 @@ class ContentAdapter(private val userToken: String) :
             return result
         }
 
-        override fun publishResults(constraint: CharSequence, results: FilterResults) {
-            contentList = results.values as List<ContentIdName>
-            notifyDataSetChanged()
+        override fun publishResults(constraint: CharSequence?, results: FilterResults) {
+            if (constraint != null) {
+                contentList = results.values as List<ContentIdName>
+                notifyDataSetChanged()
+            }
         }
     }
 
+    fun setFilter(
+        genres: ArrayList<Genre>,
+        makers: ArrayList<People>,
+        artists: ArrayList<Artist>,
+        rangeBars: IntArray,
+        notChanged: Boolean
+    ) {
+        this.filterGenre = genres
+        if (type == Type.FILM || type == Type.BOOK) {
+            this.filterMakers = makers
+        } else {
+            this.filterArtists = artists
+        }
+        this.filterSeekBars = rangeBars
+        this.filterChanges = notChanged
+    }
+
+
+    //TODO: Поправить получение из базы в соответствии с новым кодом
+    fun checkFilter(content: Content): Boolean {
+        var addToFilter = true
+
+        val existGenre = if (filterGenre.isNotEmpty()) {
+            val contentGenres = content.getGenres().toMutableList()
+            contentGenres.retainAll(filterGenre)
+            contentGenres.isNotEmpty()
+        } else {
+            true
+        }
+
+        val boundYears =
+            filterSeekBars[0] <= content.getYear() && content.getYear() <= filterSeekBars[1]
+        val boundRating =
+            filterSeekBars[4] <= content.getRating() && content.getRating() <= filterSeekBars[5]
+        val boundDur = checkDuration(content)
+
+        when (type) {
+            Type.FILM -> {
+                val existMakers = checkMakers(content)
+                addToFilter = addToFilter && existMakers
+            }
+
+            Type.MUSIC -> {
+                val existArtist = if (filterArtists.isNotEmpty()) {
+                    //TODO: Получить из базы артистов конкретной песни
+                    val contentArtists =
+                        WebClient().getMusic(content.getId()).getArtists().toMutableList()
+                    contentArtists.retainAll(filterArtists)
+                    contentArtists.isNotEmpty()
+                } else {
+                    true
+                }
+                addToFilter = addToFilter && existArtist
+            }
+
+            Type.BOOK -> {
+                val existMakers = checkMakers(content)
+                addToFilter = addToFilter && existMakers
+            }
+        }
+
+        addToFilter = addToFilter && existGenre && boundYears
+                && boundRating && boundDur
+
+        return addToFilter
+    }
+
+    private fun checkMakers(content: Content): Boolean {
+        return if (filterMakers.isNotEmpty()) {
+            //TODO: Получить из базы пиплов конкретного фильма/книги
+            val contentMakers = if (type == Type.FILM)
+                WebClient().getFilm(content.getId()).getPeoples().toMutableList()
+            else WebClient().getBook(content.getId()).getPeoples().toMutableList()
+            contentMakers.retainAll(filterMakers)
+            contentMakers.isNotEmpty()
+        } else {
+            true
+        }
+    }
+
+    private fun checkDuration(content: Content): Boolean {
+        return when (type) {
+            Type.FILM -> {
+                //TODO: Получить из базы продолжительность фильма
+                val filmDuration = WebClient().getFilm(content.getId()).getDuration()
+                filterSeekBars[2] <= filmDuration && filmDuration <= filterSeekBars[3]
+            }
+            Type.MUSIC -> {
+                //TODO: Получить из базы продолжительность песни
+                var musicDuration = WebClient().getMusic(content.getId()).getDuration()
+                filterSeekBars[2] <= musicDuration && musicDuration <= filterSeekBars[3]
+            }
+            else -> true
+        }
+    }
 }

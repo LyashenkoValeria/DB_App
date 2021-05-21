@@ -9,6 +9,8 @@ data class Content(
     val poster: String
 ) {
     fun getGenreString() = genres.joinToString(separator = ", ")
+
+    fun getGenres() = genres // TODO
 }
 
 

@@ -11,6 +11,9 @@ import com.example.db_app.R
 import com.example.db_app.adapters.ContentAdapter
 import com.example.db_app.dataClasses.Type
 import kotlinx.android.synthetic.main.activity_main.*
+import com.example.db_app.dataClasses.Artist
+import com.example.db_app.dataClasses.Genre
+import com.example.db_app.dataClasses.People
 import kotlinx.android.synthetic.main.fragment_content_list.*
 import java.util.*
 
@@ -96,7 +99,46 @@ class ContentListFragment : Fragment() {
                 }
             }
             changeList.value = true
+            // todo
+//            search_content.setQuery("", false)
+//            search_content.clearFocus()
             true
+        }
+
+        filter_button.setOnClickListener {
+            var needRestoreFilters = false
+            if (arguments?.getInt("typeFromFilter") != null) {
+                needRestoreFilters = arguments?.getInt("typeFromFilter") == type.t
+            }
+            (requireActivity() as MainActivity).toFilter(contentAdapter.type, needRestoreFilters)
+        }
+
+
+        if (arguments?.getBoolean("fromFilter") != null && arguments?.getBoolean("fromFilter") == true) {
+            var filterGenre = arguments?.getParcelableArrayList<Genre>("genresList")!!
+            var filterMakers = arrayListOf<People>()
+            var filterArtists = arrayListOf<Artist>()
+
+            when (arguments?.getInt("typeFromFilter")) {
+                1 -> {
+                    type = ContentAdapter.Type.FILM
+                    filterMakers = arguments?.getParcelableArrayList("makersList")!!
+                }
+                2 -> {
+                    type = ContentAdapter.Type.MUSIC
+                    filterArtists = arguments?.getParcelableArrayList("artistsList")!!
+                }
+                else -> {
+                    type = ContentAdapter.Type.BOOK
+                    filterMakers = arguments?.getParcelableArrayList("makersList")!!
+                }
+            }
+            var filterSeekBars = arguments?.getIntArray("seekBars")!!
+            val notChanged = arguments?.getBoolean("notChanged")!!
+
+            contentAdapter.setContent(type)
+            contentAdapter.setFilter(filterGenre, filterMakers, filterArtists, filterSeekBars, notChanged)
+            search_content.setQuery("", false)
         }
 
         super.onViewCreated(view, savedInstanceState)
@@ -133,7 +175,6 @@ class ContentListFragment : Fragment() {
                     searchView.clearFocus()
                     return false
                 }
-
                 override fun onQueryTextChange(newText: String): Boolean {
                     (recycler.adapter as ContentAdapter).filter.filter(newText)
                     return false
