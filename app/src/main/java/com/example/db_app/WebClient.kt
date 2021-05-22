@@ -1,10 +1,8 @@
 package com.example.db_app
 
-import android.provider.ContactsContract
 import com.example.db_app.dataClasses.*
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
@@ -24,6 +22,7 @@ class WebClient {
 
 interface WebClientService {
 
+    // Получение книги, фильма или музыки (в зависимости от type) как Content
     @GET("{type}/{id}")
     fun getContentById(
         @Path("type") type: String,
@@ -31,23 +30,12 @@ interface WebClientService {
         @Header("Authorization") token: String
     ): Call<Content>
 
-
-//    @GET("book/{id}")
-//    fun getBookContent(@Path("id") id: Int, @Header("Authorization") token: String): Call<Content>
-//
-//    @GET("film/{id}")
-//    fun getFilmContent(@Path("id") id: Int, @Header("Authorization") token: String): Call<Content>
-//
-//    @GET("music/{id}")
-//    fun getMusicContent(@Path("id") id: Int, @Header("Authorization") token: String): Call<Content>
-
     @GET("book/{id}")
     fun getBookForUser(
         @Path("id") bookId: Int,
         @Header("Authorization") token: String,
         @Query("expanded") expanded: Boolean = true
     ): Call<Book>
-
 
     @GET("film/{id}")
     fun getFilmForUser(
@@ -63,29 +51,19 @@ interface WebClientService {
         @Query("expanded") expanded: Boolean = true,
     ): Call<Music>
 
-    @GET("book")
-    fun getBookList(@Header("Authorization") token: String): Call<List<ContentIdName>>
+    // Получение списка книг, фильмов или музыки (в зависимости от type) как <List<ContentIdName>
+    @GET("{type}")
+    fun getContentListByType(
+        @Path("type") type: String,
+        @Header("Authorization") token: String
+    ): Call<List<ContentIdName>>
 
-    @GET("film")
-    fun getFilmList(@Header("Authorization") token: String): Call<List<ContentIdName>>
-
-    @GET("music")
-    fun getMusicList(@Header("Authorization") token: String): Call<List<ContentIdName>>
-
-
+    // Возврат жанров по типу
     @GET("{type}_genre")
     fun getGenreByType(
         @Path("type") type: String,
         @Header("Authorization") token: String): Call<List<Genre>>
 
-//    @GET("book_genre")
-//    fun getBookGenre(@Header("Authorization") token: String): Call<List<Genre>>
-//
-//    @GET("music_genre")
-//    fun getMusicGenre(@Header("Authorization") token: String): Call<List<Genre>>
-//
-//    @GET("film_genre")
-//    fun getFilmGenre(@Header("Authorization") token: String): Call<List<Genre>>
 
     /** ------------------------------ Работа с топами ------------------------------ **/
 
@@ -95,6 +73,13 @@ interface WebClientService {
         @Path("type") type: String,
         @Header("Authorization") token: String
     ): Call<List<ContentIdName>>
+
+    @GET("top/{type}/{id}")
+    fun getTopByTypeAndId(
+        @Path("type") type: String,
+        @Path("id") topId: Int,
+        @Header("Authorization") token: String
+    ): Call<Top>
 
 
     /** ------------------------------ Работа с юзером ------------------------------ **/
@@ -193,100 +178,3 @@ interface WebClientService {
 //fun main() {
 //    print(book?.getName())
 //}
-
-
-//val people = People(1, "Человек Первый", 1111, null)
-val genre = Genre(1, "genre 1", "Это genre 1")
-//val peopleList = listOf(people)
-//val genreList = listOf(genre)
-//
-//// -------------------------------------------------------------------------------------------------
-//val bookSeries = BookSeries(1, "book series 1", "Это book series 1")
-//val book1 = Book(
-//    1,
-//    "book 1",
-//    1111,
-//    "Это book 1",
-//    "poster",
-//    5.0,
-//    bookSeries,
-//    peopleList,
-//    genreList
-//)
-//val book2 = Book(
-//    2,
-//    "book 2",
-//    2222,
-//    "Это book 2",
-//    "poster",
-//    5.0,
-//    bookSeries,
-//    peopleList,
-//    genreList
-//)
-//val book3 = Book(
-//    3,
-//    "book 3",
-//    3333,
-//    "Это book 3",
-//    "poster",
-//    5.0,
-//    bookSeries,
-//    peopleList,
-//    genreList
-//)
-//
-//// -------------------------------------------------------------------------------------------------
-//val artist = Artist(1, "artist 1", "Это artist 1")
-//val album = MusicAlbum(1, "music album 1", 1111, null)
-//val artistList = listOf(artist)
-//
-//val music1 = Music(1, "music 1", 1111, 1, 5.0, artistList, album, genreList)
-//val music2 = Music(2, "music 2", 1111, 2, 5.0, artistList, album, genreList)
-//val music3 = Music(3, "music 2", 1111, 3, 5.0, artistList, album, genreList)
-//
-//// -------------------------------------------------------------------------------------------------
-//val filmSeries = FilmSeries(1, "film series 1", "Это film series 1")
-//val listMusic = listOf(music1)
-//val film1 = Film(
-//    1,
-//    "film 1",
-//    1111,
-//    10,
-//    "Это film 1",
-//    "poster",
-//    5.0,
-//    filmSeries,
-//    book1,
-//    listMusic,
-//    peopleList,
-//    genreList
-//)
-//val film2 = Film(
-//    2,
-//    "film 2",
-//    2222,
-//    20,
-//    "Это film 2",
-//    "poster",
-//    5.0,
-//    filmSeries,
-//    book2,
-//    listMusic,
-//    peopleList,
-//    genreList
-//)
-//val film3 = Film(
-//    3,
-//    "film 3",
-//    3333,
-//    30,
-//    "Это film 3",
-//    "poster",
-//    5.0,
-//    filmSeries,
-//    book2,
-//    listMusic,
-//    peopleList,
-//    genreList
-//)

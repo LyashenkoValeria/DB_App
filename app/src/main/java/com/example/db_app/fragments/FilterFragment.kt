@@ -32,7 +32,6 @@ class FilterFragment : Fragment() {
     private lateinit var viewModel: FilterViewModel
     private val webClient = WebClient().getApi()
     var type = Type.BOOK
-    var typeDB = "book"
     var selectedGenre = arrayListOf<Genre>()
     var selectedActors = arrayListOf<People>()
     var selectedMakers = arrayListOf<People>()
@@ -76,19 +75,10 @@ class FilterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val userToken = (requireActivity() as MainActivity).getUserToken()!!
 
-        val listType = when (arguments?.getInt("type")) {
-            1 -> {
-                typeDB = "film"
-                Type.FILM
-            }
-            2 -> {
-                typeDB = "music"
-                Type.MUSIC
-            }
-            else -> {
-                typeDB = "book"
-                Type.BOOK
-            }
+        val listType = when (arguments?.getString("type")) {
+            Type.FILM.t -> Type.FILM
+            Type.MUSIC.t -> Type.MUSIC
+            else -> Type.BOOK
         }
 
 //        val genreList = arrayListOf<Genre>()
@@ -156,7 +146,7 @@ class FilterFragment : Fragment() {
         )
 
         //Заполняем спиннер жанрами
-        val callGenre = webClient.getGenreByType(typeDB, userToken)
+        val callGenre = webClient.getGenreByType(type.t, userToken)
         callGenre.enqueue(object : Callback<List<Genre>> {
             override fun onResponse(call: Call<List<Genre>>, response: Response<List<Genre>>) {
                 val genreList = response.body()!!

@@ -23,7 +23,6 @@ class ContentAdapter(private val userToken: String) :
 
     private val webClient = WebClient().getApi()
     var type = Type.BOOK
-    private var typeDB = "book"
     private var contentList: List<ContentIdName> = listOf()
     var contentListFull: List<ContentIdName> = listOf()
     private lateinit var listener: OnItemClickListener
@@ -51,21 +50,7 @@ class ContentAdapter(private val userToken: String) :
 
     fun setContent(type: Type) {
         this.type = type
-
-        val call = when (type) {
-            Type.BOOK -> {
-                typeDB = "book"
-                webClient.getBookList(userToken)
-            }
-            Type.FILM -> {
-                typeDB = "film"
-                webClient.getFilmList(userToken)
-            }
-            Type.MUSIC -> {
-                typeDB = "music"
-                webClient.getMusicList(userToken)
-            }
-        }
+        val call = webClient.getContentListByType(type.t, userToken)
 
         call.enqueue(object : Callback<List<ContentIdName>> {
             override fun onResponse(
@@ -104,7 +89,7 @@ class ContentAdapter(private val userToken: String) :
 
         fun updateViewElement(holder: ContentViewHolder, position: Int) {
             val contentId = contentList[position].id
-            val call = webClient.getContentById(typeDB, contentId, userToken)
+            val call = webClient.getContentById(type.t, contentId, userToken)
 
             call.enqueue(object : Callback<Content> {
                 override fun onResponse(call: Call<Content>, response: Response<Content>) {
@@ -150,13 +135,15 @@ class ContentAdapter(private val userToken: String) :
                 val filterPattern = constraint.toString().toLowerCase(Locale.getDefault()).trim()
 
                 for (content1 in contentListFull) {
-                    val callContent = webClient.getContentById(typeDB, content1.id, userToken)
+                    val callContent = webClient.getContentById(type.t, content1.id, userToken)
 
                     callContent.enqueue(object : Callback<Content> {
                         override fun onResponse(call: Call<Content>, response: Response<Content>) {
                             val content = response.body()!!
+                            // TODO: 22.05.2021 Падает при поиске тут
                             if (content.name.toLowerCase(Locale.getDefault())
-                                    .startsWith(filterPattern) && checkFilter(content)) {
+                                    .startsWith(filterPattern) && checkFilter(content)
+                            ) {
                                 filterList.add(content.toContentIdName())
                                 result.values = filterList
                             }

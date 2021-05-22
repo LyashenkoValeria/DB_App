@@ -34,8 +34,8 @@ class TopListFragment : Fragment() {
         val topsAdapter = TopsAdapter(userToken)
         topsAdapter.setOnItemClickListener(object : TopsAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
-                val top = topsAdapter.getContentByPosition(position)
-                (requireActivity() as MainActivity).toTop(type, top.id)
+                val top = topsAdapter.getTopByPosition(position)
+                (requireActivity() as MainActivity).toTop(type, top.id, top.getTopName(), top.getTopAuthor())
             }
         })
 

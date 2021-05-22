@@ -7,4 +7,9 @@
         android:title=""
         app:showAsAction="collapseActionView|ifRoom"
         app:actionViewClass="android.widget.SearchView" />
+    <item
+        android:id="@+id/toolbar_filter"
+        android:icon="@drawable/ic_filter_img"
+        android:title=""
+        app:showAsAction="collapseActionView|ifRoom" />
 </menu>

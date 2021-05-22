@@ -14,12 +14,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
-class EditDialogFragment(
-    private val userToken: String,
-//    private val listener: OnSubmitClickListener
-//) : DialogFragment(), View.OnClickListener {
-) : DialogFragment() {
+class EditDialogFragment(private val userToken: String) : DialogFragment() {
     var typeOfDialog = DialogType.USERNAME
     private lateinit var viewRoot: View
     private val webClient = WebClient().getApi()
@@ -34,13 +29,6 @@ class EditDialogFragment(
         val view: View = inflater.inflate(R.layout.dialog_fragment_layout, container, false)
 
         view.run {
-
-//            val title = when (typeOfDialog) {
-//                DialogType.USERNAME -> "Логин"
-//                DialogType.EMAIL -> "Электронная почта"
-//                DialogType.PASSWORD -> "Пароль"
-//            }
-
             val enterText: String
             dialog_title.text = when (typeOfDialog) {
                 DialogType.USERNAME -> {
@@ -58,7 +46,6 @@ class EditDialogFragment(
             }
             view.enter_old.text = enterText
 
-
             if (typeOfDialog != DialogType.PASSWORD) {
                 view.old_pass_layout.visibility = View.GONE
                 view.enter_new.visibility = View.GONE
@@ -68,12 +55,7 @@ class EditDialogFragment(
             } else {
                 view.edit_line.visibility = View.GONE
             }
-//        val builder = AlertDialog.Builder(requireActivity())
-//
-//        builder.setTitle(title)
-//            .setView(view)
 
-//
             view.save_button.setOnClickListener {
                 val newUsernameOrEmail = viewRoot.edit_line.text.toString()
                 val oldPass = viewRoot.old_pass.text.toString()
@@ -168,15 +150,6 @@ class EditDialogFragment(
     }
 
 
-//    override fun onAttach(context: Context) {
-//        super.onAttach(context)
-//        listener = try {
-//            context as OnSubmitClickListener
-//        } catch (e: ClassCastException) {
-//            throw ClassCastException(context.toString() + "must implement EditDialogListener")
-//        }
-//    }
-
     private fun checkFormat(edit: String): Boolean {
         return when (typeOfDialog) {
             DialogType.USERNAME -> edit.matches("[a-zA-Z][a-zA-Z_0-9\\-]+".toRegex()) && edit.length < 20
@@ -184,96 +157,5 @@ class EditDialogFragment(
             DialogType.PASSWORD -> edit.matches("[a-zA-Z0-9!@#$%&]{6,32}".toRegex())
         }
     }
-
-//    override fun onClick(v: View?) {
-//        when (v?.id) {
-//            R.id.save_button -> {
-//                val newUsernameOrEmail = viewRoot.edit_line.text.toString()
-//                val oldPass = viewRoot.old_pass.text.toString()
-//                val newPass = viewRoot.new_pass.text.toString()
-//                val newPassConfirm = viewRoot.new_pass_confirm.text.toString()
-//                var msg: String? = null
-//
-//                // Проверка для username и email
-//                if (typeOfDialog == DialogType.USERNAME || typeOfDialog == DialogType.EMAIL) {
-//                    // проверка на пустоту
-//                    if (newUsernameOrEmail.isEmpty())
-//                        msg = "Введите данные и повторите попытку."
-//                    else
-//                    // проверка на неверный формат
-//                        if (!checkFormat(newUsernameOrEmail))
-//                            msg = "Введённые данные некорректны."
-//                }
-//                // Проверка для пароля
-//                else {
-//                    // проверка на пустоту
-//                    if (oldPass.isEmpty() || newPass.isEmpty() || newPassConfirm.isEmpty())
-//                        msg = "Введите данные и повторите попытку."
-//                    else
-//                    // проверка на неверный формат
-//                        if (!checkFormat(oldPass) || !checkFormat(newPass) || !checkFormat(
-//                                newPassConfirm
-//                            )
-//                        )
-//                            msg = "Введённые данные некорректны."
-//                        else
-//                        // проверка на несовпадение
-//                            if (newPass != newPassConfirm)
-//                                msg = "Новый пароль и его подтверждение не совпадают."
-//                }
-//
-//                // Если есть сообщение об ошибке, выводим его и не идём дальше
-//                if (msg != null) {
-//                    (requireActivity() as MainActivity).makeToast(msg)
-//                    return
-//                }
-//
-//                val callUpdate = when (typeOfDialog) {
-//                    DialogType.USERNAME -> webClient.updateUsername(newUsernameOrEmail, userToken)
-//                    DialogType.EMAIL -> webClient.updateEmail(newUsernameOrEmail, userToken)
-//                    DialogType.PASSWORD -> webClient.updatePass(oldPass, newPass, userToken)
-//                }
-//
-//
-//                callUpdate.enqueue(object : Callback<Map<String, Int>> {
-//                    override fun onResponse(
-//                        call: Call<Map<String, Int>>,
-//                        response: Response<Map<String, Int>>
-//                    ) {
-//                        val code = response.body()!!["code"]
-//                        val message = when (code) {
-//                            0 -> {
-//                                when (typeOfDialog) {
-//                                    DialogType.USERNAME -> "Имя пользователя успешно изменено."
-//                                    DialogType.EMAIL -> "Email успешно изменён."
-//                                    DialogType.PASSWORD -> "Пароль успешно изменён."
-//                                }
-//                            }
-//                            1 -> "Это имя пользователя уже занято."
-//                            2 -> "Имя пользователя должно быть меньше 20 символов."
-//                            3 -> "Этот email уже занят."
-//                            4 -> "Пароль должен быть меньше 32 символов."
-//                            5 -> "Пароль должен быть больше 6 символов."
-//                            6 -> "Введён неверный текущий пароль."
-//                            else -> resources.getString(R.string.err_unknown)
-//                        }
-//                        (requireActivity() as MainActivity).makeToast(message)
-//                        // если всё ок, завершаем диалог
-//                        if (code == 0) {
-//                            if (typeOfDialog == DialogType.USERNAME || typeOfDialog == DialogType.EMAIL)
-//                            listener.onSubmitClicked(typeOfDialog, newUsernameOrEmail)
-//                            dismiss()
-//                        }
-//                    }
-//
-//                    override fun onFailure(call: Call<Map<String, Int>>, t: Throwable) {
-//                        Log.d("db", "Response = $t")
-//                    }
-//                })
-//            }
-//
-//            R.id.cancel_button -> dismiss()
-//        }
-//    }
 
 }

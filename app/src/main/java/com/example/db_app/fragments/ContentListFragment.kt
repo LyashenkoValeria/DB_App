@@ -105,13 +105,13 @@ class ContentListFragment : Fragment() {
             true
         }
 
-        filter_button.setOnClickListener {
-            var needRestoreFilters = false
-            if (arguments?.getInt("typeFromFilter") != null) {
-                needRestoreFilters = arguments?.getInt("typeFromFilter") == type.t
-            }
-            (requireActivity() as MainActivity).toFilter(contentAdapter.type, needRestoreFilters)
-        }
+//        filter_button.setOnClickListener {
+//            var needRestoreFilters = false
+//            if (arguments?.getInt("typeFromFilter") != null) {
+//                needRestoreFilters = arguments?.getInt("typeFromFilter") == type.t
+//            }
+//            (requireActivity() as MainActivity).toFilter(contentAdapter.type, needRestoreFilters)
+//        }
 
 
         if (arguments?.getBoolean("fromFilter") != null && arguments?.getBoolean("fromFilter") == true) {
@@ -124,12 +124,12 @@ class ContentListFragment : Fragment() {
             var filterMakers = arrayListOf<People>()
             var filterArtists = arrayListOf<Artist>()
 
-            when (arguments?.getInt("typeFromFilter")) {
-                1 -> {
+            when (arguments?.getString("typeFromFilter")) {
+                Type.FILM.t -> {
                     type = Type.FILM
                     filterMakers = arguments?.getParcelableArrayList("makersList")!!
                 }
-                2 -> {
+                Type.MUSIC.t -> {
                     type = Type.MUSIC
                     filterArtists = arguments?.getParcelableArrayList("artistsList")!!
                 }
@@ -185,6 +185,14 @@ class ContentListFragment : Fragment() {
                     return false
                 }
             })
+        }
+
+        if (item.itemId == R.id.toolbar_filter) {
+            var needRestoreFilters = false
+            if (arguments?.getString("typeFromFilter") != null) {
+                needRestoreFilters = arguments?.getString("typeFromFilter") == type.t
+            }
+            (requireActivity() as MainActivity).toFilter((recycler.adapter as ContentAdapter).type, needRestoreFilters)
         }
         return super.onOptionsItemSelected(item)
     }

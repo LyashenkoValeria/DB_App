@@ -7,7 +7,7 @@ package com.example.db_app.dataClasses
 data class Top(
     val id: Int,
     val name: String,
-    val contentList: List<Content>
+    val content: List<TopEl>
 ) {
     private val nameTop = name.split('(')[0]
     private val authorTop = name.split("- ")[1].dropLast(1)
@@ -15,3 +15,8 @@ data class Top(
     fun getNameTop() = nameTop
     fun getAuthorTop() = authorTop
 }
+
+data class TopEl(
+    val id: Int,
+    val position: Int
+)

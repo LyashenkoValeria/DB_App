@@ -17,8 +17,9 @@ data class Content(
 }
 
 
-enum class Type(val t: Int) {
-    BOOK(0), FILM(1), MUSIC(2)
+enum class Type(val t: String) {
+    BOOK("book"), FILM("film"), MUSIC("music")
+//    BOOK(0), FILM(1), MUSIC(2)
 }
 
 

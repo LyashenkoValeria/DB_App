@@ -87,9 +87,6 @@ class MainActivity : AppCompatActivity() {
         typeContentList = type
     }
 
-
-
-
     fun makeToast(message: String) {
         Toast.makeText(
             this,
@@ -103,10 +100,10 @@ class MainActivity : AppCompatActivity() {
         exit()
     }
 
-    fun exit() {
+    private fun exit() {
         val sp = this.getSharedPreferences("settings", MODE_PRIVATE)
         val editor = sp.edit()
-        editor.putInt("userId", -1)
+        editor.putString("userToken", "")
         editor.apply()
 
         toAuthorization()
@@ -152,7 +149,7 @@ class MainActivity : AppCompatActivity() {
 
     fun toContent(type: Type, id: Int) {
         val bundle = Bundle().apply {
-            putInt("type", type.t)
+            putString("type", type.t)
             putInt("id", id)
         }
 //        navController.navigate(R.id.action_contentList_to_content, bundle)
@@ -163,17 +160,19 @@ class MainActivity : AppCompatActivity() {
         navController.navigate(R.id.action_profileFragment_to_chooseGenreFragment)
     }
 
-    fun toTop(type: Type, id: Int) {
+    fun toTop(type: Type, id: Int, topName: String, topAuthor: String) {
         val bundle = Bundle().apply {
-            putInt("type", type.t)
+            putString("type", type.t)
             putInt("id", id)
+            putString("name", topName)
+            putString("author", topAuthor)
         }
         navController.navigate(R.id.topContentListFragment, bundle)
     }
 
     fun toFilter(type: Type, needRestore: Boolean) {
         val bundle = Bundle().apply {
-            putInt("type", type.t)
+            putString("type", type.t)
             putBoolean("restore", needRestore)
         }
         navController.navigate(R.id.action_contentListFragment_to_filterFragment, bundle)
@@ -207,7 +206,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             putIntArray("seekBars", rangeBars)
-            putInt("typeFromFilter", type.t)
+            putString("typeFromFilter", type.t)
             putBoolean("fromFilter", dir)
             putBoolean("notChanged", filterChanges)
         }

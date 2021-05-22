@@ -23,7 +23,6 @@ class TopsAdapter (private val userToken: String): RecyclerView.Adapter<TopsAdap
 
     private val webClient = WebClient().getApi()
     private var type = Type.BOOK
-    private var typeDB = "book"
     private var topsList = listOf<ContentIdName>()
 
     private lateinit var listener: OnItemClickListener
@@ -51,17 +50,12 @@ class TopsAdapter (private val userToken: String): RecyclerView.Adapter<TopsAdap
 
     override fun getItemCount(): Int = topsList.size
 
-    fun getContentByPosition(position: Int) = topsList[position]
+    fun getTopByPosition(position: Int) = topsList[position]
 
     fun setContent(type: Type) {
         this.type = type
-        typeDB = when (this.type) {
-            Type.BOOK   -> "book"
-            Type.FILM   -> "film"
-            Type.MUSIC  -> "music"
-        }
 
-        val call = webClient.getTopsByType(typeDB, userToken)
+        val call = webClient.getTopsByType(type.t, userToken)
 
         call.enqueue(object : Callback<List<ContentIdName>> {
             override fun onResponse(call: Call<List<ContentIdName>>, response: Response<List<ContentIdName>>) {

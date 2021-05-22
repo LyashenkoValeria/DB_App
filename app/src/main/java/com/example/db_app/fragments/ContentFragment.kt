@@ -26,7 +26,6 @@ class ContentFragment : Fragment() {
     private var type = Type.BOOK
     private val webClient = WebClient().getApi()
     private var userToken: String? = null
-    private var typeDB = "book"
     private var notViewedMsg = ""
     private var notRatedMsg = ""
 
@@ -41,25 +40,22 @@ class ContentFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         userToken = (requireActivity() as MainActivity).getUserToken()
         val id = arguments?.getInt("id") ?: 1
-        val t = arguments?.getInt("type")
+        val t = arguments?.getString("type")
         when (t) {
-            1 -> {
+            Type.FILM.t -> {
                 type = Type.FILM
-                typeDB = "film"
                 notViewedMsg = resources.getString(R.string.film_not_viewed)
                 notRatedMsg = resources.getString(R.string.film_not_rated)
                 drawFilm(id)
             }
-            2 -> {
+            Type.MUSIC.t -> {
                 type = Type.MUSIC
-                typeDB = "music"
                 notViewedMsg = resources.getString(R.string.music_not_viewed)
                 notRatedMsg = resources.getString(R.string.music_not_rated)
                 drawMusic(id)
             }
             else -> {
                 type = Type.BOOK
-                typeDB = "book"
                 notViewedMsg = resources.getString(R.string.book_not_viewed)
                 notRatedMsg = resources.getString(R.string.book_not_rated)
                 drawBook(id)
@@ -76,7 +72,7 @@ class ContentFragment : Fragment() {
             override fun onResponse(call: Call<Book>, response: Response<Book>) {
                 val book = response.body()!!
                 drawViewBook(book)
-                initListeners()
+                initListeners(id)
             }
 
             override fun onFailure(call: Call<Book>, t: Throwable) {
@@ -129,7 +125,7 @@ class ContentFragment : Fragment() {
             content_pos.text = book.topPosition.toString()
             // листенер для перехода к топу
             content_top.setOnClickListener {
-                (requireActivity() as MainActivity).toTop(type, bookTop.id)
+                (requireActivity() as MainActivity).toTop(type, bookTop.id, bookTop.getTopName(), bookTop.getTopAuthor())
             }
         }
 
@@ -177,7 +173,7 @@ class ContentFragment : Fragment() {
             override fun onResponse(call: Call<Film>, response: Response<Film>) {
                 val film = response.body()!!
                 drawViewFilm(film)
-                initListeners()
+                initListeners(id)
             }
 
             override fun onFailure(call: Call<Film>, t: Throwable) {
@@ -289,7 +285,7 @@ class ContentFragment : Fragment() {
             content_pos.text = film.topPosition.toString()
             // листенер для перехода к топу
             content_top.setOnClickListener {
-                (requireActivity() as MainActivity).toTop(type, filmTop.id)
+                (requireActivity() as MainActivity).toTop(type, filmTop.id, filmTop.getTopName(), filmTop.getTopAuthor())
             }
         }
 
@@ -329,7 +325,7 @@ class ContentFragment : Fragment() {
             override fun onResponse(call: Call<Music>, response: Response<Music>) {
                 val music = response.body()!!
                 drawViewMusic(music)
-                initListeners()
+                initListeners(id)
             }
 
             override fun onFailure(call: Call<Music>, t: Throwable) {
@@ -378,7 +374,7 @@ class ContentFragment : Fragment() {
             content_pos.text = music.topPosition.toString()
             // листенер для перехода к топу
             content_top.setOnClickListener {
-                (requireActivity() as MainActivity).toTop(type, musicTop.id)
+                (requireActivity() as MainActivity).toTop(type, musicTop.id, musicTop.getTopName(), musicTop.getTopAuthor())
             }
         }
 
@@ -418,10 +414,10 @@ class ContentFragment : Fragment() {
         book_film_desc.visibility = View.GONE
     }
 
-    fun initListeners() {
+    fun initListeners(id: Int) {
         content_user_viewed.setOnCheckedChangeListener { _, isChecked ->
             val callUserViewed =
-                webClient.changeViewedContent(typeDB, id, userToken!!, viewed = isChecked)
+                webClient.changeViewedContent(type.t, id, userToken!!, viewed = isChecked)
 
             callUserViewed.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
@@ -451,7 +447,7 @@ class ContentFragment : Fragment() {
             if (content_user_viewed.isChecked) {
                 val rtng = rating.toInt()
                 val callChangeRating = webClient.changeViewedContent(
-                    typeDB,
+                    type.t,
                     id,
                     userToken!!,
                     viewed = true,

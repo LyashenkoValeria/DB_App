@@ -57,7 +57,7 @@
     <string name="current_pass">Введите текущий пароль</string>
     <string name="new_pass">Введите новый пароль</string>
     <string name="confirm_new_pass">Повторите новый пароль</string>
-    <string name="change_login_complete">Имя пользователя успешно изменено.</string>
+    <string name="change_login_complete">Имя пользователя успешно изменено. Пожалуйста, авторизируйтесь повторно.</string>
     <string name="change_email_complete">Email успешно изменён.</string>
     <string name="change_pass_complete">Пароль успешно изменён.</string>
 
