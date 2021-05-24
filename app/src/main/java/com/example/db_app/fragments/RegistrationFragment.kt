@@ -87,7 +87,8 @@ class RegistrationFragment : Fragment() {
                     (requireActivity() as MainActivity).back() // переход к авторизации
                 else {
                     (requireActivity() as MainActivity).saveUserToken("Bearer $userToken")
-                    (requireActivity() as MainActivity).authToContentList()
+                    (requireActivity() as MainActivity).savePreviousFragment()
+                    (requireActivity() as MainActivity).toChooseGenre()
                 }
             }
 

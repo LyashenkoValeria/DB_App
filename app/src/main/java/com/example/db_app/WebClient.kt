@@ -64,6 +64,18 @@ interface WebClientService {
         @Path("type") type: String,
         @Header("Authorization") token: String): Call<List<Genre>>
 
+    @GET("user/genre/{type}")
+    fun getLikeGenreByType(
+        @Path("type") type: String,
+        @Header("Authorization") token: String
+    ): Call<List<Int>>
+
+    @POST("user/update/genre/{type}")
+    fun changeLikeGenreByType(
+        @Path("type") type: String,
+        @Query("genres") likeBookGenre: List<Int>,
+        @Header("Authorization") token: String,
+    ): Call<ResponseBody>
 
     /** ------------------------------ Работа с топами ------------------------------ **/
 
@@ -135,44 +147,6 @@ interface WebClientService {
         @Header("Authorization") token: String
     ): Call<Map<String, Int>>
 
-
-
-
-
-    // TODO: 14.05.2021
-    @GET("")
-    fun getBookLikeGenre(@Header("Authorization") token: String): Call<List<Genre>>
-
-    @GET("")
-    fun getFilmLikeGenre(@Header("Authorization") token: String): Call<List<Genre>>
-
-    @GET("")
-    fun getMusicLikeGenre(@Header("Authorization") token: String): Call<List<Genre>>
-
-    // TODO: 16.05.2021 Как это вообще оформить?
-//    @SET("")
-    fun changeLikeBookGenre(userId: Int, likeBookGenre: List<Genre>): Call<Boolean>
-
-    // TODO: 16.05.2021 Как это вообще оформить?
-//    @SET("")
-    fun changeLikeFilmGenre(userId: Int, likeFilmGenre: List<Genre>): Call<Boolean>
-
-    // TODO: 16.05.2021 Как это вообще оформить?
-//    @SET("")
-    fun changeLikeMusicGenre(userId: Int, likeMusicGenre: List<Genre>): Call<Boolean>
-
-
-    //    val book = api.getBook(1).execute().body()
-//    fun getMusicGenreById(@Path("id") id: Int): Call<Genre>
-
-//    @GET("book")
-    fun getBooksOfTop(topId: Int): Call<List<ContentIdName>>
-
-//    @GET("film")
-    fun getFilmOfTop(topId: Int): Call<List<ContentIdName>>
-
-//    @GET("music")
-    fun getMusicOfTop(topId: Int): Call<List<ContentIdName>>
 }
 
 //fun main() {

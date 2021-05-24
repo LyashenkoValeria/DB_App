@@ -11,7 +11,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.*
 import com.example.db_app.dataClasses.Type
-import com.example.db_app.adapters.ContentAdapter
 import com.example.db_app.dataClasses.Artist
 import com.example.db_app.dataClasses.Genre
 import com.example.db_app.dataClasses.People
@@ -23,6 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var navController: NavController
     var typeContentList: Type? = null
+    var prevFragment: Int = -1
 //    var posContentList: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.contentListFragment -> resources.getString(R.string.catalog_menu)
                 R.id.profileFragment -> resources.getString(R.string.prof_str)
                 R.id.topListFragment -> resources.getString(R.string.tops_menu)
+                R.id.chooseGenreFragment -> "Жанры книг"
                 // TODO: 19.05.2021 Добавить названия для остальных фрагментов
                 else -> ""
             }
@@ -74,6 +75,10 @@ class MainActivity : AppCompatActivity() {
 //            setToolbarTitle(resources.getString(R.string.catalog_menu))
     }
 
+    fun savePreviousFragment() {
+        prevFragment = navController.currentDestination!!.id
+    }
+
     fun setToolbarListener(listener: View.OnClickListener) {
         toolbar.setOnClickListener(listener)
     }
@@ -81,10 +86,6 @@ class MainActivity : AppCompatActivity() {
     fun setToolbarTitle(title: String) {
         toolbar.title = title
         toolbar.setTitleTextAppearance(this, R.style.ToolbarTitle)
-    }
-
-    fun saveContentListType(type: Type) {
-        typeContentList = type
     }
 
     fun makeToast(message: String) {
@@ -123,7 +124,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun toAuthorization() {
         navController.navigate(R.id.authorisationFragment)
-        collapsing_toolbar_layout.visibility = View.GONE
+        toolbar_layout.visibility = View.GONE
     }
 
     fun authToReg() {
@@ -132,7 +133,7 @@ class MainActivity : AppCompatActivity() {
 
     fun authToContentList() {
         navController.navigate(R.id.contentListFragment)
-        collapsing_toolbar_layout.visibility = View.VISIBLE
+        toolbar_layout.visibility = View.VISIBLE
     }
 
     fun toContentList() {
@@ -146,6 +147,7 @@ class MainActivity : AppCompatActivity() {
     fun back() {
         navController.popBackStack()
     }
+
 
     fun toContent(type: Type, id: Int) {
         val bundle = Bundle().apply {
@@ -191,8 +193,8 @@ class MainActivity : AppCompatActivity() {
         val bundle = Bundle().apply {
             putParcelableArrayList("genresList", genres)
 
-            when(type){
-                Type.FILM ->{
+            when (type) {
+                Type.FILM -> {
                     val allMakers = actors
                     allMakers.addAll(makers)
                     putParcelableArrayList("makersList", makers)
@@ -200,7 +202,7 @@ class MainActivity : AppCompatActivity() {
                 Type.BOOK -> {
                     putParcelableArrayList("makersList", makers)
                 }
-                Type.MUSIC ->{
+                Type.MUSIC -> {
                     putParcelableArrayList("artistsList", artists)
                 }
             }
@@ -214,7 +216,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     // Обработчик нажатия кнопки назад
     override fun onBackPressed() {
         val fragmentId = navController.currentBackStackEntry!!.destination.id
@@ -222,7 +223,7 @@ class MainActivity : AppCompatActivity() {
 
         when (fragmentId) {
             R.id.contentListFragment ->
-                if (previousId == R.id.authorisationFragment || previousId == R.id.registrationFragment)
+                if (previousId == R.id.authorisationFragment || previousId == R.id.registrationFragment || previousId == R.id.chooseGenreFragment)
                     finish()
                 else
                     super.onBackPressed()
@@ -230,6 +231,12 @@ class MainActivity : AppCompatActivity() {
             R.id.authorisationFragment ->
                 if (previousId == R.id.contentListFragment)
                     finish()
+                else
+                    super.onBackPressed()
+
+            R.id.chooseGenreFragment ->
+                if (previousId == R.id.registrationFragment)
+                    toContentList()
                 else
                     super.onBackPressed()
 

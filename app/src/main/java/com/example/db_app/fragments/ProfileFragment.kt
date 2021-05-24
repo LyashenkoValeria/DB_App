@@ -57,6 +57,7 @@ class ProfileFragment : Fragment() {
         }
 
         edit_like_genres.setOnClickListener {
+            (requireActivity() as MainActivity).savePreviousFragment()
             (requireActivity() as MainActivity).profileToChooseList()
         }
 

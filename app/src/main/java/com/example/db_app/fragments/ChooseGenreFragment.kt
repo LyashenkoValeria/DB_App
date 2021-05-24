@@ -11,18 +11,19 @@ import com.example.db_app.MainActivity
 import com.example.db_app.R
 import com.example.db_app.WebClient
 import com.example.db_app.adapters.GenreAdapter
-import com.example.db_app.dataClasses.Genre
 import com.example.db_app.dataClasses.Type
 import kotlinx.android.synthetic.main.fragment_choose_genre.*
+import kotlinx.android.synthetic.main.fragment_content_list.*
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class ChooseGenreFragment : Fragment() {
     private var type = Type.BOOK
-    private var bookGenreList = listOf<Genre>()
-    private var filmGenreList = listOf<Genre>()
-    private var musicGenreList = listOf<Genre>()
+    private var bookGenreList = listOf<Int>()
+    private var filmGenreList = listOf<Int>()
+    private var musicGenreList = listOf<Int>()
     private val webClient = WebClient().getApi()
 
     override fun onCreateView(
@@ -32,16 +33,22 @@ class ChooseGenreFragment : Fragment() {
     ): View? {
         return inflater.inflate(R.layout.fragment_choose_genre, container, false)
     }
+    // TODO: 22.05.2021 1) Изменять Toolbar title;
+    //  2) Изменить checkBox на checkableTextView;
+    //  3) Сетать позицию recycler при переключении типами (т.е. при обновлении его содержимого);
+    //  4) Возвращать пользователя на нужный фрагмент (если запускал из профиля, то вернуть на профиль);
+    //  5) Делать toast о том, что жанры изменились (?);
+    //  6) Сворачивать описание в CradView (????).
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         choose_text.text = resources.getString(R.string.choose_genre_book)
-
         val userToken = (requireActivity() as MainActivity).getUserToken()!!
 
         val genreAdapter = GenreAdapter(userToken)
         genre_recycler.layoutManager = LinearLayoutManager(requireContext())
         genre_recycler.adapter = genreAdapter
         (genre_recycler.adapter as GenreAdapter).setGenreList(type)
+
 
         button_next.setOnClickListener {
             when (type) {
@@ -51,6 +58,8 @@ class ChooseGenreFragment : Fragment() {
                         bookGenreList = getLikeGenreList()
                         setGenreList(type)
                     }
+                    (genre_recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+                    (requireActivity() as MainActivity).setToolbarTitle("Жанры фильмов")
                     choose_text.text = resources.getString(R.string.choose_genre_film)
                 }
                 Type.FILM -> {
@@ -60,56 +69,55 @@ class ChooseGenreFragment : Fragment() {
                         filmGenreList = getLikeGenreList()
                         setGenreList(type)
                     }
+                    (genre_recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+                    (requireActivity() as MainActivity).setToolbarTitle("Жанры музыки")
                     choose_text.text = resources.getString(R.string.choose_genre_music)
                 }
                 Type.MUSIC -> {
                     musicGenreList = (genre_recycler.adapter as GenreAdapter).getLikeGenreList()
 
                     // ОБновление данных в бд
-                    val userId = 1 // TODO: 16.05.2021  Добавить сохранение и получение userId
-                    val callChangeBookGenre = webClient.changeLikeBookGenre(userId, bookGenreList)
+                    val callChangeBookGenre =  webClient.changeLikeGenreByType(Type.BOOK.t, bookGenreList, userToken)
 
-                    callChangeBookGenre.enqueue(object : Callback<Boolean> {
+                    callChangeBookGenre.enqueue(object : Callback<ResponseBody> {
                         override fun onResponse(
-                            call: Call<Boolean>,
-                            response: Response<Boolean>
+                            call: Call<ResponseBody>,
+                            response: Response<ResponseBody>
                         ) {}
 
-                        override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                             Log.d("db", "Response = $t")
                         }
                     })
 
 
-                    val callChangeFilmGenre = webClient.changeLikeFilmGenre(userId, filmGenreList)
+                    val callChangeFilmGenre = webClient.changeLikeGenreByType(Type.FILM.t, filmGenreList, userToken)
 
-                    callChangeFilmGenre.enqueue(object : Callback<Boolean> {
+                    callChangeFilmGenre.enqueue(object : Callback<ResponseBody> {
                         override fun onResponse(
-                            call: Call<Boolean>,
-                            response: Response<Boolean>
+                            call: Call<ResponseBody>,
+                            response: Response<ResponseBody>
                         ) {}
 
-                        override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                             Log.d("db", "Response = $t")
                         }
                     })
 
 
-                    val callChangeMusicGenre = webClient.changeLikeMusicGenre(userId, musicGenreList)
+                    val callChangeMusicGenre = webClient.changeLikeGenreByType(Type.MUSIC.t, musicGenreList, userToken)
 
-                    callChangeMusicGenre.enqueue(object : Callback<Boolean> {
+                    callChangeMusicGenre.enqueue(object : Callback<ResponseBody> {
                         override fun onResponse(
-                            call: Call<Boolean>,
-                            response: Response<Boolean>
+                            call: Call<ResponseBody>,
+                            response: Response<ResponseBody>
                         ) {}
 
-                        override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                             Log.d("db", "Response = $t")
                         }
                     })
-
-
-                    (requireActivity() as MainActivity).toContentList()
+                    toBackFragment(true)
                 }
             }
         }
@@ -117,19 +125,33 @@ class ChooseGenreFragment : Fragment() {
         button_back.setOnClickListener {
             when (type) {
                 Type.BOOK -> {
-                    (requireActivity() as MainActivity).toContentList()
+                    toBackFragment(false)
                 }
                 Type.FILM -> {
                     type = Type.BOOK
                     (genre_recycler.adapter as GenreAdapter).setGenreList(type)
+                    (genre_recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+                    (requireActivity() as MainActivity).setToolbarTitle("Жанры книг")
                     choose_text.text = resources.getString(R.string.choose_genre_book)
                 }
                 Type.MUSIC -> {
                     type = Type.FILM
                     (genre_recycler.adapter as GenreAdapter).setGenreList(type)
+                    (genre_recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+                    (requireActivity() as MainActivity).setToolbarTitle("Жанры фильмов")
                     choose_text.text = resources.getString(R.string.choose_genre_film)
                 }
             }
         }
+    }
+
+    fun toBackFragment(save: Boolean) {
+        if (save)
+            (requireActivity() as MainActivity).makeToast("Жанры успешно сохранены.")
+        val prevFrag = (requireActivity() as MainActivity).prevFragment
+        if (prevFrag == R.id.profileFragment)
+            (requireActivity() as MainActivity).back()
+        else
+            (requireActivity() as MainActivity).toContentList()
     }
 }
