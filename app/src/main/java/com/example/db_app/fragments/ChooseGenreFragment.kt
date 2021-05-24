@@ -33,12 +33,9 @@ class ChooseGenreFragment : Fragment() {
     ): View? {
         return inflater.inflate(R.layout.fragment_choose_genre, container, false)
     }
-    // TODO: 22.05.2021 1) Изменять Toolbar title;
+    // TODO: 22.05.2021
     //  2) Изменить checkBox на checkableTextView;
-    //  3) Сетать позицию recycler при переключении типами (т.е. при обновлении его содержимого);
-    //  4) Возвращать пользователя на нужный фрагмент (если запускал из профиля, то вернуть на профиль);
-    //  5) Делать toast о том, что жанры изменились (?);
-    //  6) Сворачивать описание в CradView (????).
+    //  6) Сворачивать описание в CardView (????).
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         choose_text.text = resources.getString(R.string.choose_genre_book)
@@ -145,7 +142,7 @@ class ChooseGenreFragment : Fragment() {
         }
     }
 
-    fun toBackFragment(save: Boolean) {
+    private fun toBackFragment(save: Boolean) {
         if (save)
             (requireActivity() as MainActivity).makeToast("Жанры успешно сохранены.")
         val prevFrag = (requireActivity() as MainActivity).prevFragment

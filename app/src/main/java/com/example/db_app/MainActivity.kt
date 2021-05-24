@@ -124,7 +124,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun toAuthorization() {
         navController.navigate(R.id.authorisationFragment)
-        toolbar_layout.visibility = View.GONE
     }
 
     fun authToReg() {
@@ -133,7 +132,6 @@ class MainActivity : AppCompatActivity() {
 
     fun authToContentList() {
         navController.navigate(R.id.contentListFragment)
-        toolbar_layout.visibility = View.VISIBLE
     }
 
     fun toContentList() {
