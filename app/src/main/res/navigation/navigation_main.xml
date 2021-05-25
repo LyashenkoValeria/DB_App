@@ -97,4 +97,24 @@
             android:id="@+id/action_filterFragment_to_contentListFragment"
             app:destination="@id/contentListFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/superUserFragment"
+        android:name="com.example.db_app.fragments.SuperUserFragment"
+        android:label="SuperUserFragment"
+        tools:layout="@layout/fragment_super_user">
+        <action
+            android:id="@+id/action_superUserFragment_to_superUserAddFragment"
+            app:destination="@id/superUserAddFragment" />
+        <action
+            android:id="@+id/action_superUserFragment_to_superUserAddTopFragment"
+            app:destination="@id/superUserAddTopFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/superUserAddFragment"
+        android:name="com.example.db_app.fragments.SuperUserAddFragment"
+        android:label="SuperUserAddFragment" />
+    <fragment
+        android:id="@+id/superUserAddTopFragment"
+        android:name="com.example.db_app.fragments.SuperUserAddTopFragment"
+        android:label="SuperUserAddTopFragment" />
 </navigation>

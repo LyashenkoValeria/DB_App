@@ -23,7 +23,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var navController: NavController
     var typeContentList: Type? = null
     var prevFragment: Int = -1
-//    var posContentList: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,8 +70,6 @@ class MainActivity : AppCompatActivity() {
         val userId = getUserToken()
         if (userId == null || userId == "")
             toAuthorization()
-//        else
-//            setToolbarTitle(resources.getString(R.string.catalog_menu))
     }
 
     fun savePreviousFragment() {
@@ -110,9 +107,9 @@ class MainActivity : AppCompatActivity() {
         toAuthorization()
     }
 
-    fun getUserToken(): String? {
+    fun getUserToken(): String {
         val sp = this.getSharedPreferences("settings", MODE_PRIVATE)
-        return sp.getString("userToken", "")
+        return sp.getString("userToken", "") ?: ""
     }
 
     fun saveUserToken(userToken: String) {
@@ -146,13 +143,11 @@ class MainActivity : AppCompatActivity() {
         navController.popBackStack()
     }
 
-
     fun toContent(type: Type, id: Int) {
         val bundle = Bundle().apply {
             putString("type", type.t)
             putInt("id", id)
         }
-//        navController.navigate(R.id.action_contentList_to_content, bundle)
         navController.navigate(R.id.contentFragment, bundle)
     }
 
@@ -211,6 +206,20 @@ class MainActivity : AppCompatActivity() {
             putBoolean("notChanged", filterChanges)
         }
         navController.navigate(R.id.action_filterFragment_to_contentListFragment, bundle)
+    }
+
+    fun toAddContent(type: Type) {
+        val bundle = Bundle().apply {
+            putString("type", type.t)
+        }
+        navController.navigate(R.id.superUserAddFragment, bundle)
+    }
+
+    fun toAddTop(type: Type) {
+        val bundle = Bundle().apply {
+            putString("type", type.t)
+        }
+        navController.navigate(R.id.superUserAddTopFragment, bundle)
     }
 
 

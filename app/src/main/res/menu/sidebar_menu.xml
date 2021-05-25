@@ -36,6 +36,11 @@
         android:id="@+id/group2"
         android:checkableBehavior="single">
         <item
+            android:id="@+id/superUserFragment"
+            android:checked="false"
+            android:icon="@drawable/ic_superuser"
+            android:title="@string/super_user_menu" />
+        <item
             android:id="@+id/exit_menu"
             android:checked="false"
             android:icon="@drawable/ic_exit"

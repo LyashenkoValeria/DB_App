@@ -64,18 +64,60 @@ interface WebClientService {
         @Path("type") type: String,
         @Header("Authorization") token: String): Call<List<Genre>>
 
+    // Возврат лайкнутыых жанров по типу
     @GET("user/genre/{type}")
     fun getLikeGenreByType(
         @Path("type") type: String,
         @Header("Authorization") token: String
     ): Call<List<Int>>
 
+    // Изменение лайкнутыых жанров по типу
     @POST("user/update/genre/{type}")
     fun changeLikeGenreByType(
         @Path("type") type: String,
         @Query("genres") likeBookGenre: List<Int>,
-        @Header("Authorization") token: String,
+        @Header("Authorization") token: String
     ): Call<ResponseBody>
+
+    // Получение списка людей по типу (применимо только для BOOK и FILM)
+    @GET("people/{type}")
+    fun getPeopleByType(
+        @Path("type") type: String,
+        @Header("Authorization") token: String
+    ): Call<List<People>>
+
+    // Получение списка артистов по типу (применимо только для BOOK и FILM)
+    @GET("people/music")
+    fun getArtists(@Header("Authorization") token: String): Call<List<Artist>>
+
+    // Получение списка ролей людей (применимо только для FILM)
+    @GET("people/functions")
+    fun getFunctions(@Header("Authorization") token: String): Call<List<ContentIdName>>
+
+    // Запись книги в бд и возврат его id, если всё ок
+    @POST("moderate/book")
+    fun saveBook(
+        @Query("name") name: String,
+        @Query("year") year: Int,
+        @Query("description") desc: String,
+        @Query("poster") poster: String,
+        @Query("book_series") bookSeries: String,
+        @Query("authors") authors: List<String>,
+        @Query("genres") genres: List<Int>,
+        @Header("Authorization") token: String
+    ): Call<Int>
+
+    // TODO: 25.05.2021
+    @POST("")
+    fun saveFilm(): Call<ResponseBody>
+
+    // TODO: 25.05.2021
+    @POST("")
+    fun saveMusic(): Call<ResponseBody>
+
+    // TODO: 25.05.2021
+    @POST("")
+    fun saveTop(): Call<ResponseBody>
 
     /** ------------------------------ Работа с топами ------------------------------ **/
 

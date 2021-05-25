@@ -48,6 +48,7 @@
     <string name="tops_menu">Топы</string>
     <string name="recommend_menu">Рекомендации</string>
     <string name="viewed_menu">Просмотренное</string>
+    <string name="super_user_menu">Изменение БД</string>
 
     <string name="change_login">Изменение логина</string>
     <string name="change_email">Изменение почты</string>

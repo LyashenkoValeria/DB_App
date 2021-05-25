@@ -19,7 +19,7 @@ data class Music(
     val topPosition: Int?
 ) {
 
-    fun getArtistString() = artists.joinToString(separator = ",\n") {it.name}
+    fun getArtistString() = artists.joinToString(separator = ",\n") {it.fullname}
 
     fun getGenreString() = genres.joinToString(separator = ", ")
 
@@ -37,13 +37,13 @@ data class MusicAlbum(
 
 data class Artist(
     val id: Int,
-    val name: String,
+    val fullname: String,
     val description: String?
     // TODO: 12.05.2021  Разобраться с группами и отдельными артистами
 ): Parcelable {
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(id)
-        parcel.writeString(name)
+        parcel.writeString(fullname)
         parcel.writeString(description)
     }
 

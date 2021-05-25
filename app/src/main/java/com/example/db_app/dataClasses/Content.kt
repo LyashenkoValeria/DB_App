@@ -65,4 +65,6 @@ data class Genre(
         }
     }
 
+    fun toContentIdName() = ContentIdName(id, name)
+
 }

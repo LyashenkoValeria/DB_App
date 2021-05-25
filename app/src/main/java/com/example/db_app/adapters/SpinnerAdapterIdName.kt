@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2021. Code by Juniell.
+ */
+
 package com.example.db_app.adapters
 
 import android.content.Context
@@ -5,15 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import com.example.db_app.dataClasses.Genre
+import com.example.db_app.dataClasses.ContentIdName
 import kotlinx.android.synthetic.main.genre_item.view.*
+import kotlinx.android.synthetic.main.spinner_text_layout.view.*
 
+class SpinnerAdapterIdName (ctx: Context, contents: List<ContentIdName>) : ArrayAdapter<ContentIdName>(ctx, 0, contents) {
 
-class SpinnerAdapter(ctx: Context, genres: List<Genre>) : ArrayAdapter<Genre>(ctx, 0, genres) {
-
-    private var selectedList = arrayListOf<Genre>()
-    var customListener = false
-    var listener = View.OnClickListener {}
+    private var selectedList = mutableListOf<ContentIdName>()
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val viewRoot = convertView ?: LayoutInflater.from(context).inflate(
@@ -25,7 +27,7 @@ class SpinnerAdapter(ctx: Context, genres: List<Genre>) : ArrayAdapter<Genre>(ct
     }
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val genre = getItem(position)
+        val content = getItem(position)
 
         val view = LayoutInflater.from(context).inflate(
             com.example.db_app.R.layout.genre_item,
@@ -33,29 +35,28 @@ class SpinnerAdapter(ctx: Context, genres: List<Genre>) : ArrayAdapter<Genre>(ct
             false
         )
 
+        view.auth_text.text = "Роль"
+
         view.genre_desc.visibility = View.GONE
 
         val checkBox = view.check_box
 
-        genre?.let {
-            checkBox.text = genre.name
+        content?.let {
+            checkBox.text = content.name
         }
 
-        checkBox.isChecked = selectedList.contains(genre)
-
+        checkBox.isChecked = selectedList.contains(content)
         checkBox.setOnClickListener {
             if (checkBox.isChecked) {
-                selectedList.add(genre!!)
+                selectedList.add(content!!)
             } else {
-                selectedList.remove(genre!!)
+                selectedList.remove(content!!)
             }
-            if (customListener)
-                listener.onClick(it)
         }
         return view
     }
 
-    fun getSelectedItems(): ArrayList<Genre> {
+    fun getSelectedItems(): List<ContentIdName> {
         return selectedList
     }
 
@@ -63,7 +64,8 @@ class SpinnerAdapter(ctx: Context, genres: List<Genre>) : ArrayAdapter<Genre>(ct
         selectedList.clear()
     }
 
-    fun setGenreList(list: ArrayList<Genre>) {
-        this.selectedList = list
+    fun setGenreList(list: List<ContentIdName>) {
+        this.selectedList = list.toMutableList()
     }
+
 }

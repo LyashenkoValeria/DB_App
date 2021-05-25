@@ -12,7 +12,7 @@
         android:fontFamily="@font/lato"
         android:text="Выберите жанр"
         android:textColor="#444b52"
-        android:textSize="16sp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

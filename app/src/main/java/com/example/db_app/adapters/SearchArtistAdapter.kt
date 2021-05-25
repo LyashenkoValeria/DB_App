@@ -33,7 +33,7 @@ class SearchArtistAdapter(ctx: Context, allArtist: List<Artist>) :
                 val filterPattern = constraint.toString().toLowerCase(Locale.getDefault()).trim()
 
                 for (artist in fullArtistList) {
-                    if (artist.name.toLowerCase(Locale.getDefault()).startsWith(
+                    if (artist.fullname.toLowerCase(Locale.getDefault()).startsWith(
                             filterPattern
                         ) && !selectedArtists.contains(artist)
                     )
@@ -54,7 +54,7 @@ class SearchArtistAdapter(ctx: Context, allArtist: List<Artist>) :
         }
 
         override fun convertResultToString(resultValue: Any?): CharSequence {
-            return (resultValue as Artist).name
+            return (resultValue as Artist).fullname
         }
     }
 
@@ -73,7 +73,7 @@ class SearchArtistAdapter(ctx: Context, allArtist: List<Artist>) :
         val artist = getItem(position)
 
         artist?.let {
-            textLine.text = artist.name
+            textLine.text = artist.fullname
         }
 
         // todo: проверить (если что, вернуть то, то выше)
