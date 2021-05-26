@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.superUserFragment -> "Изменение БД"
                 R.id.viewedFragment -> resources.getString(R.string.viewed_menu)
                 R.id.recommendationFragment -> resources.getString(R.string.recommend_menu)
+                R.id.filterFragment -> "Фильтр"
                 // TODO: 19.05.2021 Добавить названия для остальных фрагментов
                 else -> ""
             }

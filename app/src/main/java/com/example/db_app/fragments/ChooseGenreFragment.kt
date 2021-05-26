@@ -13,7 +13,6 @@ import com.example.db_app.WebClient
 import com.example.db_app.adapters.GenreAdapter
 import com.example.db_app.dataClasses.Type
 import kotlinx.android.synthetic.main.fragment_choose_genre.*
-import kotlinx.android.synthetic.main.fragment_content_list.*
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -39,7 +38,7 @@ class ChooseGenreFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         choose_text.text = resources.getString(R.string.choose_genre_book)
-        val userToken = (requireActivity() as MainActivity).getUserToken()!!
+        val userToken = (requireActivity() as MainActivity).getUserToken()
 
         val genreAdapter = GenreAdapter(userToken)
         genre_recycler.layoutManager = LinearLayoutManager(requireContext())
@@ -74,9 +73,9 @@ class ChooseGenreFragment : Fragment() {
                     musicGenreList = (genre_recycler.adapter as GenreAdapter).getLikeGenreList()
 
                     // ОБновление данных в бд
-                    val callChangeBookGenre =  webClient.changeLikeGenreByType(Type.BOOK.t, bookGenreList, userToken)
+                    val callChangeGenres =  webClient.changeLikeGenre(bookGenreList,filmGenreList, musicGenreList, userToken)
 
-                    callChangeBookGenre.enqueue(object : Callback<ResponseBody> {
+                    callChangeGenres.enqueue(object : Callback<ResponseBody> {
                         override fun onResponse(
                             call: Call<ResponseBody>,
                             response: Response<ResponseBody>
@@ -88,32 +87,32 @@ class ChooseGenreFragment : Fragment() {
                     })
 
 
-                    val callChangeFilmGenre = webClient.changeLikeGenreByType(Type.FILM.t, filmGenreList, userToken)
-
-                    callChangeFilmGenre.enqueue(object : Callback<ResponseBody> {
-                        override fun onResponse(
-                            call: Call<ResponseBody>,
-                            response: Response<ResponseBody>
-                        ) {}
-
-                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                            Log.d("db", "Response = $t")
-                        }
-                    })
-
-
-                    val callChangeMusicGenre = webClient.changeLikeGenreByType(Type.MUSIC.t, musicGenreList, userToken)
-
-                    callChangeMusicGenre.enqueue(object : Callback<ResponseBody> {
-                        override fun onResponse(
-                            call: Call<ResponseBody>,
-                            response: Response<ResponseBody>
-                        ) {}
-
-                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                            Log.d("db", "Response = $t")
-                        }
-                    })
+//                    val callChangeFilmGenre = webClient.changeLikeGenre(Type.FILM.t, filmGenreList, userToken)
+//
+//                    callChangeFilmGenre.enqueue(object : Callback<ResponseBody> {
+//                        override fun onResponse(
+//                            call: Call<ResponseBody>,
+//                            response: Response<ResponseBody>
+//                        ) {}
+//
+//                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+//                            Log.d("db", "Response = $t")
+//                        }
+//                    })
+//
+//
+//                    val callChangeMusicGenre = webClient.changeLikeGenre(Type.MUSIC.t, musicGenreList, userToken)
+//
+//                    callChangeMusicGenre.enqueue(object : Callback<ResponseBody> {
+//                        override fun onResponse(
+//                            call: Call<ResponseBody>,
+//                            response: Response<ResponseBody>
+//                        ) {}
+//
+//                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+//                            Log.d("db", "Response = $t")
+//                        }
+//                    })
                     toBackFragment(true)
                 }
             }
@@ -151,4 +150,5 @@ class ChooseGenreFragment : Fragment() {
         else
             (requireActivity() as MainActivity).toContentList()
     }
+
 }

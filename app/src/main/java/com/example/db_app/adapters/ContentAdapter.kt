@@ -58,11 +58,14 @@ class ContentAdapter(private val userToken: String) :
                 response: Response<List<ContentIdName>>
             ) {
                 val content = response.body()
-                if (content != null) {
+                if (content == null) {
+                    contentList = emptyList()
+                    contentListFull = emptyList()
+                } else {
                     contentList = content
-                    contentListFull = response.body()!!
-                    notifyDataSetChanged()
+                    contentListFull = content
                 }
+                    notifyDataSetChanged()
             }
 
             override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {

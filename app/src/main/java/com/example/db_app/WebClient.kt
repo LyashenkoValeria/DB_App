@@ -77,10 +77,11 @@ interface WebClientService {
     ): Call<List<Int>>
 
     // Изменение лайкнутыых жанров по типу
-    @POST("user/update/genre/{type}")
-    fun changeLikeGenreByType(
-        @Path("type") type: String,
-        @Query("genres") likeBookGenre: List<Int>,
+    @POST("user/update/genre")
+    fun changeLikeGenre(
+        @Query("book_genres") likeBookGenre: List<Int>,
+        @Query("film_genres") likeFilmGenre: List<Int>,
+        @Query("music_genres") likeMusicGenre: List<Int>,
         @Header("Authorization") token: String
     ): Call<ResponseBody>
 
