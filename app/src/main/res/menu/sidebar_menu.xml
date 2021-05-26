@@ -17,12 +17,12 @@
             android:icon="@drawable/ic_tops"
             android:title="@string/tops_menu" />
         <item
-            android:id="@+id/recommend_menu"
+            android:id="@+id/recommendationFragment"
             android:checked="false"
             android:icon="@drawable/ic_recommend"
             android:title="@string/recommend_menu" />
         <item
-            android:id="@+id/viewed_menu"
+            android:id="@+id/viewedFragment"
             android:checked="false"
             android:icon="@drawable/ic_viewed"
             android:title="@string/viewed_menu" />

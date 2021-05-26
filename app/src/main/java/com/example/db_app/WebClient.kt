@@ -84,18 +84,13 @@ interface WebClientService {
         @Header("Authorization") token: String
     ): Call<ResponseBody>
 
-    // Получение списка людей по типу (применимо только для BOOK и FILM)
+    // Получение списка людей по типу (BOOK и MUSIC)
     @GET("people/{type}")
     fun getPeopleByType(
         @Path("type") type: String,
         @Header("Authorization") token: String
-    ): Call<List<People>>
+    ): Call<List<ContentIdName>>
 
-    // Получение списка артистов по типу (применимо только для BOOK и FILM)
-    @GET("people/music")
-    fun getArtists(@Header("Authorization") token: String): Call<List<Artist>>
-
-    // Получение списка ролей людей (применимо только для FILM)
     @GET("people/functions")
     fun getFunctions(@Header("Authorization") token: String): Call<List<ContentIdName>>
 
@@ -215,7 +210,72 @@ interface WebClientService {
         @Header("Authorization") token: String
     ): Call<Map<String, Int>>
 
+    //Получение списка просмотренных
+    @GET("user/{type}")
+    fun getViewedByType(
+        @Path("type") type: String,
+        @Header("Authorization") token: String
+    ): Call<List<ContentIdName>>
+
+    //Получение списка рекомендации
+    //TODO: Добавить запрос на рекомендации
+    @GET("user/recommended/{type}")
+    fun getRecommend(
+        @Path("type") type: String,
+        @Header("Authorization") token: String
+    ): Call<List<ContentIdName>>
+
+    /** ------------------------------ Работа с фильтраией ------------------------------ **/
+
+    //Получение списка фильтрации для книг
+    @GET("book/filter")
+    fun getFilterBook(
+        @Query("year_down") year_down: Int,
+        @Query("year_up") year_up: Int,
+        @Query("rating_down") rating_down: Int,
+        @Query("rating_up") rating_up: Int,
+        @Query("authors") authorsId: List<Int>?,
+        @Query("genres") genresId: List<Int>?,
+        @Header("Authorization") token: String
+    ): Call<List<ContentIdName>>
+
+    //Получение списка фильтрации для фильмов
+    @GET("film/filter")
+    fun getFilterFilm(
+        @Query("year_down") year_down: Int,
+        @Query("year_up") year_up: Int,
+        @Query("rating_down") rating_down: Int,
+        @Query("rating_up") rating_up: Int,
+        @Query("duration_down") duration_down: Int,
+        @Query("duration_up") duration_up: Int,
+        @Query("actors") actorsId: List<Int>?,
+        @Query("creators") creatorsId: List<Int>?,
+        @Query("genres") genresId: List<Int>?,
+        @Header("Authorization") token: String
+    ): Call<List<ContentIdName>>
+
+    //Получение списка фильтрации для фильмов
+    @GET("music/filter")
+    fun getFilterMusic(
+        @Query("genres") genresId: List<Int>?,
+        @Query("artists") artistsId: List<Int>?,
+        @Query("duration_down") duration_down: Int,
+        @Query("duration_up") duration_up: Int,
+        @Query("year_down") year_down: Int,
+        @Query("year_up") year_up: Int,
+        @Query("rating_down") rating_down: Int,
+        @Query("rating_up") rating_up: Int,
+        @Header("Authorization") token: String
+    ): Call<List<ContentIdName>>
+
+    // Получение людей фильмов (actor = true - актёры, = false - все остальные)
+    @GET("people/film")
+    fun getPeopleForFilm(
+        @Query("actors") actors: Boolean = true,
+        @Header("Authorization") token: String
+    ): Call<List<ContentIdName>>
 }
+
 
 //fun main() {
 //    val call = WebClient().getApi().saveFilm("test", 1, 2, "kek", null, null, null, null, mapOf("Kek" to 123, "lol" to 234), listOf(1), "kekToken")

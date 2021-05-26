@@ -22,11 +22,40 @@ enum class Type(val t: String) {
 //    BOOK(0), FILM(1), MUSIC(2)
 }
 
+enum class TypeLayout(val t: String) {
+    LIST("list"), VIEWED("viewed"), RECOMMEND("recommend")
+}
+
 
 data class ContentIdName(
     val id: Int,
     val name: String
-) {
+): Parcelable {
+
+    constructor(parcel: Parcel) : this(
+        parcel.readInt(),
+        parcel.readString()?: ""
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(id)
+        parcel.writeString(name)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<ContentIdName> {
+        override fun createFromParcel(parcel: Parcel): ContentIdName {
+            return ContentIdName(parcel)
+        }
+
+        override fun newArray(size: Int): Array<ContentIdName?> {
+            return arrayOfNulls(size)
+        }
+    }
+
     fun getTopName(): String = name.split('(')[0]
 
     fun getTopAuthor(): String = name.split("- ")[1].dropLast(1)
