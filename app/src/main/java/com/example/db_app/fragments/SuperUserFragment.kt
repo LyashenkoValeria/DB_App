@@ -17,9 +17,6 @@ import kotlinx.android.synthetic.main.fragment_super_user.*
 
 class SuperUserFragment : Fragment() {
 
-//    private var userToken = ""
-//    private val webClient = WebClient().getApi()
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -29,6 +26,12 @@ class SuperUserFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val userPermission = (requireActivity() as MainActivity).getUserPermission()
+        // Проверка на тот случай, если вдруг почему-то отобразилась эта влкадка у обычного пользователя
+        if (userPermission != 2) {
+            (requireActivity() as MainActivity).makeToast("Извините, у вас недостаточно прав.")
+            (requireActivity() as MainActivity).back()
+        }
 
         super_add_book.setOnClickListener {
             (requireActivity() as MainActivity).toAddContent(Type.BOOK)
@@ -53,10 +56,6 @@ class SuperUserFragment : Fragment() {
         super_add_top_music.setOnClickListener {
             (requireActivity() as MainActivity).toAddTop(Type.MUSIC)
         }
-//
-//        super_add_people.setOnClickListener {
-//
-//        }
 
         super.onViewCreated(view, savedInstanceState)
     }

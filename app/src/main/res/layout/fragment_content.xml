@@ -44,7 +44,35 @@
                 tools:text="Кровный безоговорочный коренастость. Изумительной мыто" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/content_id_row"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="@dimen/content_margin_top"
+                android:fontFamily="@font/lato"
+                android:text="id"
+                android:visibility="gone"
+                android:textColor="#444b52"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/content_name" />
+
+            <TextView
+                android:id="@+id/content_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:fontFamily="@font/lato"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/content_year"
+                app:layout_constraintTop_toTopOf="@+id/content_id_row"
+                tools:text="1020" />
+
+            <TextView
+                android:id="@+id/content_year_row"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -54,7 +82,7 @@
                 android:textColor="#444b52"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/content_name" />
+                app:layout_constraintTop_toBottomOf="@id/content_id" />
 
             <TextView
                 android:id="@+id/content_year"
@@ -66,8 +94,8 @@
                 android:textColor="#000000"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textView2"
-                app:layout_constraintTop_toTopOf="@+id/textView2"
+                app:layout_constraintStart_toEndOf="@+id/content_year_row"
+                app:layout_constraintTop_toTopOf="@+id/content_year_row"
                 tools:text="2000" />
 
             <TextView
@@ -79,7 +107,7 @@
                 android:text="@string/author_str"
                 android:textColor="#444b52"
                 android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="@+id/textView2"
+                app:layout_constraintStart_toStartOf="@+id/content_year_row"
                 app:layout_constraintTop_toBottomOf="@+id/content_year" />
 
             <TextView
@@ -103,7 +131,7 @@
                 android:text="@string/dur_str"
                 android:textColor="#444b52"
                 android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="@id/textView2"
+                app:layout_constraintStart_toStartOf="@id/content_year_row"
                 app:layout_constraintTop_toBottomOf="@id/book_music_author" />
 
             <TextView
@@ -153,7 +181,7 @@
                 android:textColor="#444b52"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toStartOf="@+id/content_year"
-                app:layout_constraintStart_toStartOf="@id/textView2"
+                app:layout_constraintStart_toStartOf="@id/content_year_row"
                 app:layout_constraintTop_toBottomOf="@id/film_actor" />
 
             <TextView
@@ -177,7 +205,7 @@
                 android:text="@string/genre_str"
                 android:textColor="#444b52"
                 android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="@+id/textView2"
+                app:layout_constraintStart_toStartOf="@+id/content_year_row"
                 app:layout_constraintTop_toBottomOf="@+id/film_maker" />
 
             <TextView
@@ -194,7 +222,7 @@
                 tools:text="Фэнтези" />
 
             <TextView
-                android:id="@+id/film_series_row"
+                android:id="@+id/content_series_row"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/content_margin_top"
@@ -202,71 +230,21 @@
                 android:text="@string/film_series_str"
                 android:textColor="#444b52"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="@+id/film_maker_row"
-                app:layout_constraintStart_toStartOf="@+id/textView2"
+                app:layout_constraintEnd_toStartOf="@+id/content_year"
+                app:layout_constraintStart_toStartOf="@+id/content_year_row"
                 app:layout_constraintTop_toBottomOf="@+id/content_genre" />
 
             <TextView
-                android:id="@+id/film_series"
+                android:id="@+id/content_series"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/lato"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/black"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="@+id/content_year"
                 app:layout_constraintStart_toStartOf="@+id/content_year"
-                app:layout_constraintTop_toTopOf="@+id/film_series_row"
+                app:layout_constraintTop_toTopOf="@+id/content_series_row"
                 tools:text="Гарри Поттер " />
-
-            <TextView
-                android:id="@+id/book_series_row"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/content_margin_top"
-                android:fontFamily="@font/lato"
-                android:text="@string/book_series_str"
-                android:textColor="#444b52"
-                android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="@+id/film_maker_row"
-                app:layout_constraintStart_toStartOf="@+id/textView2"
-                app:layout_constraintTop_toBottomOf="@+id/film_series" />
-
-            <TextView
-                android:id="@+id/book_series"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:fontFamily="@font/lato"
-                android:textColor="@color/colorAccent"
-                android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="@+id/content_year"
-                app:layout_constraintStart_toStartOf="@+id/content_year"
-                app:layout_constraintTop_toTopOf="@+id/book_series_row"
-                tools:text="Гарри Поттер" />
-
-            <TextView
-                android:id="@+id/music_album_row"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/content_margin_top"
-                android:fontFamily="@font/lato"
-                android:text="@string/album_str"
-                android:textColor="#444b52"
-                android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="@+id/textView2"
-                app:layout_constraintTop_toBottomOf="@+id/book_series" />
-
-            <TextView
-                android:id="@+id/music_album"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/lato"
-                android:textColor="@color/colorAccent"
-                android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="@+id/content_year"
-                app:layout_constraintStart_toStartOf="@+id/content_year"
-                app:layout_constraintTop_toTopOf="@+id/music_album_row"
-                tools:text="Origins" />
 
             <TextView
                 android:id="@+id/film_book_row"
@@ -277,8 +255,8 @@
                 android:text="@string/book_film_str"
                 android:textColor="#444b52"
                 android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="@+id/textView2"
-                app:layout_constraintTop_toBottomOf="@+id/music_album" />
+                app:layout_constraintStart_toStartOf="@+id/content_year_row"
+                app:layout_constraintTop_toBottomOf="@+id/content_series" />
 
             <TextView
                 android:id="@+id/film_book"
@@ -301,20 +279,29 @@
                 android:text="@string/mus_film_str"
                 android:textColor="#444b52"
                 android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="@+id/textView2"
+                app:layout_constraintStart_toStartOf="@+id/content_year_row"
                 app:layout_constraintTop_toBottomOf="@+id/film_book" />
 
-            <TextView
+<!--            <TextView-->
+<!--                android:id="@+id/film_music"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:fontFamily="@font/lato"-->
+<!--                android:textColor="@color/colorAccent"-->
+<!--                android:textSize="20sp"-->
+<!--                app:layout_constraintEnd_toEndOf="@+id/content_year"-->
+<!--                app:layout_constraintStart_toStartOf="@+id/content_year"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/film_music_row"-->
+<!--                tools:text="John Williams — Lumos!" />-->
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/film_music"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/lato"
-                android:textColor="@color/colorAccent"
-                android:textSize="20sp"
+                tools:itemCount="3"
+                tools:listitem="@layout/music_for_film_item"
                 app:layout_constraintEnd_toEndOf="@+id/content_year"
                 app:layout_constraintStart_toStartOf="@+id/content_year"
-                app:layout_constraintTop_toTopOf="@+id/film_music_row"
-                tools:text="John Williams — Lumos!" />
+                app:layout_constraintTop_toTopOf="@+id/film_music_row" />
 
             <TextView
                 android:id="@+id/content_top_row"
@@ -325,7 +312,7 @@
                 android:text="@string/top_str"
                 android:textColor="#444b52"
                 android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="@+id/textView2"
+                app:layout_constraintStart_toStartOf="@+id/content_year_row"
                 app:layout_constraintTop_toBottomOf="@+id/film_music" />
 
             <TextView
@@ -349,7 +336,7 @@
                 android:text="@string/pos_str"
                 android:textColor="#444b52"
                 android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="@+id/textView2"
+                app:layout_constraintStart_toStartOf="@+id/content_year_row"
                 app:layout_constraintTop_toBottomOf="@+id/content_top" />
 
             <TextView
@@ -373,7 +360,7 @@
                 android:text="@string/rating"
                 android:textColor="#444b52"
                 android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="@+id/textView2"
+                app:layout_constraintStart_toStartOf="@+id/content_year_row"
                 app:layout_constraintTop_toBottomOf="@+id/content_pos" />
 
             <TextView

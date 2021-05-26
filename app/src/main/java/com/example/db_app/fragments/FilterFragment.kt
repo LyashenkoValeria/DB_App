@@ -423,7 +423,7 @@ class FilterFragment : Fragment() {
     private fun setChipsArtists(listOfChips: ArrayList<Artist>, viewWithChips: NachoTextView) {
         val saveChips = mutableListOf<ChipInfo>()
         for (chip in listOfChips) {
-            saveChips.add(ChipInfo(chip.fullname, chip))
+            saveChips.add(ChipInfo(chip.name, chip))
         }
         viewWithChips.setTextWithChips(saveChips)
     }

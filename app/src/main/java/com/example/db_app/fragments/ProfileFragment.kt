@@ -31,7 +31,7 @@ class ProfileFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val userToken = (requireActivity() as MainActivity).getUserToken()!!
+        val userToken = (requireActivity() as MainActivity).getUserToken()
         val callUserInfo = webClient.getUserInfo(userToken)
 
         callUserInfo.enqueue(object : Callback<User> {

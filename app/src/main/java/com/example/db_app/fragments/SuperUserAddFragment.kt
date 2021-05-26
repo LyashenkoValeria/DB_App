@@ -21,6 +21,7 @@ import com.example.db_app.dataClasses.Genre
 import com.example.db_app.dataClasses.Type
 import kotlinx.android.synthetic.main.fragment_super_user_add.*
 import okhttp3.ResponseBody
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,7 +35,7 @@ class SuperUserAddFragment : Fragment() {
     private var funcSelected = ContentIdName(0, "")     // временное
     private var genres = listOf<Genre>()
 
-    private val peoplesFilmSelected = mutableMapOf<String, ContentIdName>()     // нужно
+    private val peoplesFilmSelected = mutableMapOf<String, Int>()     // нужно
     private val peoplesSelected = mutableListOf<String>()                       // нужно
     private val genresSelected = mutableListOf<ContentIdName>()                 // нужно
 
@@ -48,12 +49,28 @@ class SuperUserAddFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val typeStr = arguments?.getString("type") ?: "book"
+        val title: String
         type = when (typeStr) {
-            Type.BOOK.t -> Type.BOOK
-            Type.FILM.t -> Type.FILM
-            Type.MUSIC.t -> Type.MUSIC
-            else -> Type.BOOK
+            Type.BOOK.t -> {
+                title = "Создание книги"
+                Type.BOOK
+            }
+            Type.FILM.t -> {
+                title = "Создание фильма"
+                Type.FILM
+            }
+            Type.MUSIC.t -> {
+                title = "Создание музыки"
+                Type.MUSIC
+            }
+            else -> {
+                title = "Создание книги"
+                Type.BOOK
+            }
         }
+
+        (requireActivity() as MainActivity).setToolbarTitle(title)
+
         userToken = (requireActivity() as MainActivity).getUserToken()
 
         // Заполняем спиннер с жанрами
@@ -130,10 +147,9 @@ class SuperUserAddFragment : Fragment() {
                     val peopleFullName = super_people.text.toString()
 
                     if (peopleFullName.isNotEmpty()) {
-                        val peopleRole = funcSelected
-                        peoplesFilmSelected[peopleFullName] = peopleRole
+                        peoplesFilmSelected[peopleFullName] = funcSelected.id
                         super_peoples_list.text =
-                            "${super_peoples_list.text}\n$peopleFullName - ${peopleRole.name}"
+                            "${super_peoples_list.text}\n$peopleFullName - ${funcSelected.name}"
                         super_people.setText("")
                     } else
                         (requireActivity() as MainActivity).makeToast("Введите имя")
@@ -164,7 +180,6 @@ class SuperUserAddFragment : Fragment() {
                 super_series.hint = "Музыкальный альбом"
                 super_films_book_layout.visibility = View.GONE
                 super_films_music_layout.visibility = View.GONE
-                super_poster_layout.visibility = View.GONE
 
                 super_button_plus.setOnClickListener {
                     val peopleFullName = super_people.text.toString()
@@ -181,18 +196,22 @@ class SuperUserAddFragment : Fragment() {
 
         super_button_save.setOnClickListener {
             val name = super_name.text.toString()
-//            val year = super_year.text.toString().toInt()
-            val year = 2000
-//            val duration = super_duration.text.toString().toInt()
-            val duration = 12
+            val year = super_year.text.toString()
+            val duration = super_duration.text.toString()
             val desc = super_desc.text.toString()
-            val poster = super_poster.text.toString()
-            val series = super_series.text.toString()
-            val filmsBook = super_films_book.text.toString()
-            val filmsMusic = super_films_music.text.toString()
+            val poster =
+                if (super_poster.text.isNullOrEmpty()) null else super_poster.text.toString()
+            val series =
+                if (super_series.text.isNullOrEmpty()) null else super_series.text.toString()
+            val filmsBook =
+                if (super_films_book.text.isNullOrEmpty()) null else super_films_book.text.toString()
+            val filmsMusic =
+                if (super_films_music.text.isNullOrEmpty()) null else super_films_music.text.toString()
 
-            if (name.isEmpty() || year == 0 || (duration == 0 && type != Type.BOOK) ||
-                (desc.isEmpty() && type != Type.MUSIC) || (peoplesSelected.isEmpty() && peoplesFilmSelected.isEmpty()) || genresSelected.isEmpty()) {
+            if (name.isEmpty() || year.isEmpty() || (duration.isEmpty() && type != Type.BOOK) ||
+                (desc.isEmpty() && type != Type.MUSIC) ||
+                (peoplesSelected.isEmpty() && peoplesFilmSelected.isEmpty()) || genresSelected.isEmpty()
+            ) {
                 (requireActivity() as MainActivity).makeToast("Заполните обязательные поля.")
                 return@setOnClickListener
             }
@@ -200,50 +219,66 @@ class SuperUserAddFragment : Fragment() {
             val genresToCall = mutableListOf<Int>()
             genresSelected.forEach { genresToCall.add(it.id) }
 
-            val callSaveBook = webClient.saveBook(name, year, desc, poster, series, peoplesSelected, genresToCall, userToken)
+            val callSave = when (type) {
+                Type.BOOK -> webClient.saveBook(
+                    name,
+                    year.toInt(),
+                    desc,
+                    poster,
+                    series,
+                    peoplesSelected,
+                    genresToCall,
+                    userToken
+                )
+                Type.FILM -> webClient.saveFilm(
+                    name,
+                    year.toInt(),
+                    duration.toInt(),
+                    desc,
+                    poster,
+                    series,
+                    filmsBook,
+                    filmsMusic,
+                    JSONObject(peoplesFilmSelected as Map<*, *>).toString(),
+                    genresToCall,
+                    userToken
+                )
+                Type.MUSIC -> webClient.saveMusic(
+                    name,
+                    year.toInt(),
+                    duration.toInt(),
+                    poster,
+                    peoplesSelected,
+                    series,
+                    genresToCall,
+                    userToken
+                )
+            }
 
-            callSaveBook.enqueue(object : Callback<Int> {
+            callSave.enqueue(object : Callback<Map<String, Int>> {
                 override fun onResponse(
-                    call: Call<Int>,
-                    response: Response<Int>
+                    call: Call<Map<String, Int>>,
+                    response: Response<Map<String, Int>>
                 ) {
-                    if (response.body() != null) {
-                    (requireActivity() as MainActivity).makeToast("Данные успешно сохранены.")
-                    (requireActivity() as MainActivity).back()
-                    } else {
-                        (requireActivity() as MainActivity).makeToast("Кажется, что-то пошло не так.")
+                    val code = response.body()?.get("code")
+                    val msg = when (code) {
+                        0 -> "Данные успешно сохранены."
+                        10 -> "Указанная книга не существует."
+                        11 -> "Указанная песня не существует."
+                        else -> "Кажется, что-то пошло не так."
                     }
+
+                    (requireActivity() as MainActivity).makeToast(msg)
+                    if (code == 0)
+                        (requireActivity() as MainActivity).back()
                 }
 
-                override fun onFailure(call: Call<Int>, t: Throwable) {
+                override fun onFailure(call: Call<Map<String, Int>>, t: Throwable) {
                     Log.d("db", "Response = $t")
                     (requireActivity() as MainActivity).makeToast("Кажется, что-то пошло совсем не так.")
                 }
             })
 
-
-
-
-//            val callSave = when (type) {
-//                Type.BOOK -> webClient.saveBook()
-//                Type.FILM -> webClient.saveFilm()
-//                Type.MUSIC -> webClient.saveMusic()
-//            }
-//
-//            callSave.enqueue(object : Callback<ResponseBody> {
-//                override fun onResponse(
-//                    call: Call<ResponseBody>,
-//                    response: Response<ResponseBody>
-//                ) {
-//                    (requireActivity() as MainActivity).makeToast("Данные успешно сохранены.")
-//                    (requireActivity() as MainActivity).back()
-//                }
-//
-//                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-//                    Log.d("db", "Response = $t")
-//                    (requireActivity() as MainActivity).makeToast("Кажется, что-то пошло не так.")
-//                }
-//            })
         }
 
     }

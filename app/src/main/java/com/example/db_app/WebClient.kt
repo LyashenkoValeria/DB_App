@@ -1,11 +1,15 @@
 package com.example.db_app
 
+import android.util.Log
 import com.example.db_app.dataClasses.*
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
+import java.time.Duration
 
 class WebClient {
 
@@ -62,7 +66,8 @@ interface WebClientService {
     @GET("{type}_genre")
     fun getGenreByType(
         @Path("type") type: String,
-        @Header("Authorization") token: String): Call<List<Genre>>
+        @Header("Authorization") token: String
+    ): Call<List<Genre>>
 
     // Возврат лайкнутыых жанров по типу
     @GET("user/genre/{type}")
@@ -100,20 +105,41 @@ interface WebClientService {
         @Query("name") name: String,
         @Query("year") year: Int,
         @Query("description") desc: String,
-        @Query("poster") poster: String,
-        @Query("book_series") bookSeries: String,
+        @Query("poster") poster: String? = null,
+        @Query("book_series") bookSeries: String? = null,
         @Query("authors") authors: List<String>,
         @Query("genres") genres: List<Int>,
         @Header("Authorization") token: String
-    ): Call<Int>
+    ): Call<Map<String, Int>>
 
     // TODO: 25.05.2021
-    @POST("")
-    fun saveFilm(): Call<ResponseBody>
+    @POST("moderate/film")
+    fun saveFilm(
+        @Query("name") name: String,
+        @Query("year") year: Int,
+        @Query("duration") duration: Int,
+        @Query("description") desc: String,
+        @Query("poster") poster: String? = null,
+        @Query("film_series") filmSeries: String? = null,
+        @Query("book") book: String? = null,
+        @Query("music") music: String? = null,
+        @Query("peoples") peoples: String,
+        @Query("genres") genres: List<Int>,
+        @Header("Authorization") token: String
+    ): Call<Map<String, Int>>
 
-    // TODO: 25.05.2021
-    @POST("")
-    fun saveMusic(): Call<ResponseBody>
+    // Запись песни в бд и возврат его id, если всё ок
+    @POST("moderate/music")
+    fun saveMusic(
+        @Query("name") name: String,
+        @Query("year") year: Int,
+        @Query("duration") duration: Int,
+        @Query("poster") poster: String? = null,
+        @Query("artists") artists: List<String>,
+        @Query("albums") albums: String?,
+        @Query("genres") genres: List<Int>,
+        @Header("Authorization") token: String
+    ): Call<Map<String, Int>>
 
     // TODO: 25.05.2021
     @POST("")
@@ -192,5 +218,19 @@ interface WebClientService {
 }
 
 //fun main() {
-//    print(book?.getName())
+//    val call = WebClient().getApi().saveFilm("test", 1, 2, "kek", null, null, null, null, mapOf("Kek" to 123, "lol" to 234), listOf(1), "kekToken")
+//    call.enqueue(object : Callback<Int> {
+//        override fun onResponse(
+//            call: Call<Int>,
+//            response: Response<Int>
+//        ) {
+//            1+1
+//        }
+//
+//        override fun onFailure(call: Call<Int>, t: Throwable) {
+//            Log.d("db", "Response = $t")
+////            (requireActivity() as MainActivity).makeToast("Кажется, что-то пошло совсем не так.")
+//        }
+//    })
+//    1 + 1
 //}

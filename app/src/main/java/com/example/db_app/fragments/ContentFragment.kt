@@ -8,15 +8,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.db_app.MainActivity
 import com.example.db_app.R
 import com.example.db_app.WebClient
+import com.example.db_app.adapters.MusicForFilmAdapter
 import com.example.db_app.dataClasses.Book
 import com.example.db_app.dataClasses.Film
 import com.example.db_app.dataClasses.Music
 import com.example.db_app.dataClasses.Type
 import kotlinx.android.synthetic.main.fragment_content.*
+import kotlinx.android.synthetic.main.fragment_content_list.*
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -26,6 +30,7 @@ class ContentFragment : Fragment() {
     private var type = Type.BOOK
     private val webClient = WebClient().getApi()
     private var userToken: String? = null
+    private var userPermission = 1
     private var notViewedMsg = ""
     private var notRatedMsg = ""
 
@@ -39,6 +44,14 @@ class ContentFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         userToken = (requireActivity() as MainActivity).getUserToken()
+//        userPermission = (requireActivity() as MainActivity).getUserPermission()  TODO: раскомментировать
+        userPermission = 2
+
+        if (userPermission == 2) {
+            content_id_row.visibility = View.VISIBLE
+            content_id.visibility = View.VISIBLE
+        }
+
         val id = arguments?.getInt("id") ?: 1
         val t = arguments?.getString("type")
         when (t) {
@@ -64,8 +77,6 @@ class ContentFragment : Fragment() {
     }
 
 
-// TODO: 21.05.2021 Доделать переходы на серии и альбомы?
-
     private fun drawBook(id: Int) {
         val call = webClient.getBookForUser(id, userToken!!)
         call.enqueue(object : Callback<Book> {
@@ -82,25 +93,28 @@ class ContentFragment : Fragment() {
     }
 
     private fun drawViewBook(book: Book) {
-        content_poster.setImageResource(R.drawable.book_poster) // TODO: 20.05.2021 Обработка разных изображений?
-        content_name.text = book.name
-
         // отображение названия в toolbar
         (requireActivity() as MainActivity).setToolbarTitle(book.name)
+
+        content_poster.setImageResource(R.drawable.book_poster) // TODO: 20.05.2021 Обработка разных изображений?
+        if (userPermission == 2)
+            content_id.text = book.id.toString()
+        content_name.text = book.name
 
         content_year.text = book.year.toString()
         book_music_author.text = book.getAuthorsString()
         content_genre.text = book.getGenreString()
 
         // Скрытие и отображение серии книг
-        book_series.run {
+        content_series.run {
             val bookSeries = book.bookSeries
             visibility = if (bookSeries != null) {
-                book_series_row.visibility = View.VISIBLE
+                content_series_row.visibility = View.VISIBLE
+                content_series_row.text = "Серия книг"
                 text = bookSeries.name
                 View.VISIBLE
             } else {
-                book_series_row.visibility = View.GONE
+                content_series_row.visibility = View.GONE
                 View.GONE
             }
         }
@@ -157,10 +171,6 @@ class ContentFragment : Fragment() {
         film_actor.visibility = View.GONE
         film_maker_row.visibility = View.GONE
         film_maker.visibility = View.GONE
-        film_series_row.visibility = View.GONE
-        film_series.visibility = View.GONE
-        music_album_row.visibility = View.GONE
-        music_album.visibility = View.GONE
         film_book_row.visibility = View.GONE
         film_book.visibility = View.GONE
         film_music_row.visibility = View.GONE
@@ -183,11 +193,13 @@ class ContentFragment : Fragment() {
     }
 
     private fun drawViewFilm(film: Film) {
-        content_poster.setImageResource(R.drawable.film_poster)
-        content_name.text = film.name
-
         // отображение названия в toolbar
         (requireActivity() as MainActivity).setToolbarTitle(film.name)
+
+        content_poster.setImageResource(R.drawable.film_poster)
+        if (userPermission == 2)
+            content_id.text = film.id.toString()
+        content_name.text = film.name
 
         content_year.text = film.year.toString()
         film_music_dur.text = resources.getString(R.string.duration, film.duration)
@@ -202,7 +214,7 @@ class ContentFragment : Fragment() {
 
         // Скрытие и отображение создателей фильма
         val makers = film.getMakersString()
-        if (actors == null) {
+        if (makers == null) {
             film_maker_row.visibility = View.GONE
             film_maker.visibility = View.GONE
         } else
@@ -211,14 +223,15 @@ class ContentFragment : Fragment() {
         content_genre.text = film.getGenreString()
 
         // Скрытие и отображение серии фильма
-        film_series.run {
+        content_series.run {
             val filmSeries = film.filmSeries
             visibility = if (filmSeries != null) {
-                film_series_row.visibility = View.VISIBLE
+                content_series_row.visibility = View.VISIBLE
+                content_series_row.text = "Серия фильмов"
                 text = filmSeries.name
                 View.VISIBLE
             } else {
-                film_series_row.visibility = View.GONE
+                content_series_row.visibility = View.GONE
                 View.GONE
             }
         }
@@ -249,20 +262,17 @@ class ContentFragment : Fragment() {
             film_music_row.visibility = View.GONE
             film_music.visibility = View.GONE
         } else {
-            val musicString = film.getMusicString()
-            val spannableString = SpannableString(musicString)
-            spannableString.setSpan(
-                UnderlineSpan(),
-                0,
-                musicString.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-            film_music.text = spannableString
+            val musicAdapter = MusicForFilmAdapter(filmsMusic)
             // листенер для перехода к музыке
-            film_music.setOnClickListener {
-                // TODO: 20.05.2021 Пока что переход только к первой песне
-                (requireActivity() as MainActivity).toContent(Type.MUSIC, filmsMusic[0].id)
+            val musicListener = object : MusicForFilmAdapter.OnItemClickListener {
+                override fun onItemClick(position: Int) {
+                    val musicId = musicAdapter.getMusicIdByPosition(position)
+                    (requireActivity() as MainActivity).toContent(Type.MUSIC, musicId)
+                }
             }
+            musicAdapter.setOnItemClickListener(musicListener)
+            film_music.layoutManager = LinearLayoutManager(requireContext())
+            film_music.adapter = musicAdapter
         }
 
         // Скрытие и отображение топов
@@ -313,10 +323,6 @@ class ContentFragment : Fragment() {
         // Скрываем не нужное
         book_music_author_row.visibility = View.GONE
         book_music_author.visibility = View.GONE
-        book_series_row.visibility = View.GONE
-        book_series.visibility = View.GONE
-        music_album_row.visibility = View.GONE
-        music_album.visibility = View.GONE
     }
 
     private fun drawMusic(id: Int) {
@@ -335,11 +341,13 @@ class ContentFragment : Fragment() {
     }
 
     private fun drawViewMusic(music: Music) {
-        content_poster.setImageResource(R.drawable.music_poster)
-        content_name.text = music.name
-
         // отображение названия в toolbar
         (requireActivity() as MainActivity).setToolbarTitle(music.name)
+
+        content_poster.setImageResource(R.drawable.music_poster)
+        if (userPermission == 2)
+            content_id.text = music.id.toString()
+        content_name.text = music.name
 
         content_year.text = music.year.toString()
         book_music_author.text = music.getArtistString()
@@ -349,10 +357,12 @@ class ContentFragment : Fragment() {
         // Скрытие и отображение музыкальных альбомов
         val albums = music.albums
         if (albums.isEmpty()) {
-            music_album_row.visibility = View.GONE
-            music_album.visibility = View.GONE
-        } else
-            music_album.text = music.getAlbumsString()
+            content_series_row.visibility = View.GONE
+            content_series.visibility = View.GONE
+        } else {
+            content_series.text = music.getAlbumsString()
+            content_series_row.text = "Альбом"
+        }
 
         // Скрытие и отображение топов
         val musicTop = music.top
@@ -403,10 +413,6 @@ class ContentFragment : Fragment() {
         film_actor.visibility = View.GONE
         film_maker_row.visibility = View.GONE
         film_maker.visibility = View.GONE
-        film_series_row.visibility = View.GONE
-        film_series.visibility = View.GONE
-        book_series_row.visibility = View.GONE
-        book_series.visibility = View.GONE
         film_book_row.visibility = View.GONE
         film_book.visibility = View.GONE
         film_music_row.visibility = View.GONE

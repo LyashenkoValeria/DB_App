@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.db_app.MainActivity
 import com.example.db_app.fragments.EditDialogFragment.DialogType
@@ -83,10 +82,11 @@ class RegistrationFragment : Fragment() {
         callAuth.enqueue(object : Callback<Map<String, String?>> {
             override fun onResponse(call: Call<Map<String, String?>>, response: Response<Map<String, String?>>) {
                 val userToken = response.body()?.get("token")
+                val userPermission = response.body()?.get("role")
                 if (userToken == null)
                     (requireActivity() as MainActivity).back() // переход к авторизации
                 else {
-                    (requireActivity() as MainActivity).saveUserToken("Bearer $userToken")
+                    (requireActivity() as MainActivity).saveUserInfo("Bearer $userToken", userPermission?.toInt() ?: 1)
                     (requireActivity() as MainActivity).savePreviousFragment()
                     (requireActivity() as MainActivity).toChooseGenre()
                 }

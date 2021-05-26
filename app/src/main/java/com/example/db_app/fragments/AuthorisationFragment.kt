@@ -39,10 +39,11 @@ class AuthorisationFragment : Fragment() {
                 call.enqueue(object : Callback<Map<String, String?>> {
                     override fun onResponse(call: Call<Map<String, String?>>, response: Response<Map<String, String?>>) {
                         val userToken = response.body()?.get("token")
+                        val userPermission = response.body()?.get("role")
                         if (userToken == null)
                             (requireActivity() as MainActivity).makeToast(resources.getString(R.string.err_auth_data))
                         else {
-                            (requireActivity() as MainActivity).saveUserToken("Bearer $userToken")
+                            (requireActivity() as MainActivity).saveUserInfo("Bearer $userToken", userPermission?.toInt() ?: 1)
                             (requireActivity() as MainActivity).authToContentList()
                         }
                     }

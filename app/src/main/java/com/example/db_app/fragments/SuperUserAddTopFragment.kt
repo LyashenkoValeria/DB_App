@@ -39,12 +39,26 @@ class SuperUserAddTopFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val typeStr = arguments?.getString("type") ?: "book"
+        val title: String
         type = when (typeStr) {
-            Type.BOOK.t -> Type.BOOK
-            Type.FILM.t -> Type.FILM
-            Type.MUSIC.t -> Type.MUSIC
-            else -> Type.BOOK
+            Type.BOOK.t -> {
+                title = "Создание книжного топа"
+                Type.BOOK
+            }
+            Type.FILM.t -> {
+                title = "Создание топа фильмов"
+                Type.FILM}
+            Type.MUSIC.t -> {
+                title = "Создание музыкального топа"
+                Type.MUSIC
+            }
+            else -> {
+                title = "Создание книжного топа"
+                Type.BOOK
+            }
         }
+        (requireActivity() as MainActivity).setToolbarTitle(title)
+
         userToken = (requireActivity() as MainActivity).getUserToken()
 
         super_top_button_plus.setOnClickListener {
@@ -78,7 +92,6 @@ class SuperUserAddTopFragment : Fragment() {
                 ) {
                     (requireActivity() as MainActivity).makeToast("Данные успешно сохранены.")
                     (requireActivity() as MainActivity).back()
-
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {

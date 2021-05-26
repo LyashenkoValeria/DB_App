@@ -37,10 +37,8 @@ class ContentListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val userToken = (requireActivity() as MainActivity).getUserToken()!!
+        val userToken = (requireActivity() as MainActivity).getUserToken()
         type = (requireActivity() as MainActivity).typeContentList ?: Type.BOOK
-//        val position = (requireActivity() as MainActivity).posContentList ?: 0
-        // TODO: 21.05.2021 Сохранять позицию? Или как-нибудь перенести в адаптер? Прыгает на 0 при возврате
 
         val contentAdapter = ContentAdapter(userToken)
 
@@ -48,8 +46,6 @@ class ContentListFragment : Fragment() {
             override fun onItemClick(position: Int) {
                 val content = contentAdapter.getContentByPosition(position)
                 (requireActivity() as MainActivity).typeContentList = type
-//                (requireActivity() as MainActivity).posContentList =
-//                    (recycler.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
                 (requireActivity() as MainActivity).toContent(type, content.id)
             }
         })
@@ -57,7 +53,6 @@ class ContentListFragment : Fragment() {
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = contentAdapter
         (recycler.adapter as ContentAdapter).setContent(type)
-//        (recycler.layoutManager as LinearLayoutManager).scrollToPosition(position)
 
         // Установка листенера на toolbar
         val toolbarListener = View.OnClickListener {
@@ -99,19 +94,10 @@ class ContentListFragment : Fragment() {
                 }
             }
             changeList.value = true
-            // todo
 //            search_content.setQuery("", false)
 //            search_content.clearFocus()
             true
         }
-
-//        filter_button.setOnClickListener {
-//            var needRestoreFilters = false
-//            if (arguments?.getInt("typeFromFilter") != null) {
-//                needRestoreFilters = arguments?.getInt("typeFromFilter") == type.t
-//            }
-//            (requireActivity() as MainActivity).toFilter(contentAdapter.type, needRestoreFilters)
-//        }
 
 
         if (arguments?.getBoolean("fromFilter") != null && arguments?.getBoolean("fromFilter") == true) {

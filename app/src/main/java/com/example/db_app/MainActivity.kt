@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.profileFragment -> resources.getString(R.string.prof_str)
                 R.id.topListFragment -> resources.getString(R.string.tops_menu)
                 R.id.chooseGenreFragment -> "Жанры книг"
+                R.id.superUserFragment -> "Изменение БД"
                 // TODO: 19.05.2021 Добавить названия для остальных фрагментов
                 else -> ""
             }
@@ -67,9 +68,13 @@ class MainActivity : AppCompatActivity() {
 
 
 //  Проверка того, что пользователь уже авторизован
-        val userId = getUserToken()
-        if (userId == null || userId == "")
+        val userToken = getUserToken()
+        if (userToken == "") {
             toAuthorization()
+        }
+
+// Установка видимости на элемент бокового меню для модератора
+        setSuperUserMenu()
     }
 
     fun savePreviousFragment() {
@@ -83,6 +88,11 @@ class MainActivity : AppCompatActivity() {
     fun setToolbarTitle(title: String) {
         toolbar.title = title
         toolbar.setTitleTextAppearance(this, R.style.ToolbarTitle)
+    }
+
+    private fun setSuperUserMenu() {
+        val userPermission = getUserPermission()
+        sidebar.menu.findItem(R.id.superUserFragment).isVisible = userPermission == 2
     }
 
     fun makeToast(message: String) {
@@ -102,6 +112,7 @@ class MainActivity : AppCompatActivity() {
         val sp = this.getSharedPreferences("settings", MODE_PRIVATE)
         val editor = sp.edit()
         editor.putString("userToken", "")
+        editor.putInt("userPermission", -1)
         editor.apply()
 
         toAuthorization()
@@ -112,12 +123,20 @@ class MainActivity : AppCompatActivity() {
         return sp.getString("userToken", "") ?: ""
     }
 
-    fun saveUserToken(userToken: String) {
+    fun getUserPermission(): Int {
+        val sp = this.getSharedPreferences("settings", MODE_PRIVATE)
+        return sp.getInt("userPermission", 1)
+    }
+
+    fun saveUserInfo(userToken: String, userPermission: Int) {
         val sp = this.getSharedPreferences("settings", MODE_PRIVATE)
         val editor = sp.edit()
         editor.putString("userToken", userToken)
+        editor.putInt("userPermission", userPermission)
         editor.apply()
+        setSuperUserMenu()
     }
+
 
     private fun toAuthorization() {
         navController.navigate(R.id.authorisationFragment)
