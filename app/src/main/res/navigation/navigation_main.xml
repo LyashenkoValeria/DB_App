@@ -97,4 +97,20 @@
             android:id="@+id/action_filterFragment_to_contentListFragment"
             app:destination="@id/contentListFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/viewedFragment"
+        android:name="com.example.db_app.fragments.ViewedFragment"
+        android:label="ViewedFragment" >
+        <action
+            android:id="@+id/action_viewedFragment_to_contentFragment"
+            app:destination="@id/contentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recommendationFragment"
+        android:name="com.example.db_app.fragments.RecommendationFragment"
+        android:label="RecommendationFragment" >
+        <action
+            android:id="@+id/action_recommendationFragment_to_contentFragment"
+            app:destination="@id/contentFragment" />
+    </fragment>
 </navigation>

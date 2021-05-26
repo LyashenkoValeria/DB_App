@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.content_item.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.*
 import kotlin.collections.ArrayList
 
 class ContentAdapter(private val userToken: String) :
@@ -27,11 +26,8 @@ class ContentAdapter(private val userToken: String) :
     var contentListFull: List<ContentIdName> = listOf()
     private lateinit var listener: OnItemClickListener
 
-    var filterGenre = listOf<String>()
-    var filterMakers = arrayListOf<People>()
-    var filterArtists = arrayListOf<Artist>()
-    var filterSeekBars = intArrayOf()
     var filterChanges = true
+
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
@@ -48,9 +44,13 @@ class ContentAdapter(private val userToken: String) :
 
     override fun getItemCount(): Int = contentList.size
 
-    fun setContent(type: Type) {
+    fun setContent(type: Type, layout: TypeLayout) {
         this.type = type
-        val call = webClient.getContentListByType(type.t, userToken)
+        val call = when(layout) {
+            TypeLayout.LIST -> webClient.getContentListByType(type.t, userToken)
+            TypeLayout.VIEWED -> webClient.getViewedByType(type.t, userToken)
+            TypeLayout.RECOMMEND -> webClient.getRecommend(type.t, userToken)
+        }
 
         call.enqueue(object : Callback<List<ContentIdName>> {
             override fun onResponse(
@@ -125,144 +125,118 @@ class ContentAdapter(private val userToken: String) :
 
     private val contentFilter: Filter = object : Filter() {
         override fun performFiltering(constraint: CharSequence): FilterResults {
-            val result = FilterResults()
-
             val filterList = arrayListOf<ContentIdName>()
 
-            if (constraint.isEmpty() && filterChanges)
+            if (constraint.isEmpty() && filterChanges){
                 filterList.addAll(contentListFull)
-            else {
-                val filterPattern = constraint.toString().toLowerCase(Locale.getDefault()).trim()
+            } else {
+                val filterPattern = constraint.toString().toLowerCase().trim()
 
-                for (content1 in contentListFull) {
-                    val callContent = webClient.getContentById(type.t, content1.id, userToken)
-
-                    callContent.enqueue(object : Callback<Content> {
-                        override fun onResponse(call: Call<Content>, response: Response<Content>) {
-                            val content = response.body()!!
-                            // TODO: 22.05.2021 Падает при поиске тут
-                            if (content.name.toLowerCase(Locale.getDefault())
-                                    .startsWith(filterPattern) && checkFilter(content)
-                            ) {
-                                filterList.add(content.toContentIdName())
-                                result.values = filterList
-                            }
-                        }
-
-                        override fun onFailure(call: Call<Content>, t: Throwable) {
-                            Log.d("db", "Response = $t")
-                        }
-                    })
+                for (content in contentListFull) {
+                    if (content.name.toLowerCase().startsWith(filterPattern))
+                        filterList.add(content)
                 }
             }
 
-            // todo подумать над возвратом result
+            val result = FilterResults()
+            result.values = filterList
+
             return result
         }
 
-        override fun publishResults(constraint: CharSequence?, results: FilterResults) {
-            if (constraint != null) {
-                contentList = results.values as List<ContentIdName>
-                notifyDataSetChanged()
-            }
+        override fun publishResults(constraint: CharSequence, results: FilterResults) {
+            contentList = results.values as List<ContentIdName>
+            notifyDataSetChanged()
         }
     }
 
     fun setFilter(
-        genres: List<String>,
-        makers: ArrayList<People>,
-        artists: ArrayList<Artist>,
+        genres: List<Genre>,
+        actors: ArrayList<ContentIdName>,
+        makers: ArrayList<ContentIdName>,
         rangeBars: IntArray,
-        notChanged: Boolean
+        notChanged: Boolean,
+        typeFilter: Type
     ) {
-        this.filterGenre = genres
-        if (type == Type.FILM || type == Type.BOOK) {
-            this.filterMakers = makers
-        } else {
-            this.filterArtists = artists
+        this.type = typeFilter
+
+        val genresId = arrayListOf<Int>()
+        for (genre in genres) {
+            genresId.add(genre.id)
         }
-        this.filterSeekBars = rangeBars
+
+        val makersId = arrayListOf<Int>()
+        for (maker in makers) {
+            makersId.add(maker.id)
+        }
+
         this.filterChanges = notChanged
-    }
-
-
-    //TODO: Поправить получение из базы в соответствии с новым кодом
-    fun checkFilter(content: Content): Boolean {
-        val existGenre = if (filterGenre.isNotEmpty()) {
-            val contentGenres = content.genres.toMutableList()
-            contentGenres.retainAll(filterGenre)
-            contentGenres.isNotEmpty()
-        } else
-            true
-        val boundYears =
-            filterSeekBars[0] <= content.year && content.year <= filterSeekBars[1]
-        val boundRating =
-            filterSeekBars[4] <= content.rating && content.rating <= filterSeekBars[5]
-        var addToFilter = existGenre && boundYears && boundRating
 
         when (type) {
             Type.FILM -> {
-                if (filterMakers.isNotEmpty()) {
-                    val callFilm = webClient.getFilmForUser(content.id, userToken)
-
-                    callFilm.enqueue(object : Callback<Film> {
-                        override fun onResponse(call: Call<Film>, response: Response<Film>) {
-                            val film = response.body()!!
-                            //checkDur
-                            val checkDur = filterSeekBars[2] <= film.duration && film.duration <= filterSeekBars[3]
-                            //checkMakers
-                            val contentMakers = film.peoples.toMutableList()
-                            contentMakers.retainAll(filterMakers)
-                            addToFilter = addToFilter && contentMakers.isNotEmpty() && checkDur
-                        }
-                        override fun onFailure(call: Call<Film>, t: Throwable) {
-                            Log.d("db", "Response = $t")
-                        }
-                    })
+                val actorsId = arrayListOf<Int>()
+                for (actor in actors) {
+                    actorsId.add(actor.id)
                 }
+
+                val call = webClient.getFilterFilm(rangeBars[0], rangeBars[1],
+                    rangeBars[4], rangeBars[5], rangeBars[2], rangeBars[3], actorsId, makersId, genresId, userToken)
+
+                call.enqueue(object : Callback<List<ContentIdName>> {
+                    override fun onResponse(
+                        call: Call<List<ContentIdName>>,
+                        response: Response<List<ContentIdName>>
+                    ) {
+                        contentList = response.body()!!
+                        contentListFull = response.body()!!
+                        notifyDataSetChanged()
+                    }
+
+                    override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
+                        Log.d("db", "Response = $t")
+                    }
+                })
             }
-
-            Type.MUSIC -> {
-                if (filterArtists.isNotEmpty()) {
-                    val callMusic = webClient.getMusicForUser(content.id, userToken)
-
-                    callMusic.enqueue(object : Callback<Music> {
-                        override fun onResponse(call: Call<Music>, response: Response<Music>) {
-                            val music = response.body()!!
-                            //checkDur
-                            val checkDur =  filterSeekBars[2] <= music.duration && music.duration <= filterSeekBars[3]
-                            //checkMakers
-                            val contentArtists = music.artists.toMutableList()
-                            contentArtists.retainAll(filterArtists)
-                            addToFilter = addToFilter && contentArtists.isNotEmpty() && checkDur
-                        }
-                        override fun onFailure(call: Call<Music>, t: Throwable) {
-                            Log.d("db", "Response = $t")
-                        }
-                    })
-                }
-            }
-
             Type.BOOK -> {
-                if (filterMakers.isNotEmpty()) {
-                    val callBook = webClient.getBookForUser(content.id, userToken)
 
-                    callBook.enqueue(object : Callback<Book> {
-                        override fun onResponse(call: Call<Book>, response: Response<Book>) {
-                            val book = response.body()!!
-                            val contentMakers = book.authors.toMutableList()
-                            contentMakers.retainAll(filterMakers)
-                            addToFilter = addToFilter && contentMakers.isNotEmpty()
-                        }
-                        override fun onFailure(call: Call<Book>, t: Throwable) {
-                            Log.d("db", "Response = $t")
-                        }
-                    })
-                }
+                val call = webClient.getFilterBook(rangeBars[0], rangeBars[1],
+                    rangeBars[4], rangeBars[5],  makersId, genresId, userToken)
+
+                call.enqueue(object : Callback<List<ContentIdName>> {
+                    override fun onResponse(
+                        call: Call<List<ContentIdName>>,
+                        response: Response<List<ContentIdName>>
+                    ) {
+                        contentList = response.body()!!
+                        contentListFull = response.body()!!
+                        notifyDataSetChanged()
+                    }
+
+                    override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
+                        Log.d("db", "Response = $t")
+                    }
+                })
+            }
+            Type.MUSIC -> {
+                val call = webClient.getFilterMusic(genresId, makersId, rangeBars[2], rangeBars[3],
+                    rangeBars[0], rangeBars[1], rangeBars[4], rangeBars[5], userToken)
+
+                call.enqueue(object : Callback<List<ContentIdName>> {
+                    override fun onResponse(
+                        call: Call<List<ContentIdName>>,
+                        response: Response<List<ContentIdName>>
+                    ) {
+                        contentList = response.body()!!
+                        contentListFull = response.body()!!
+                        notifyDataSetChanged()
+                    }
+
+                    override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
+                        Log.d("db", "Response = $t")
+                    }
+                })
             }
         }
 
-        // todo: подумать над return
-        return addToFilter
     }
 }

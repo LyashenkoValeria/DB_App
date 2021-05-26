@@ -1,29 +1,35 @@
 package com.example.db_app.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.db_app.FilterViewModel
 import com.example.db_app.MainActivity
 import com.example.db_app.R
+import com.example.db_app.WebClient
 import com.example.db_app.adapters.ContentAdapter
-import com.example.db_app.dataClasses.Type
-import kotlinx.android.synthetic.main.activity_main.*
-import com.example.db_app.dataClasses.Artist
-import com.example.db_app.dataClasses.Genre
-import com.example.db_app.dataClasses.People
+import com.example.db_app.dataClasses.*
 import kotlinx.android.synthetic.main.fragment_content_list.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 
 
 class ContentListFragment : Fragment() {
 
+    private lateinit var viewModel: FilterViewModel
+    private val webClient = WebClient().getApi()
     private var type = Type.BOOK
     private var changeList = MutableLiveData(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        viewModel = ViewModelProvider(requireActivity()).get(FilterViewModel::class.java)
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
@@ -38,7 +44,8 @@ class ContentListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val userToken = (requireActivity() as MainActivity).getUserToken()!!
-        type = (requireActivity() as MainActivity).typeContentList ?: Type.BOOK
+        //type = (requireActivity() as MainActivity).typeContentList ?: Type.BOOK
+
 //        val position = (requireActivity() as MainActivity).posContentList ?: 0
         // TODO: 21.05.2021 Сохранять позицию? Или как-нибудь перенести в адаптер? Прыгает на 0 при возврате
 
@@ -56,7 +63,46 @@ class ContentListFragment : Fragment() {
 
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = contentAdapter
-        (recycler.adapter as ContentAdapter).setContent(type)
+
+        if (arguments?.getBoolean("fromFilter") != null && arguments?.getBoolean("fromFilter") == true) {
+            arguments?.putBoolean("fromFilter", false)
+            val filterGenre = arguments?.getParcelableArrayList<Genre>("genresList")!!
+
+            var filterActors = arrayListOf<ContentIdName>()
+            val filterMakers: ArrayList<ContentIdName>
+
+            when (arguments?.getString("typeFromFilter")) {
+                Type.FILM.t -> {
+                    type = Type.FILM
+                    filterActors = arguments?.getParcelableArrayList("actorsList")!!
+                    filterMakers = arguments?.getParcelableArrayList("makersList")!!
+                }
+                Type.MUSIC.t -> {
+                    type = Type.MUSIC
+                    filterMakers = arguments?.getParcelableArrayList("makersList")!!
+                }
+                else -> {
+                    type = Type.BOOK
+                    filterMakers = arguments?.getParcelableArrayList("makersList")!!
+                }
+            }
+            val filterSeekBars = arguments?.getIntArray("seekBars")!!
+            val notChanged = arguments?.getBoolean("notChanged")!!
+
+
+            (recycler.adapter as ContentAdapter).setFilter(
+                filterGenre,
+                filterActors,
+                filterMakers,
+                filterSeekBars,
+                notChanged,
+                type
+            )
+            changeList.value = true
+        } else {
+            (recycler.adapter as ContentAdapter).setContent(type, TypeLayout.LIST)
+        }
+
 //        (recycler.layoutManager as LinearLayoutManager).scrollToPosition(position)
 
         // Установка листенера на toolbar
@@ -72,12 +118,15 @@ class ContentListFragment : Fragment() {
             return@setOnNavigationItemReselectedListener
         }
 
+        loadDataForFilter()
+
         navigationView.setOnNavigationItemSelectedListener {
             when (it.title) {
                 resources.getString(R.string.books_str) -> {
                     if (type != Type.BOOK) {
                         type = Type.BOOK
-                        (recycler.adapter as ContentAdapter).setContent(type)
+                        loadDataForFilter()
+                        (recycler.adapter as ContentAdapter).setContent(type, TypeLayout.LIST)
                         (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
                     }
                 }
@@ -85,7 +134,8 @@ class ContentListFragment : Fragment() {
                 resources.getString(R.string.films_str) -> {
                     if (type != Type.FILM) {
                         type = Type.FILM
-                        (recycler.adapter as ContentAdapter).setContent(type)
+                        loadDataForFilter()
+                        (recycler.adapter as ContentAdapter).setContent(type, TypeLayout.LIST)
                         (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
                     }
                 }
@@ -93,57 +143,14 @@ class ContentListFragment : Fragment() {
                 resources.getString(R.string.mus_film_str) -> {
                     if (type != Type.MUSIC) {
                         type = Type.MUSIC
-                        (recycler.adapter as ContentAdapter).setContent(type)
+                        loadDataForFilter()
+                        (recycler.adapter as ContentAdapter).setContent(type, TypeLayout.LIST)
                         (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
                     }
                 }
             }
             changeList.value = true
-            // todo
-//            search_content.setQuery("", false)
-//            search_content.clearFocus()
             true
-        }
-
-//        filter_button.setOnClickListener {
-//            var needRestoreFilters = false
-//            if (arguments?.getInt("typeFromFilter") != null) {
-//                needRestoreFilters = arguments?.getInt("typeFromFilter") == type.t
-//            }
-//            (requireActivity() as MainActivity).toFilter(contentAdapter.type, needRestoreFilters)
-//        }
-
-
-        if (arguments?.getBoolean("fromFilter") != null && arguments?.getBoolean("fromFilter") == true) {
-            val filterGenre = arguments?.getParcelableArrayList<Genre>("genresList")!!
-            val filterGenreStrings = mutableListOf<String>()
-            filterGenre.forEach {
-                filterGenreStrings.add(it.name)
-            }
-
-            var filterMakers = arrayListOf<People>()
-            var filterArtists = arrayListOf<Artist>()
-
-            when (arguments?.getString("typeFromFilter")) {
-                Type.FILM.t -> {
-                    type = Type.FILM
-                    filterMakers = arguments?.getParcelableArrayList("makersList")!!
-                }
-                Type.MUSIC.t -> {
-                    type = Type.MUSIC
-                    filterArtists = arguments?.getParcelableArrayList("artistsList")!!
-                }
-                else -> {
-                    type = Type.BOOK
-                    filterMakers = arguments?.getParcelableArrayList("makersList")!!
-                }
-            }
-            val filterSeekBars = arguments?.getIntArray("seekBars")!!
-            val notChanged = arguments?.getBoolean("notChanged")!!
-
-            contentAdapter.setContent(type)
-            contentAdapter.setFilter(filterGenreStrings.toList(), filterMakers, filterArtists, filterSeekBars, notChanged)
-            changeList.value = true
         }
 
         super.onViewCreated(view, savedInstanceState)
@@ -180,6 +187,7 @@ class ContentListFragment : Fragment() {
                     searchView.clearFocus()
                     return false
                 }
+
                 override fun onQueryTextChange(newText: String): Boolean {
                     (recycler.adapter as ContentAdapter).filter.filter(newText)
                     return false
@@ -188,12 +196,114 @@ class ContentListFragment : Fragment() {
         }
 
         if (item.itemId == R.id.toolbar_filter) {
+
+
             var needRestoreFilters = false
             if (arguments?.getString("typeFromFilter") != null) {
                 needRestoreFilters = arguments?.getString("typeFromFilter") == type.t
             }
-            (requireActivity() as MainActivity).toFilter((recycler.adapter as ContentAdapter).type, needRestoreFilters)
+
+            (requireActivity() as MainActivity).toFilter(
+                (recycler.adapter as ContentAdapter).type,
+                needRestoreFilters
+            )
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun loadDataForFilter() {
+        val userToken = (requireActivity() as MainActivity).getUserToken()!!
+
+        var checkGenres = listOf<Genre>()
+        viewModel.getGenresForFilter(type).observe(requireActivity(), {
+            checkGenres = it
+        })
+
+        if (checkGenres.isEmpty()) {
+            val callGenre = webClient.getGenreByType(type.t, userToken)
+            callGenre.enqueue(object : Callback<List<Genre>> {
+                override fun onResponse(call: Call<List<Genre>>, response: Response<List<Genre>>) {
+                    viewModel.setGenresForFilter(type, response.body()!!)
+                }
+
+                override fun onFailure(call: Call<List<Genre>>, t: Throwable) {
+                    Log.d("db", "Response = $t")
+                }
+            })
+        }
+
+        if (checkEmptyList()) {
+            when (type) {
+                Type.FILM -> {
+
+                    val callActors = webClient.getPeopleForFilm(true, userToken)
+
+                    callActors.enqueue(object : Callback<List<ContentIdName>> {
+                        override fun onResponse(
+                            call: Call<List<ContentIdName>>,
+                            response: Response<List<ContentIdName>>
+                        ) {
+                            viewModel.setActorsForFilter(response.body()!!)
+                        }
+
+                        override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
+                            Log.d("db", "Response = $t")
+                        }
+                    })
+
+                    val callMakers = webClient.getPeopleForFilm(false, userToken)
+
+                    callMakers.enqueue(object : Callback<List<ContentIdName>> {
+                        override fun onResponse(
+                            call: Call<List<ContentIdName>>,
+                            response: Response<List<ContentIdName>>
+                        ) {
+                            viewModel.setPeopleForFilter(type, response.body()!!)
+                        }
+
+                        override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
+                            Log.d("db", "Response = $t")
+                        }
+                    })
+                }
+
+                else -> {
+                    val callMakers = webClient.getPeopleByType(type.t, userToken)
+
+                    callMakers.enqueue(object : Callback<List<ContentIdName>> {
+                        override fun onResponse(
+                            call: Call<List<ContentIdName>>,
+                            response: Response<List<ContentIdName>>
+                        ) {
+                            viewModel.setPeopleForFilter(type, response.body()!!)
+                        }
+
+                        override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
+                            Log.d("db", "Response = $t")
+                        }
+                    })
+                }
+            }
+        }
+
+    }
+
+    private fun checkEmptyList(): Boolean {
+        var makers = listOf<ContentIdName>()
+        viewModel.getPeopleForFilter(type).observe(requireActivity(), {
+            makers = it
+        })
+
+        var makerIsEmpty = makers.isEmpty()
+
+        if (type == Type.FILM) {
+            var actors = listOf<ContentIdName>()
+            viewModel.getActorsForFilter().observe(requireActivity(), {
+                actors = it
+            })
+
+            makerIsEmpty = makerIsEmpty && actors.isEmpty()
+        }
+        return makerIsEmpty
     }
 }

@@ -77,6 +77,14 @@ interface WebClientService {
         @Header("Authorization") token: String,
     ): Call<ResponseBody>
 
+    // Получение списка людей по типу (применимо только для BOOK и FILM)
+    @GET("people/{type}")
+    fun getPeopleByType(
+        @Path("type") type: String,
+        @Header("Authorization") token: String
+    ): Call<List<ContentIdName>>
+
+
     /** ------------------------------ Работа с топами ------------------------------ **/
 
     // Получение списка топов по типу контента
@@ -147,6 +155,106 @@ interface WebClientService {
         @Header("Authorization") token: String
     ): Call<Map<String, Int>>
 
+    //Получение списка просмотренных
+    @GET("user/{type}")
+    fun getViewedByType(
+        @Path("type") type: String,
+        @Header("Authorization") token: String
+    ): Call<List<ContentIdName>>
+
+    //Получение списка рекомендации
+    //TODO: Добавить запрос на рекомендации
+    @GET("user/recommended/{type}")
+    fun getRecommend(
+        @Path("type") type: String,
+        @Header("Authorization") token: String
+    ): Call<List<ContentIdName>>
+
+    /** ------------------------------ Работа с фильтраией ------------------------------ **/
+
+    //Получение списка фильтрации для книг
+    @GET("book/filter")
+    fun getFilterBook(
+        @Query("year_down") year_down: Int,
+        @Query("year_up") year_up: Int,
+        @Query("rating_down") rating_down: Int,
+        @Query("rating_up") rating_up: Int,
+        @Query("authors") authorsId: List<Int>?,
+        @Query("genres") genresId: List<Int>?,
+        @Header("Authorization") token: String
+    ): Call<List<ContentIdName>>
+
+    //Получение списка фильтрации для фильмов
+    @GET("film/filter")
+    fun getFilterFilm(
+        @Query("year_down") year_down: Int,
+        @Query("year_up") year_up: Int,
+        @Query("rating_down") rating_down: Int,
+        @Query("rating_up") rating_up: Int,
+        @Query("duration_down") duration_down: Int,
+        @Query("duration_up") duration_up: Int,
+        @Query("actors") actorsId: List<Int>?,
+        @Query("creators") creatorsId: List<Int>?,
+        @Query("genres") genresId: List<Int>?,
+        @Header("Authorization") token: String
+    ): Call<List<ContentIdName>>
+
+    //Получение списка фильтрации для фильмов
+    @GET("music/filter")
+    fun getFilterMusic(
+        @Query("genres") genresId: List<Int>?,
+        @Query("artists") artistsId: List<Int>?,
+        @Query("duration_down") duration_down: Int,
+        @Query("duration_up") duration_up: Int,
+        @Query("year_down") year_down: Int,
+        @Query("year_up") year_up: Int,
+        @Query("rating_down") rating_down: Int,
+        @Query("rating_up") rating_up: Int,
+        @Header("Authorization") token: String
+    ): Call<List<ContentIdName>>
+
+    @GET("people/film")
+    fun getPeopleForFilm(
+        @Query("actors") actors: Boolean = true,
+        @Header("Authorization") token: String
+    ): Call<List<ContentIdName>>
+
+
+
+    // TODO: 14.05.2021
+    @GET("")
+    fun getBookLikeGenre(@Header("Authorization") token: String): Call<List<Genre>>
+
+    @GET("")
+    fun getFilmLikeGenre(@Header("Authorization") token: String): Call<List<Genre>>
+
+    @GET("")
+    fun getMusicLikeGenre(@Header("Authorization") token: String): Call<List<Genre>>
+
+    // TODO: 16.05.2021 Как это вообще оформить?
+//    @SET("")
+    fun changeLikeBookGenre(userId: Int, likeBookGenre: List<Genre>): Call<Boolean>
+
+    // TODO: 16.05.2021 Как это вообще оформить?
+//    @SET("")
+    fun changeLikeFilmGenre(userId: Int, likeFilmGenre: List<Genre>): Call<Boolean>
+
+    // TODO: 16.05.2021 Как это вообще оформить?
+//    @SET("")
+    fun changeLikeMusicGenre(userId: Int, likeMusicGenre: List<Genre>): Call<Boolean>
+
+
+    //    val book = api.getBook(1).execute().body()
+//    fun getMusicGenreById(@Path("id") id: Int): Call<Genre>
+
+//    @GET("book")
+    fun getBooksOfTop(topId: Int): Call<List<ContentIdName>>
+
+//    @GET("film")
+    fun getFilmOfTop(topId: Int): Call<List<ContentIdName>>
+
+//    @GET("music")
+    fun getMusicOfTop(topId: Int): Call<List<ContentIdName>>
 }
 
 //fun main() {

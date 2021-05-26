@@ -88,4 +88,12 @@
 
     <string name="place_in_top">%1$d место</string>
 
+    <string name="genres_str">Жанры</string>
+    <string name="artists_str">Исполнители</string>
+    <string name="min_str">min</string>
+    <string name="max_str">max</string>
+    <string name="duration_str">Продолжительность</string>
+    <string name="reset_str">Сбросить</string>
+    <string name="choose_str">Выбрать</string>
+
 </resources>

@@ -10,10 +10,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.*
-import com.example.db_app.dataClasses.Type
-import com.example.db_app.dataClasses.Artist
-import com.example.db_app.dataClasses.Genre
-import com.example.db_app.dataClasses.People
+import com.example.db_app.dataClasses.*
 import com.example.db_app.fragments.EditDialogFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_profile.*
@@ -61,6 +58,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.profileFragment -> resources.getString(R.string.prof_str)
                 R.id.topListFragment -> resources.getString(R.string.tops_menu)
                 R.id.chooseGenreFragment -> "Жанры книг"
+                R.id.viewedFragment -> resources.getString(R.string.viewed_menu)
+                R.id.recommendationFragment -> resources.getString(R.string.recommend_menu)
                 // TODO: 19.05.2021 Добавить названия для остальных фрагментов
                 else -> ""
             }
@@ -180,9 +179,8 @@ class MainActivity : AppCompatActivity() {
 
     fun fromFilter(
         genres: ArrayList<Genre>,
-        actors: ArrayList<People>,
-        makers: ArrayList<People>,
-        artists: ArrayList<Artist>,
+        actors: ArrayList<ContentIdName>,
+        makers: ArrayList<ContentIdName>,
         rangeBars: IntArray,
         type: Type,
         dir: Boolean,
@@ -193,15 +191,11 @@ class MainActivity : AppCompatActivity() {
 
             when (type) {
                 Type.FILM -> {
-                    val allMakers = actors
-                    allMakers.addAll(makers)
+                    putParcelableArrayList("actorsList", actors)
                     putParcelableArrayList("makersList", makers)
                 }
-                Type.BOOK -> {
+                else -> {
                     putParcelableArrayList("makersList", makers)
-                }
-                Type.MUSIC -> {
-                    putParcelableArrayList("artistsList", artists)
                 }
             }
 

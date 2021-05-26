@@ -8,15 +8,15 @@ import android.widget.ArrayAdapter
 import android.widget.Filter
 import android.widget.Filterable
 import android.widget.TextView
-import com.example.db_app.dataClasses.People
+import com.example.db_app.dataClasses.ContentIdName
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-class SearchActorAdapter(ctx: Context, allPeople: List<People>) : ArrayAdapter<People>(ctx, 0, allPeople), Filterable {
+class SearchActorAdapter(ctx: Context, allPeople: List<ContentIdName>) : ArrayAdapter<ContentIdName>(ctx, 0, allPeople), Filterable {
 
     private val fullPeopleList = ArrayList(allPeople)
-    private var selectedPeople = arrayListOf<People>()
+    private var selectedPeople = arrayListOf<ContentIdName>()
 
     override fun getFilter(): Filter {
         return peopleFilter
@@ -24,7 +24,7 @@ class SearchActorAdapter(ctx: Context, allPeople: List<People>) : ArrayAdapter<P
 
     private val peopleFilter: Filter = object : Filter() {
         override fun performFiltering(constraint: CharSequence?): FilterResults {
-            val filterList = arrayListOf<People>()
+            val filterList = arrayListOf<ContentIdName>()
 
             if ((constraint == null || constraint.isEmpty()) && selectedPeople.size == 0){
                 filterList.addAll(fullPeopleList)
@@ -32,7 +32,7 @@ class SearchActorAdapter(ctx: Context, allPeople: List<People>) : ArrayAdapter<P
                 val filterPattern = constraint.toString().toLowerCase(Locale.getDefault()).trim()
 
                 for (people in fullPeopleList) {
-                    if (people.fullname.toLowerCase(Locale.getDefault()).startsWith(
+                    if (people.name.toLowerCase(Locale.getDefault()).startsWith(
                             filterPattern
                         ) && !selectedPeople.contains(people))
                         filterList.add(people)
@@ -47,12 +47,12 @@ class SearchActorAdapter(ctx: Context, allPeople: List<People>) : ArrayAdapter<P
 
         override fun publishResults(constraint: CharSequence?, results: FilterResults) {
             clear()
-            addAll(results.values as ArrayList<People>)
+            addAll(results.values as ArrayList<ContentIdName>)
             notifyDataSetChanged()
         }
 
         override fun convertResultToString(resultValue: Any?): CharSequence {
-            return (resultValue as People).fullname
+            return (resultValue as ContentIdName).name
         }
     }
 
@@ -71,28 +71,19 @@ class SearchActorAdapter(ctx: Context, allPeople: List<People>) : ArrayAdapter<P
         val people = getItem(position)
 
         people?.let {
-            textLine.text = people.fullname
+            textLine.text = people.name
         }
 
-//        textLine.setOnTouchListener { v, event ->
-//            selectedPeople.add(people!!)
-//            false
-//        }
-
-        // todo: проверить (если что, вернуть то, то выше)
-        textLine.setOnClickListener {
+        textLine.setOnTouchListener { v, event ->
             selectedPeople.add(people!!)
+            false
         }
 
         return textLine
     }
 
-    // todo: проверить, если что - вернуть
-//    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
-//        return super.getDropDownView(position, convertView, parent)
-//    }
 
-    fun getSelectedPeople(): ArrayList<People>{
+    fun getSelectedPeople(): ArrayList<ContentIdName>{
         return selectedPeople
     }
 
@@ -102,7 +93,7 @@ class SearchActorAdapter(ctx: Context, allPeople: List<People>) : ArrayAdapter<P
         }
     }
 
-    fun setSelectedPeople(newList: ArrayList<People>){
+    fun setSelectedPeople(newList: ArrayList<ContentIdName>){
         this.selectedPeople = newList
     }
 
