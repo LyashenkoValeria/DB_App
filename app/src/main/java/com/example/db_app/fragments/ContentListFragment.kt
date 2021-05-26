@@ -220,6 +220,7 @@ class ContentListFragment : Fragment() {
         })
 
         if (checkGenres.isEmpty()) {
+            
             val callGenre = webClient.getGenreByType(type.t, userToken)
             callGenre.enqueue(object : Callback<List<Genre>> {
                 override fun onResponse(call: Call<List<Genre>>, response: Response<List<Genre>>) {
