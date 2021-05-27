@@ -15,7 +15,6 @@ import com.example.db_app.MainActivity
 import com.example.db_app.R
 import com.example.db_app.WebClient
 import com.example.db_app.adapters.TopContentAdapter
-import com.example.db_app.dataClasses.ContentIdName
 import com.example.db_app.dataClasses.Top
 import com.example.db_app.dataClasses.Type
 import kotlinx.android.synthetic.main.fragment_top.*
@@ -40,8 +39,7 @@ class TopContentListFragment : Fragment() {
         val topId = arguments?.getInt("id") ?: 1
         val topName = arguments?.getString("name")
         (requireActivity() as MainActivity).setToolbarTitle(topName?:"")
-        val t = arguments?.getString("type")
-        val type = when (t) {
+        val type = when (arguments?.getString("type")) {
             Type.FILM.t -> Type.FILM
             Type.MUSIC.t -> Type.MUSIC
             else -> Type.BOOK

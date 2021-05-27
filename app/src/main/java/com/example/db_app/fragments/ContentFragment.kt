@@ -8,9 +8,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.db_app.MainActivity
 import com.example.db_app.R
 import com.example.db_app.WebClient
@@ -19,8 +19,8 @@ import com.example.db_app.dataClasses.Book
 import com.example.db_app.dataClasses.Film
 import com.example.db_app.dataClasses.Music
 import com.example.db_app.dataClasses.Type
+import kotlinx.android.synthetic.main.content_item.view.*
 import kotlinx.android.synthetic.main.fragment_content.*
-import kotlinx.android.synthetic.main.fragment_content_list.*
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -44,8 +44,8 @@ class ContentFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         userToken = (requireActivity() as MainActivity).getUserToken()
-//        userPermission = (requireActivity() as MainActivity).getUserPermission()  TODO: раскомментировать
-        userPermission = 2
+        userPermission = (requireActivity() as MainActivity).getUserPermission()
+//        userPermission = 2
 
         if (userPermission == 2) {
             content_id_row.visibility = View.VISIBLE
@@ -53,8 +53,7 @@ class ContentFragment : Fragment() {
         }
 
         val id = arguments?.getInt("id") ?: 1
-        val t = arguments?.getString("type")
-        when (t) {
+        when (arguments?.getString("type")) {
             Type.FILM.t -> {
                 type = Type.FILM
                 notViewedMsg = resources.getString(R.string.film_not_viewed)
@@ -96,7 +95,13 @@ class ContentFragment : Fragment() {
         // отображение названия в toolbar
         (requireActivity() as MainActivity).setToolbarTitle(book.name)
 
-        content_poster.setImageResource(R.drawable.book_poster) // TODO: 20.05.2021 Обработка разных изображений?
+//        content_poster.setImageResource(R.drawable.book_poster)
+        Glide
+            .with(this)
+            .load(book.poster)
+            .placeholder(R.drawable.book_poster)
+            .error(R.drawable.book_poster)
+            .into(content_poster)
         if (userPermission == 2)
             content_id.text = book.id.toString()
         content_name.text = book.name
@@ -196,7 +201,13 @@ class ContentFragment : Fragment() {
         // отображение названия в toolbar
         (requireActivity() as MainActivity).setToolbarTitle(film.name)
 
-        content_poster.setImageResource(R.drawable.film_poster)
+//        content_poster.setImageResource(R.drawable.film_poster)
+        Glide
+            .with(this)
+            .load(film.poster)
+            .placeholder(R.drawable.film_poster)
+            .error(R.drawable.film_poster)
+            .into(content_poster)
         if (userPermission == 2)
             content_id.text = film.id.toString()
         content_name.text = film.name
@@ -344,7 +355,13 @@ class ContentFragment : Fragment() {
         // отображение названия в toolbar
         (requireActivity() as MainActivity).setToolbarTitle(music.name)
 
-        content_poster.setImageResource(R.drawable.music_poster)
+//        content_poster.setImageResource(R.drawable.music_poster)
+        Glide
+            .with(this)
+            .load(music.poster)
+            .placeholder(R.drawable.music_poster)
+            .error(R.drawable.music_poster)
+            .into(content_poster)
         if (userPermission == 2)
             content_id.text = music.id.toString()
         content_name.text = music.name

@@ -19,6 +19,8 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var navController: NavController
     var typeContentList: Type? = null
+    var typeRecommendList: Type? = null
+    var typeViewedList: Type? = null
     var prevFragment: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,7 +63,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.viewedFragment -> resources.getString(R.string.viewed_menu)
                 R.id.recommendationFragment -> resources.getString(R.string.recommend_menu)
                 R.id.filterFragment -> "Фильтр"
-                // TODO: 19.05.2021 Добавить названия для остальных фрагментов
                 else -> ""
             }
         }
@@ -266,7 +267,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onSubmitClicked(typeOfDialog: EditDialogFragment.DialogType, newValue: String) {
-        // TODO: 21.05.2021 Для повторной скрытой авторизации надо знать пароль
         if (typeOfDialog == EditDialogFragment.DialogType.USERNAME)
             exit()
         if (typeOfDialog == EditDialogFragment.DialogType.EMAIL)

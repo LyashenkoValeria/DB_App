@@ -20,7 +20,6 @@ import com.example.db_app.dataClasses.ContentIdName
 import com.example.db_app.dataClasses.Genre
 import com.example.db_app.dataClasses.Type
 import kotlinx.android.synthetic.main.fragment_super_user_add.*
-import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -36,8 +35,8 @@ class SuperUserAddFragment : Fragment() {
     private var genres = listOf<Genre>()
 
     private val peoplesFilmSelected = mutableMapOf<String, Int>()     // нужно
-    private val peoplesSelected = mutableListOf<String>()                       // нужно
-    private val genresSelected = mutableListOf<ContentIdName>()                 // нужно
+    private val peoplesSelected = mutableListOf<String>()             // нужно
+    private val genresSelected = mutableListOf<ContentIdName>()       // нужно
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -239,7 +238,7 @@ class SuperUserAddFragment : Fragment() {
                     series,
                     filmsBook,
                     filmsMusic,
-                    JSONObject(peoplesFilmSelected as Map<*, *>).toString(),
+                    JSONObject(peoplesFilmSelected.toMap()).toString(),
                     genresToCall,
                     userToken
                 )

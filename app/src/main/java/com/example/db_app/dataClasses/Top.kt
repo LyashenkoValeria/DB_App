@@ -9,11 +9,11 @@ data class Top(
     val name: String,
     val content: List<TopEl>
 ) {
-    private val nameTop = name.split('(')[0]
-    private val authorTop = name.split("- ")[1].dropLast(1)
+//    private val nameTop = name.split('(')[0]
+//    private val authorTop = name.split("- ")[1].dropLast(1)
 
-    fun getNameTop() = nameTop
-    fun getAuthorTop() = authorTop
+//    fun getNameTop() = nameTop
+//    fun getAuthorTop() = authorTop
 }
 
 data class TopEl(

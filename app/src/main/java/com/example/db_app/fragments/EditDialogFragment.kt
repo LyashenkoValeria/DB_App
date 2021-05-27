@@ -25,7 +25,7 @@ class EditDialogFragment(private val userToken: String) : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view: View = inflater.inflate(R.layout.dialog_fragment_layout, container, false)
 
         view.run {

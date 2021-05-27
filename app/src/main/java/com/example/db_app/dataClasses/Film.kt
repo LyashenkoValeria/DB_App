@@ -10,7 +10,7 @@ data class Film(
     val rating: Double,
     val filmSeries: ContentIdName?,
     val book: ContentIdName?,
-    val music: List<ContentIdName>,   // TODO: 13.05.2021 надо это вообще?
+    val music: List<ContentIdName>,
     val peoples: List<People>,
     val genres: List<String>,
     val viewed: Boolean,
@@ -41,9 +41,6 @@ data class Film(
 
     fun getGenreString() = genres.joinToString(separator = ", ")
 
-    fun getMusicString() =
-        music.joinToString(separator = ",\n") { it.name } // TODO: 20.05.2021 Добавить получение из бд и исполнителя
-
     private fun initActors(actorsList: MutableList<People>) {
         for (people in peoples)
             if (people.function == "Актёр")
@@ -55,54 +52,10 @@ data class Film(
             if (people.function != "Актёр")
                 makersList.add(people)
     }
-
-//    fun getMakersString(): String? {
-//        val makers = emptyList<People>().toMutableList()
-//        initMakers(makers)
-//
-//        return if (makers.isEmpty())
-//            null
-//        else
-//            peoplesToString(makers)
-//    }
-//
-//    fun getActorsString(): String? {
-//        val actors = mutableListOf<People>()
-//        initActors(actors)
-//
-//        return if (actors.isEmpty())
-//            null
-//        else
-//            peoplesToString(actors)
-//    }
-//
-//    fun getGenreString() = genres.joinToString(separator = ", ")
-//
-//    fun getMusicString(): String {
-//        val sb = StringBuilder()
-//
-//        music.forEach {
-//            sb.append(it.name)
-//            if (music.indexOf(it) !== music.size - 1)
-//                sb.append("\n")
-//        }
-//        return sb.toString()
-//    }
-//
-//    private fun peoplesToString(peoples: List<People>): String {
-//        val sb = StringBuilder()
-//
-//        peoples.forEach {
-//            sb.append(it.getFullName())
-//            if (peoples.indexOf(it) !== peoples.size - 1)
-//                sb.append("\n")
-//        }
-//        return sb.toString()
-//    }
 }
 
-class FilmSeries(
-    val id: Int,
-    val name: String,
-    val description: String
-)
+//class FilmSeries(
+//    val id: Int,
+//    val name: String,
+//    val description: String
+//)

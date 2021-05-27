@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.top_item.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
 
 class TopsAdapter (private val userToken: String): RecyclerView.Adapter<TopsAdapter.TopsViewHolder>(),
     Filterable {
@@ -73,7 +74,7 @@ class TopsAdapter (private val userToken: String): RecyclerView.Adapter<TopsAdap
         })
     }
 
-    fun setOnItemClickListener(listener: TopsAdapter.OnItemClickListener) {
+    fun setOnItemClickListener(listener: OnItemClickListener) {
         this.listener = listener
     }
 

@@ -49,7 +49,6 @@ class AuthorisationFragment : Fragment() {
                     }
 
                     override fun onFailure(call: Call<Map<String, String?>>, t: Throwable) {
-                        // TODO: 19.05.2021 Ошибка при верном логине, но неверном пароле
 //                        (requireActivity() as MainActivity).makeToast(resources.getString(R.string.err_auth_data))
                         Log.d("db", "Response = $t")
                     }

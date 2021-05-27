@@ -216,6 +216,7 @@ class ContentListFragment : Fragment() {
             val callGenre = webClient.getGenreByType(type.t, userToken)
             callGenre.enqueue(object : Callback<List<Genre>> {
                 override fun onResponse(call: Call<List<Genre>>, response: Response<List<Genre>>) {
+                    if (response.body() != null)
                     viewModel.setGenresForFilter(type, response.body()!!)
                 }
 
@@ -226,56 +227,59 @@ class ContentListFragment : Fragment() {
         }
 
 //        if (checkEmptyList()) {
-            when (type) {
-                Type.FILM -> {
+        when (type) {
+            Type.FILM -> {
 
-                    val callActors = webClient.getPeopleForFilm(true, userToken)
+                val callActors = webClient.getPeopleForFilm(true, userToken)
 
-                    callActors.enqueue(object : Callback<List<ContentIdName>> {
-                        override fun onResponse(
-                            call: Call<List<ContentIdName>>,
-                            response: Response<List<ContentIdName>>
-                        ) {
-                            viewModel.setActorsForFilter(response.body()!!)
-                        }
+                callActors.enqueue(object : Callback<List<ContentIdName>> {
+                    override fun onResponse(
+                        call: Call<List<ContentIdName>>,
+                        response: Response<List<ContentIdName>>
+                    ) {
+                        if (response.body() != null)
+                        viewModel.setActorsForFilter(response.body()!!)
+                    }
 
-                        override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
-                            Log.d("db", "Response = $t")
-                        }
-                    })
+                    override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
+                        Log.d("db", "Response = $t")
+                    }
+                })
 
-                    val callMakers = webClient.getPeopleForFilm(false, userToken)
+                val callMakers = webClient.getPeopleForFilm(false, userToken)
 
-                    callMakers.enqueue(object : Callback<List<ContentIdName>> {
-                        override fun onResponse(
-                            call: Call<List<ContentIdName>>,
-                            response: Response<List<ContentIdName>>
-                        ) {
+                callMakers.enqueue(object : Callback<List<ContentIdName>> {
+                    override fun onResponse(
+                        call: Call<List<ContentIdName>>,
+                        response: Response<List<ContentIdName>>
+                    ) {
+                        if (response.body() != null)
+                        viewModel.setPeopleForFilter(type, response.body()!!)
+                    }
+
+                    override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
+                        Log.d("db", "Response = $t")
+                    }
+                })
+            }
+
+            else -> {
+                val callMakers = webClient.getPeopleByType(type.t, userToken)
+
+                callMakers.enqueue(object : Callback<List<ContentIdName>> {
+                    override fun onResponse(
+                        call: Call<List<ContentIdName>>,
+                        response: Response<List<ContentIdName>>
+                    ) {
+                        if (response.body() != null)
                             viewModel.setPeopleForFilter(type, response.body()!!)
-                        }
+                    }
 
-                        override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
-                            Log.d("db", "Response = $t")
-                        }
-                    })
-                }
-
-                else -> {
-                    val callMakers = webClient.getPeopleByType(type.t, userToken)
-
-                    callMakers.enqueue(object : Callback<List<ContentIdName>> {
-                        override fun onResponse(
-                            call: Call<List<ContentIdName>>,
-                            response: Response<List<ContentIdName>>
-                        ) {
-                            viewModel.setPeopleForFilter(type, response.body()!!)
-                        }
-
-                        override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
-                            Log.d("db", "Response = $t")
-                        }
-                    })
-                }
+                    override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
+                        Log.d("db", "Response = $t")
+                    }
+                })
+            }
 //            }
         }
 

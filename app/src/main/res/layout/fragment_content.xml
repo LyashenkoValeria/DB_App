@@ -190,6 +190,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/lato"
                 android:textColor="#000000"
+                android:minLines="2"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="@+id/content_year"
                 app:layout_constraintStart_toStartOf="@+id/content_year"
@@ -238,6 +239,7 @@
                 android:id="@+id/content_series"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:minLines="2"
                 android:fontFamily="@font/lato"
                 android:textColor="@color/black"
                 android:textSize="20sp"
@@ -423,7 +425,6 @@
                 app:layout_constraintStart_toEndOf="@id/content_user_rating"
                 app:layout_constraintTop_toTopOf="@id/content_user_rating" />
 
-            <!--            todo: отметить крсным то, на что можно нажать-->
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

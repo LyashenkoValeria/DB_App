@@ -1,6 +1,5 @@
 package com.example.db_app.adapters
 
-import android.text.style.UpdateLayout
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +8,7 @@ import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.bumptech.glide.Glide
 import com.example.db_app.MainActivity
 import com.example.db_app.R
 import com.example.db_app.WebClient
@@ -17,7 +17,6 @@ import kotlinx.android.synthetic.main.content_item.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.collections.ArrayList
 
 class ContentAdapter(private val activity: MainActivity) :
     RecyclerView.Adapter<ContentAdapter.ContentViewHolder>(), Filterable {
@@ -49,7 +48,7 @@ class ContentAdapter(private val activity: MainActivity) :
 
     fun setContent(type: Type, layout: TypeLayout) {
         this.type = type
-        val call = when(layout) {
+        val call = when (layout) {
             TypeLayout.LIST -> webClient.getContentListByType(type.t, userToken)
             TypeLayout.VIEWED -> webClient.getViewedByType(type.t, userToken)
             TypeLayout.RECOMMEND -> webClient.getRecommend(type.t, userToken)
@@ -61,11 +60,11 @@ class ContentAdapter(private val activity: MainActivity) :
                 response: Response<List<ContentIdName>>
             ) {
                 val content = response.body()
-                // TODO: 27.05.2021 разобраться с отображением при пустом списке
                 if (content == null) {
                     contentList = emptyList()
                     contentListFull = emptyList()
-                    printEmptyMessage(layout)
+                    if (userToken != "")
+                        printEmptyMessage(layout)
                 } else {
                     contentList = content
                     contentListFull = content
@@ -88,12 +87,12 @@ class ContentAdapter(private val activity: MainActivity) :
     fun printEmptyMessage(layout: TypeLayout) {
         val msg = when (layout) {
             TypeLayout.LIST -> "Кажется, тут пусто."
-            TypeLayout.RECOMMEND -> "Вы ещё не выбрали предпочтения в " + when(type) {
+            TypeLayout.RECOMMEND -> "Вы ещё не выбрали предпочтения в " + when (type) {
                 Type.BOOK -> "книжных жанрах."
                 Type.MUSIC -> "жанрах музыки."
                 Type.FILM -> "жанрах фильмов."
             }
-            TypeLayout.VIEWED -> "Вы ещё не просмотрели " + when(type) {
+            TypeLayout.VIEWED -> "Вы ещё не просмотрели " + when (type) {
                 Type.BOOK -> "ни одну книгу."
                 Type.MUSIC -> "ни одну песню."
                 Type.FILM -> "ни один фильм."
@@ -127,14 +126,19 @@ class ContentAdapter(private val activity: MainActivity) :
                 override fun onResponse(call: Call<Content>, response: Response<Content>) {
                     holder.itemView.run {
                         val item = response.body()
-                        if (item != null) { // TODO: 20.05.2021 Удалить или обрабатывать по-другому
-                            poster.setImageResource(
-                                when (type) {
-                                    Type.BOOK -> R.drawable.book_poster
-                                    Type.FILM -> R.drawable.film_poster
-                                    Type.MUSIC -> R.drawable.music_poster
-                                }
-                            )
+                        if (item != null) {
+
+                            val placeholder = when (type) {
+                                Type.BOOK -> R.drawable.book_poster
+                                Type.FILM -> R.drawable.film_poster
+                                Type.MUSIC -> R.drawable.music_poster
+                            }
+                            Glide
+                                .with(this)
+                                .load(item.poster)
+                                .placeholder(placeholder)
+                                .error(placeholder)
+                                .into(poster)
                             content_name.text = item.name
                             content_year.text = item.year.toString()
                             content_genre.text = item.getGenreString()
@@ -159,7 +163,7 @@ class ContentAdapter(private val activity: MainActivity) :
         override fun performFiltering(constraint: CharSequence): FilterResults {
             val filterList = arrayListOf<ContentIdName>()
 
-            if (constraint.isEmpty() && filterChanges){
+            if (constraint.isEmpty() && filterChanges) {
                 filterList.addAll(contentListFull)
             } else {
                 val filterPattern = constraint.toString().toLowerCase().trim()
@@ -211,8 +215,18 @@ class ContentAdapter(private val activity: MainActivity) :
                     actorsId.add(actor.id)
                 }
 
-                val call = webClient.getFilterFilm(rangeBars[0], rangeBars[1],
-                    rangeBars[4], rangeBars[5], rangeBars[2], rangeBars[3], actorsId, makersId, genresId, userToken)
+                val call = webClient.getFilterFilm(
+                    rangeBars[0],
+                    rangeBars[1],
+                    rangeBars[4],
+                    rangeBars[5],
+                    rangeBars[2],
+                    rangeBars[3],
+                    actorsId,
+                    makersId,
+                    genresId,
+                    userToken
+                )
 
                 call.enqueue(object : Callback<List<ContentIdName>> {
                     override fun onResponse(
@@ -231,8 +245,10 @@ class ContentAdapter(private val activity: MainActivity) :
             }
             Type.BOOK -> {
 
-                val call = webClient.getFilterBook(rangeBars[0], rangeBars[1],
-                    rangeBars[4], rangeBars[5],  makersId, genresId, userToken)
+                val call = webClient.getFilterBook(
+                    rangeBars[0], rangeBars[1],
+                    rangeBars[4], rangeBars[5], makersId, genresId, userToken
+                )
 
                 call.enqueue(object : Callback<List<ContentIdName>> {
                     override fun onResponse(
@@ -250,8 +266,10 @@ class ContentAdapter(private val activity: MainActivity) :
                 })
             }
             Type.MUSIC -> {
-                val call = webClient.getFilterMusic(genresId, makersId, rangeBars[2], rangeBars[3],
-                    rangeBars[0], rangeBars[1], rangeBars[4], rangeBars[5], userToken)
+                val call = webClient.getFilterMusic(
+                    genresId, makersId, rangeBars[2], rangeBars[3],
+                    rangeBars[0], rangeBars[1], rangeBars[4], rangeBars[5], userToken
+                )
 
                 call.enqueue(object : Callback<List<ContentIdName>> {
                     override fun onResponse(

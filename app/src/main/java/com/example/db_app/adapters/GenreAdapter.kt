@@ -28,7 +28,6 @@ class GenreAdapter(private val userToken: String) : RecyclerView.Adapter<GenreAd
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.genre_item, parent, false)
         return GenreViewHolder(view)
-
     }
 
     override fun onBindViewHolder(holder: GenreViewHolder, position: Int) {
@@ -65,11 +64,6 @@ class GenreAdapter(private val userToken: String) : RecyclerView.Adapter<GenreAd
         })
 
         val call2 = webClient.getLikeGenreByType(type.t, userToken)
-//        val call2 = when (type) {
-//            Type.BOOK -> webClient.getBookLikeGenre(userToken)
-//            Type.FILM -> webClient.getFilmLikeGenre(userToken)
-//            Type.MUSIC -> webClient.getMusicLikeGenre(userToken)
-//        }
         call2.enqueue(object : Callback<List<Int>> {
             override fun onResponse(call: Call<List<Int>>, response: Response<List<Int>>) {
                 likeGenreList = response.body()!!.toMutableList()

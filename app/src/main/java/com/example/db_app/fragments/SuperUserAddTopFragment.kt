@@ -17,6 +17,7 @@ import com.example.db_app.dataClasses.Type
 import kotlinx.android.synthetic.main.fragment_super_user_add.*
 import kotlinx.android.synthetic.main.fragment_super_user_add_top.*
 import okhttp3.ResponseBody
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,8 +27,8 @@ class SuperUserAddTopFragment : Fragment() {
     var userToken = ""
     private var type = Type.BOOK
     val webClient = WebClient().getApi()
-    val topList = mutableMapOf<Int, String>()
-    var count = 1
+    private val topList = mutableMapOf<String, String>()
+    private var count = 1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,7 +66,7 @@ class SuperUserAddTopFragment : Fragment() {
             val contentName = super_top_content.text.toString()
 
             if (contentName.isNotEmpty()) {
-                topList[count] = contentName
+                topList[count.toString()] = contentName
                 super_top_content_list.text = "${super_top_content_list.text}\n$count. $contentName"
                 super_top_content.setText("")
                 count++
@@ -83,18 +84,29 @@ class SuperUserAddTopFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val callSave = webClient.saveTop()
+            val topName = "$name (автор - $author)"
 
-            callSave.enqueue(object : Callback<ResponseBody> {
+            val callSave = webClient.saveTop(type.t, topName, JSONObject(topList.toMap()).toString(), userToken)
+
+            callSave.enqueue(object : Callback<Map<String, Int>> {
                 override fun onResponse(
-                    call: Call<ResponseBody>,
-                    response: Response<ResponseBody>
+                    call: Call<Map<String, Int>>,
+                    response: Response<Map<String, Int>>
                 ) {
-                    (requireActivity() as MainActivity).makeToast("Данные успешно сохранены.")
-                    (requireActivity() as MainActivity).back()
+                    val code = response.body()?.get("code")
+                    val msg = when (code) {
+                        0 -> "Данные успешно сохранены."
+                        21 -> "Одна из указанных книг не существует."
+                        22 -> "Один из указанных фильмов не существует."
+                        23 -> "Одна из указанных песен не существует."
+                        else -> "Кажется, что-то пошло не так."
+                    }
+                    (requireActivity() as MainActivity).makeToast(msg)
+                    if (code == 0)
+                        (requireActivity() as MainActivity).back()
                 }
 
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                override fun onFailure(call: Call<Map<String, Int>>, t: Throwable) {
                     Log.d("db", "Response = $t")
                     (requireActivity() as MainActivity).makeToast("Кажется, что-то пошло не так.")
                 }

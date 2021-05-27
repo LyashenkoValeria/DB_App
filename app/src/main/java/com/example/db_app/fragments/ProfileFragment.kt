@@ -72,17 +72,6 @@ class ProfileFragment : Fragment() {
     }
 
     private fun showDialog(buttonID: Int, userToken: String) {
-//        val listener = object : EditDialogFragment.OnSubmitClickListener{
-//            override fun onSubmitClicked(typeOfDialog: DialogType, newValue: String) {
-//                // TODO: 21.05.2021 Для повторной скрытой авторизации надо знать пароль
-//                if (typeOfDialog == DialogType.USERNAME)
-//                    (requireActivity() as MainActivity).exit()
-//                if (typeOfDialog == DialogType.EMAIL)
-//                    user_email.setText(newValue)
-//            }
-//        }
-
-//        val dialog = EditDialogFragment(userToken, listener)
         val dialog = EditDialogFragment(userToken)
         dialog.typeOfDialog = when (buttonID) {
             R.id.edit_login_button -> DialogType.USERNAME
@@ -91,34 +80,4 @@ class ProfileFragment : Fragment() {
         }
         dialog.show(requireActivity().supportFragmentManager, "EditDialogFragment")
     }
-
-
-
-//    fun updateUsername() {
-//        (requireActivity() as MainActivity).exit()
-//    }
-
-//    fun updateUsername(newUsername: String, pass: String) {
-//        val callReAuth = webClient.auth(newUsername, pass)
-//
-//        callReAuth.enqueue(object : Callback<Map<String, String?>> {
-//            override fun onResponse(call: Call<Map<String, String?>>, response: Response<Map<String, String?>>) {
-//                val userToken = response.body()?.get("token")
-//                if (userToken == null)
-//                    (requireActivity() as MainActivity).makeToast(resources.getString(R.string.err_auth_data))
-//                else {
-//                    (requireActivity() as MainActivity).saveUserToken("Bearer $userToken")
-//                    user_login.setText(newUsername)
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<Map<String, String?>>, t: Throwable) {
-//                Log.d("db", "Response = $t")
-//            }
-//        })
-//    }
-
-//    fun updateEmail(newEmail: String) {
-//        user_email.setText(newEmail)
-//    }
 }

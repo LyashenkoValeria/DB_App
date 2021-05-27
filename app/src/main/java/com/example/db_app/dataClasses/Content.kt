@@ -13,13 +13,12 @@ data class Content(
 ) {
     fun getGenreString() = genres.joinToString(separator = ", ")
 
-    fun toContentIdName(): ContentIdName = ContentIdName(id, name)
+//    fun toContentIdName(): ContentIdName = ContentIdName(id, name)
 }
 
 
 enum class Type(val t: String) {
     BOOK("book"), FILM("film"), MUSIC("music")
-//    BOOK(0), FILM(1), MUSIC(2)
 }
 
 enum class TypeLayout(val t: String) {

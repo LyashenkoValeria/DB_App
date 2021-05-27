@@ -1,15 +1,11 @@
 package com.example.db_app
 
-import android.util.Log
 import com.example.db_app.dataClasses.*
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
-import java.time.Duration
 
 class WebClient {
 
@@ -95,7 +91,7 @@ interface WebClientService {
     @GET("people/functions")
     fun getFunctions(@Header("Authorization") token: String): Call<List<ContentIdName>>
 
-    // Запись книги в бд и возврат его id, если всё ок
+    // Запись книги в бд
     @POST("moderate/book")
     fun saveBook(
         @Query("name") name: String,
@@ -108,7 +104,7 @@ interface WebClientService {
         @Header("Authorization") token: String
     ): Call<Map<String, Int>>
 
-    // TODO: 25.05.2021
+    // Запись фильма в бд
     @POST("moderate/film")
     fun saveFilm(
         @Query("name") name: String,
@@ -137,9 +133,13 @@ interface WebClientService {
         @Header("Authorization") token: String
     ): Call<Map<String, Int>>
 
-    // TODO: 25.05.2021
-    @POST("")
-    fun saveTop(): Call<ResponseBody>
+    @POST("moderate/top/{type}")
+    fun saveTop(
+        @Path("type") type: String,
+        @Query("name") name: String,
+        @Query("contents") contentList: String,
+        @Header("Authorization") token: String
+    ): Call<Map<String, Int>>
 
     /** ------------------------------ Работа с топами ------------------------------ **/
 
@@ -219,7 +219,6 @@ interface WebClientService {
     ): Call<List<ContentIdName>>
 
     //Получение списка рекомендации
-    //TODO: Добавить запрос на рекомендации
     @GET("user/recommended/{type}")
     fun getRecommend(
         @Path("type") type: String,

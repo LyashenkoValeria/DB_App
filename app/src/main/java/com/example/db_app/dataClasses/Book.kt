@@ -20,8 +20,8 @@ data class Book(
     fun getGenreString() = genres.joinToString(separator = ", ")
 }
 
-data class BookSeries(
-    val id: Int,
-    val name: String,
-    val description: String
-)
+//data class BookSeries(
+//    val id: Int,
+//    val name: String,
+//    val description: String
+//)

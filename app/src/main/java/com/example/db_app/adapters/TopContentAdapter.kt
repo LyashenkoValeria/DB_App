@@ -9,20 +9,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.db_app.R
 import com.example.db_app.WebClient
 import com.example.db_app.dataClasses.Content
-import com.example.db_app.dataClasses.Top
 import com.example.db_app.dataClasses.TopEl
 import com.example.db_app.dataClasses.Type
-import kotlinx.android.synthetic.main.content_item.view.*
 import kotlinx.android.synthetic.main.top_content_item.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class TopContentAdapter(private val contentList: List<TopEl>, private val type: Type, private val userToken: String) : RecyclerView.Adapter<TopContentAdapter.TopContentViewHolder>() {
-    // TODO: 22.05.2021 Не работатет. Получать контент по id и отрисовывать
+class TopContentAdapter(
+    private val contentList: List<TopEl>,
+    private val type: Type,
+    private val userToken: String
+) : RecyclerView.Adapter<TopContentAdapter.TopContentViewHolder>() {
     private lateinit var listener: OnItemClickListener
     private val webClient = WebClient().getApi()
 
@@ -31,7 +33,8 @@ class TopContentAdapter(private val contentList: List<TopEl>, private val type: 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopContentViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.top_content_item, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.top_content_item, parent, false)
         return TopContentViewHolder(view, listener)
     }
 
@@ -67,15 +70,21 @@ class TopContentAdapter(private val contentList: List<TopEl>, private val type: 
                 override fun onResponse(call: Call<Content>, response: Response<Content>) {
                     holder.itemView.run {
                         val item = response.body()
-                        if (item != null) { // TODO: 20.05.2021 Удалить или обрабатывать по-другому
-                            top_content_poster.setImageResource(
-                                when (type) {
-                                    Type.BOOK -> R.drawable.book_poster
-                                    Type.FILM -> R.drawable.film_poster
-                                    Type.MUSIC -> R.drawable.music_poster
-                                }
-                            )
-                            top_content_place.text =  resources.getString(R.string.place_in_top, contentId.position)
+                        if (item != null) {
+                            val placeholder = when (type) {
+                                Type.BOOK -> R.drawable.book_poster
+                                Type.FILM -> R.drawable.film_poster
+                                Type.MUSIC -> R.drawable.music_poster
+                            }
+
+                            Glide
+                                .with(this)
+                                .load(item.poster)
+                                .placeholder(placeholder)
+                                .error(placeholder)
+                                .into(top_content_poster)
+                            top_content_place.text =
+                                resources.getString(R.string.place_in_top, contentId.position)
                             top_content_name.text = item.name
                             top_content_year.text = item.year.toString()
                             top_content_genre.text = item.getGenreString()

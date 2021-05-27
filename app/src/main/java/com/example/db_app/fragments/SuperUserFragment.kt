@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.db_app.MainActivity
 import com.example.db_app.R
-import com.example.db_app.WebClient
 import com.example.db_app.dataClasses.Type
 import kotlinx.android.synthetic.main.fragment_super_user.*
 

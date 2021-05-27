@@ -31,14 +31,14 @@ class ViewedFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val userToken = (requireActivity() as MainActivity).getUserToken()
-        type = (requireActivity() as MainActivity).typeContentList ?: Type.BOOK
+        type = (requireActivity() as MainActivity).typeViewedList ?: Type.BOOK
 
         val contentAdapter = ContentAdapter(requireActivity() as MainActivity)
 
         contentAdapter.setOnItemClickListener(object : ContentAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 val content = contentAdapter.getContentByPosition(position)
-                (requireActivity() as MainActivity).typeContentList = type
+                (requireActivity() as MainActivity).typeViewedList = type
                 (requireActivity() as MainActivity).toContent(type, content.id)
             }
         })

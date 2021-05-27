@@ -12,7 +12,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.db_app.MainActivity
 import com.example.db_app.R
-import com.example.db_app.adapters.ContentAdapter
 import com.example.db_app.adapters.TopsAdapter
 import com.example.db_app.dataClasses.Type
 import kotlinx.android.synthetic.main.fragment_content_list.*

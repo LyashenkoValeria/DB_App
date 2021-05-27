@@ -25,11 +25,11 @@ class FilterFragment : Fragment() {
 
     private lateinit var viewModel: FilterViewModel
     var type = Type.BOOK
-    var selectedGenre = arrayListOf<Genre>()
-    var selectedActors = arrayListOf<ContentIdName>()
-    var selectedMakers = arrayListOf<ContentIdName>()
-    var rangeSeekbars = IntArray(6)
-    var notChanges = true
+    private var selectedGenre = arrayListOf<Genre>()
+    private var selectedActors = arrayListOf<ContentIdName>()
+    private var selectedMakers = arrayListOf<ContentIdName>()
+    private var rangeSeekbars = IntArray(6)
+    private var notChanges = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
