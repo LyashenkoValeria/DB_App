@@ -36,7 +36,7 @@ class TopContentListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val userToken = (requireActivity() as MainActivity).getUserToken()!!
+        val userToken = (requireActivity() as MainActivity).getUserToken()
         val topId = arguments?.getInt("id") ?: 1
         val topName = arguments?.getString("name")
         (requireActivity() as MainActivity).setToolbarTitle(topName?:"")

@@ -58,6 +58,7 @@ class ContentAdapter(private val userToken: String) :
                 response: Response<List<ContentIdName>>
             ) {
                 val content = response.body()
+                // TODO: 27.05.2021 разобраться с отображением при пустом списке
                 if (content == null) {
                     contentList = emptyList()
                     contentListFull = emptyList()
@@ -65,7 +66,7 @@ class ContentAdapter(private val userToken: String) :
                     contentList = content
                     contentListFull = content
                 }
-                    notifyDataSetChanged()
+                notifyDataSetChanged()
             }
 
             override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {

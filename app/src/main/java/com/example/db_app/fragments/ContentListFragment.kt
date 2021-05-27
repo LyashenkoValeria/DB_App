@@ -205,7 +205,7 @@ class ContentListFragment : Fragment() {
     }
 
     private fun loadDataForFilter() {
-        val userToken = (requireActivity() as MainActivity).getUserToken()!!
+        val userToken = (requireActivity() as MainActivity).getUserToken()
 
         var checkGenres = listOf<Genre>()
         viewModel.getGenresForFilter(type).observe(requireActivity(), {

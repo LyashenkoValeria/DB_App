@@ -32,7 +32,7 @@ class TopListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val userToken = (requireActivity() as MainActivity).getUserToken()!!
+        val userToken = (requireActivity() as MainActivity).getUserToken()
 
         val topsAdapter = TopsAdapter(userToken)
         topsAdapter.setOnItemClickListener(object : TopsAdapter.OnItemClickListener {
