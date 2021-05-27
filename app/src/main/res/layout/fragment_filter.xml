@@ -273,19 +273,6 @@
             </TableRow>
 
             <Button
-                android:id="@+id/button_clear_filter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                style="@style/Button"
-                android:text="@string/reset_str"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/button_choose_filter"
-                app:layout_constraintTop_toBottomOf="@+id/rating_filter" />
-
-            <Button
                 android:id="@+id/button_choose_filter"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -293,7 +280,21 @@
                 style="@style/Button"
                 android:text="@string/choose_str"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/button_clear_filter"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/button_clear_filter"
+                app:layout_constraintTop_toBottomOf="@+id/rating_filter" />
+
+            <Button
+                android:id="@+id/button_clear_filter"
+
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                style="@style/Button"
+                android:text="@string/reset_str"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/button_choose_filter"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/rating_filter" />
