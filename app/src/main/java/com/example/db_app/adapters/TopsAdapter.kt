@@ -8,22 +8,25 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.example.db_app.R
 import com.example.db_app.WebClient
 import com.example.db_app.dataClasses.ContentIdName
-import com.example.db_app.dataClasses.Top
 import com.example.db_app.dataClasses.Type
 import kotlinx.android.synthetic.main.top_item.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class TopsAdapter (private val userToken: String): RecyclerView.Adapter<TopsAdapter.TopsViewHolder>() {
+class TopsAdapter (private val userToken: String): RecyclerView.Adapter<TopsAdapter.TopsViewHolder>(),
+    Filterable {
 
     private val webClient = WebClient().getApi()
     private var type = Type.BOOK
     private var topsList = listOf<ContentIdName>()
+    private var topsListFull = listOf<ContentIdName>()
 
     private lateinit var listener: OnItemClickListener
 
@@ -60,6 +63,7 @@ class TopsAdapter (private val userToken: String): RecyclerView.Adapter<TopsAdap
         call.enqueue(object : Callback<List<ContentIdName>> {
             override fun onResponse(call: Call<List<ContentIdName>>, response: Response<List<ContentIdName>>) {
                 topsList = response.body()!!
+                topsListFull = response.body()!!
                 notifyDataSetChanged()
             }
 
@@ -84,6 +88,37 @@ class TopsAdapter (private val userToken: String): RecyclerView.Adapter<TopsAdap
                         listener.onItemClick(pos)
                 }
             }
+        }
+    }
+
+    override fun getFilter(): Filter {
+        return topFilter
+    }
+
+    private val topFilter: Filter = object : Filter() {
+        override fun performFiltering(constraint: CharSequence): FilterResults {
+            val filterList = arrayListOf<ContentIdName>()
+
+            if (constraint.isEmpty()){
+                filterList.addAll(topsListFull)
+            } else {
+                val filterPattern = constraint.toString().toLowerCase().trim()
+
+                for (top in topsListFull) {
+                    if (top.name.toLowerCase().contains(filterPattern))
+                        filterList.add(top)
+                }
+            }
+
+            val result = FilterResults()
+            result.values = filterList
+
+            return result
+        }
+
+        override fun publishResults(constraint: CharSequence, results: FilterResults) {
+            topsList = results.values as List<ContentIdName>
+            notifyDataSetChanged()
         }
     }
 }

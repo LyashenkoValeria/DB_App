@@ -115,7 +115,7 @@ class TopListFragment : Fragment() {
                 }
 
                 override fun onQueryTextChange(newText: String): Boolean {
-//                    (recycler.adapter as ContentAdapter).filter.filter(newText)
+                   (recycler.adapter as TopsAdapter).filter.filter(newText)
                     return false
                 }
             })
