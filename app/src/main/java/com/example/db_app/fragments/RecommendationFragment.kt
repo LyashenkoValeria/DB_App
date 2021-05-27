@@ -33,7 +33,7 @@ class RecommendationFragment : Fragment() {
         val userToken = (requireActivity() as MainActivity).getUserToken()
         type = (requireActivity() as MainActivity).typeContentList ?: Type.BOOK
 
-        val contentAdapter = ContentAdapter(userToken)
+        val contentAdapter = ContentAdapter(requireActivity() as MainActivity)
 
         contentAdapter.setOnItemClickListener(object : ContentAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {

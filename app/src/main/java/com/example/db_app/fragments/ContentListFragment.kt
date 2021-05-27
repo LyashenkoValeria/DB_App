@@ -43,10 +43,9 @@ class ContentListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val userToken = (requireActivity() as MainActivity).getUserToken()
 //        type = (requireActivity() as MainActivity).typeContentList ?: Type.BOOK
 
-        val contentAdapter = ContentAdapter(userToken)
+        val contentAdapter = ContentAdapter(requireActivity() as MainActivity)
 
         contentAdapter.setOnItemClickListener(object : ContentAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
@@ -226,7 +225,7 @@ class ContentListFragment : Fragment() {
             })
         }
 
-        if (checkEmptyList()) {
+//        if (checkEmptyList()) {
             when (type) {
                 Type.FILM -> {
 
@@ -277,27 +276,27 @@ class ContentListFragment : Fragment() {
                         }
                     })
                 }
-            }
+//            }
         }
 
     }
 
-    private fun checkEmptyList(): Boolean {
-        var makers = listOf<ContentIdName>()
-        viewModel.getPeopleForFilter(type).observe(requireActivity(), {
-            makers = it
-        })
-
-        var makerIsEmpty = makers.isEmpty()
-
-        if (type == Type.FILM) {
-            var actors = listOf<ContentIdName>()
-            viewModel.getActorsForFilter().observe(requireActivity(), {
-                actors = it
-            })
-
-            makerIsEmpty = makerIsEmpty && actors.isEmpty()
-        }
-        return makerIsEmpty
-    }
+//    private fun checkEmptyList(): Boolean {
+//        var makers = listOf<ContentIdName>()
+//        viewModel.getPeopleForFilter(type).observe(requireActivity(), {
+//            makers = it
+//        })
+//
+//        var makerIsEmpty = makers.isEmpty()
+//
+//        if (type == Type.FILM) {
+//            var actors = listOf<ContentIdName>()
+//            viewModel.getActorsForFilter().observe(requireActivity(), {
+//                actors = it
+//            })
+//
+//            makerIsEmpty = makerIsEmpty && actors.isEmpty()
+//        }
+//        return makerIsEmpty
+//    }
 }

@@ -73,47 +73,25 @@ class ChooseGenreFragment : Fragment() {
                     musicGenreList = (genre_recycler.adapter as GenreAdapter).getLikeGenreList()
 
                     // ОБновление данных в бд
-                    val callChangeGenres =  webClient.changeLikeGenre(bookGenreList,filmGenreList, musicGenreList, userToken)
+                    val callChangeGenres =  webClient.changeLikeGenre(bookGenreList, filmGenreList, musicGenreList, userToken)
 
                     callChangeGenres.enqueue(object : Callback<ResponseBody> {
                         override fun onResponse(
                             call: Call<ResponseBody>,
                             response: Response<ResponseBody>
-                        ) {}
+                        ) {
+                            val msg = if (response.isSuccessful)
+                                "Жанры успешно сохранены."
+                            else
+                                "Упс! Кажется, что-то пошло не так."
+                            (requireActivity() as MainActivity).makeToast(msg)
+                            toBackFragment()
+                        }
 
                         override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                             Log.d("db", "Response = $t")
                         }
                     })
-
-
-//                    val callChangeFilmGenre = webClient.changeLikeGenre(Type.FILM.t, filmGenreList, userToken)
-//
-//                    callChangeFilmGenre.enqueue(object : Callback<ResponseBody> {
-//                        override fun onResponse(
-//                            call: Call<ResponseBody>,
-//                            response: Response<ResponseBody>
-//                        ) {}
-//
-//                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-//                            Log.d("db", "Response = $t")
-//                        }
-//                    })
-//
-//
-//                    val callChangeMusicGenre = webClient.changeLikeGenre(Type.MUSIC.t, musicGenreList, userToken)
-//
-//                    callChangeMusicGenre.enqueue(object : Callback<ResponseBody> {
-//                        override fun onResponse(
-//                            call: Call<ResponseBody>,
-//                            response: Response<ResponseBody>
-//                        ) {}
-//
-//                        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-//                            Log.d("db", "Response = $t")
-//                        }
-//                    })
-                    toBackFragment(true)
                 }
             }
         }
@@ -121,7 +99,7 @@ class ChooseGenreFragment : Fragment() {
         button_back.setOnClickListener {
             when (type) {
                 Type.BOOK -> {
-                    toBackFragment(false)
+                    toBackFragment()
                 }
                 Type.FILM -> {
                     type = Type.BOOK
@@ -141,9 +119,7 @@ class ChooseGenreFragment : Fragment() {
         }
     }
 
-    private fun toBackFragment(save: Boolean) {
-        if (save)
-            (requireActivity() as MainActivity).makeToast("Жанры успешно сохранены.")
+    private fun toBackFragment() {
         val prevFrag = (requireActivity() as MainActivity).prevFragment
         if (prevFrag == R.id.profileFragment)
             (requireActivity() as MainActivity).back()

@@ -1,5 +1,6 @@
 package com.example.db_app.adapters
 
+import android.text.style.UpdateLayout
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.example.db_app.MainActivity
 import com.example.db_app.R
 import com.example.db_app.WebClient
 import com.example.db_app.dataClasses.*
@@ -17,11 +19,12 @@ import retrofit2.Callback
 import retrofit2.Response
 import kotlin.collections.ArrayList
 
-class ContentAdapter(private val userToken: String) :
+class ContentAdapter(private val activity: MainActivity) :
     RecyclerView.Adapter<ContentAdapter.ContentViewHolder>(), Filterable {
 
     private val webClient = WebClient().getApi()
     var type = Type.BOOK
+    private val userToken = activity.getUserToken()
     private var contentList: List<ContentIdName> = listOf()
     var contentListFull: List<ContentIdName> = listOf()
     private lateinit var listener: OnItemClickListener
@@ -62,6 +65,7 @@ class ContentAdapter(private val userToken: String) :
                 if (content == null) {
                     contentList = emptyList()
                     contentListFull = emptyList()
+                    printEmptyMessage(layout)
                 } else {
                     contentList = content
                     contentListFull = content
@@ -70,12 +74,33 @@ class ContentAdapter(private val userToken: String) :
             }
 
             override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
+                contentList = emptyList()
+                contentListFull = emptyList()
+                notifyDataSetChanged()
+                printEmptyMessage(layout)
                 Log.d("db", "Response = $t")
             }
         })
     }
 
     fun getContentByPosition(position: Int) = contentList[position]
+
+    fun printEmptyMessage(layout: TypeLayout) {
+        val msg = when (layout) {
+            TypeLayout.LIST -> "Кажется, тут пусто."
+            TypeLayout.RECOMMEND -> "Вы ещё не выбрали предпочтения в " + when(type) {
+                Type.BOOK -> "книжных жанрах."
+                Type.MUSIC -> "жанрах музыки."
+                Type.FILM -> "жанрах фильмов."
+            }
+            TypeLayout.VIEWED -> "Вы ещё не просмотрели " + when(type) {
+                Type.BOOK -> "ни одну книгу."
+                Type.MUSIC -> "ни одну песню."
+                Type.FILM -> "ни один фильм."
+            }
+        }
+        activity.makeToast(msg)
+    }
 
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
