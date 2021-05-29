@@ -22,6 +22,24 @@ class WebClient {
 
 interface WebClientService {
 
+    // Получение количества определённого контента
+    @GET("{type}/count")
+    fun getContentInfoByType(
+        @Path("type") type: String,
+        @Header("Authorization") token: String
+    ): Call<Map<String, Int>>
+
+    // Получение следующего слайса (из size элементов) контента (если id = null - для первого)
+    @GET("{type}/slice")
+    fun getNextPartContentByType(
+        @Path("type") type: String,
+        @Query("id") id: Int?,
+        @Query("size") size: Int,
+        @Header("Authorization") token: String
+    ): Call<List<Int>>
+
+
+
     // Получение книги, фильма или музыки (в зависимости от type) как Content
     @GET("{type}/{id}")
     fun getContentById(

@@ -1,32 +1,28 @@
 package com.example.db_app.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.db_app.FilterViewModel
-import com.example.db_app.MainActivity
-import com.example.db_app.R
-import com.example.db_app.WebClient
+import com.example.db_app.*
 import com.example.db_app.adapters.ContentAdapter
-import com.example.db_app.dataClasses.*
+import com.example.db_app.dataClasses.Type
+import com.example.db_app.dataClasses.TypeLayout
 import kotlinx.android.synthetic.main.fragment_content_list.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.util.*
 
 
 class ContentListFragment : Fragment() {
 
     private lateinit var viewModel: FilterViewModel
-    private val webClient = WebClient().getApi()
+    private val viewModelContentList: ViewModelContentList by activityViewModels()
     private var type = Type.BOOK
+    private var typeLayout = TypeLayout.LIST
     private var changeList = MutableLiveData(false)
+    var userToken = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         viewModel = ViewModelProvider(requireActivity()).get(FilterViewModel::class.java)
@@ -43,61 +39,30 @@ class ContentListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        type = (requireActivity() as MainActivity).typeContentList ?: Type.BOOK
+        userToken = (requireActivity() as MainActivity).getUserToken()
 
-        val contentAdapter = ContentAdapter(requireActivity() as MainActivity)
-
-        contentAdapter.setOnItemClickListener(object : ContentAdapter.OnItemClickListener {
+        val cursorAdapter = ContentAdapter(userToken, viewModelContentList)
+        cursorAdapter.setOnItemClickListener(object : ContentAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
-                val content = contentAdapter.getContentByPosition(position)
+                val contentId = cursorAdapter.getContentByPosition(position)
                 (requireActivity() as MainActivity).typeContentList = type
-                (requireActivity() as MainActivity).toContent(type, content.id)
+                (requireActivity() as MainActivity).toContent(type, contentId)
             }
         })
 
         recycler.layoutManager = LinearLayoutManager(requireContext())
-        recycler.adapter = contentAdapter
-
-        if (arguments?.getBoolean("fromFilter") != null && arguments?.getBoolean("fromFilter") == true) {
-            arguments?.putBoolean("fromFilter", false)
-            val filterGenre = arguments?.getParcelableArrayList<Genre>("genresList")!!
-
-            var filterActors = arrayListOf<ContentIdName>()
-            val filterMakers: ArrayList<ContentIdName>
-
-            when (arguments?.getString("typeFromFilter")) {
-                Type.FILM.t -> {
-                    type = Type.FILM
-                    filterActors = arguments?.getParcelableArrayList("actorsList")!!
-                    filterMakers = arguments?.getParcelableArrayList("makersList")!!
-                }
-                Type.MUSIC.t -> {
-                    type = Type.MUSIC
-                    filterMakers = arguments?.getParcelableArrayList("makersList")!!
-                }
-                else -> {
-                    type = Type.BOOK
-                    filterMakers = arguments?.getParcelableArrayList("makersList")!!
-                }
-            }
-            val filterSeekBars = arguments?.getIntArray("seekBars")!!
-            val notChanged = arguments?.getBoolean("notChanged")!!
+        recycler.adapter = cursorAdapter
 
 
-            (recycler.adapter as ContentAdapter).setFilter(
-                filterGenre,
-                filterActors,
-                filterMakers,
-                filterSeekBars,
-                notChanged,
-                type
-            )
-            changeList.value = true
-        } else {
-            (recycler.adapter as ContentAdapter).setContent(type, TypeLayout.LIST)
+        // Observer для отслеживания изменений в подгруженном списке контента
+        viewModelContentList.currentList.observe(requireActivity() as MainActivity) {
+            cursorAdapter.setContent(type, TypeLayout.LIST, it.size, mutableListOf<Int>().apply { addAll(it) } )
+            if (viewModelContentList.newTypeFlag)
+                (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+            // TODO: 30.05.2021
+            if (viewModelContentList.emptyFlag && viewModelContentList.newTypeFlag)
+                printEmptyMessage(typeLayout)
         }
-
-//        (recycler.layoutManager as LinearLayoutManager).scrollToPosition(position)
 
         // Установка листенера на toolbar
         val toolbarListener = View.OnClickListener {
@@ -112,42 +77,55 @@ class ContentListFragment : Fragment() {
             return@setOnNavigationItemReselectedListener
         }
 
-        loadDataForFilter()
-
         navigationView.setOnNavigationItemSelectedListener {
+            var new = false
             when (it.title) {
                 resources.getString(R.string.books_str) -> {
                     if (type != Type.BOOK) {
                         type = Type.BOOK
-                        loadDataForFilter()
-                        (recycler.adapter as ContentAdapter).setContent(type, TypeLayout.LIST)
-                        (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+                        new = true
                     }
                 }
 
                 resources.getString(R.string.films_str) -> {
                     if (type != Type.FILM) {
                         type = Type.FILM
-                        loadDataForFilter()
-                        (recycler.adapter as ContentAdapter).setContent(type, TypeLayout.LIST)
-                        (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+                        new = true
                     }
                 }
 
                 resources.getString(R.string.mus_film_str) -> {
                     if (type != Type.MUSIC) {
                         type = Type.MUSIC
-                        loadDataForFilter()
-                        (recycler.adapter as ContentAdapter).setContent(type, TypeLayout.LIST)
-                        (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+                        new = true
                     }
                 }
             }
-            changeList.value = true
+            if (new) {
+                viewModelContentList.updateContentForType(type)
+                changeList.value = true
+            }
             true
         }
 
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    private fun printEmptyMessage(layout: TypeLayout) {
+        val msg = when (layout) {
+            TypeLayout.LIST -> "Кажется, тут пусто."
+            TypeLayout.RECOMMEND -> "Вы ещё не выбрали предпочтения в " + when (type) {
+                Type.BOOK -> "книжных жанрах."
+                Type.MUSIC -> "жанрах музыки."
+                Type.FILM -> "жанрах фильмов."
+            }
+            TypeLayout.VIEWED -> "Вы ещё не просмотрели " + when (type) {
+                Type.BOOK -> "ни одну книгу."
+                Type.MUSIC -> "ни одну песню."
+                Type.FILM -> "ни один фильм."
+            }
+        }
+        (requireActivity() as MainActivity).makeToast(msg)
     }
 
     /** =================================    Работа с toolbar   ================================ **/
@@ -183,124 +161,23 @@ class ContentListFragment : Fragment() {
                 }
 
                 override fun onQueryTextChange(newText: String): Boolean {
-                    (recycler.adapter as ContentAdapter).filter.filter(newText)
+//                    (recycler.adapter as CursorAdapter).filter.filter(newText)
                     return false
                 }
             })
         }
 
-        if (item.itemId == R.id.toolbar_filter) {
-            var needRestoreFilters = false
-            if (arguments?.getString("typeFromFilter") != null) {
-                needRestoreFilters = arguments?.getString("typeFromFilter") == type.t
-            }
-
-            (requireActivity() as MainActivity).toFilter(
-                (recycler.adapter as ContentAdapter).type,
-                needRestoreFilters
-            )
-        }
+//        if (item.itemId == R.id.toolbar_filter) {
+//            var needRestoreFilters = false
+//            if (arguments?.getString("typeFromFilter") != null) {
+//                needRestoreFilters = arguments?.getString("typeFromFilter") == type.t
+//            }
+//
+//            (requireActivity() as MainActivity).toFilter(
+//                (recycler.adapter as ContentAdapter).type,
+//                needRestoreFilters
+//            )
+//        }
         return super.onOptionsItemSelected(item)
     }
-
-    private fun loadDataForFilter() {
-        val userToken = (requireActivity() as MainActivity).getUserToken()
-
-        var checkGenres = listOf<Genre>()
-        viewModel.getGenresForFilter(type).observe(requireActivity(), {
-            checkGenres = it
-        })
-
-        if (checkGenres.isEmpty()) {
-
-            val callGenre = webClient.getGenreByType(type.t, userToken)
-            callGenre.enqueue(object : Callback<List<Genre>> {
-                override fun onResponse(call: Call<List<Genre>>, response: Response<List<Genre>>) {
-                    if (response.body() != null)
-                    viewModel.setGenresForFilter(type, response.body()!!)
-                }
-
-                override fun onFailure(call: Call<List<Genre>>, t: Throwable) {
-                    Log.d("db", "Response = $t")
-                }
-            })
-        }
-
-//        if (checkEmptyList()) {
-        when (type) {
-            Type.FILM -> {
-
-                val callActors = webClient.getPeopleForFilm(true, userToken)
-
-                callActors.enqueue(object : Callback<List<ContentIdName>> {
-                    override fun onResponse(
-                        call: Call<List<ContentIdName>>,
-                        response: Response<List<ContentIdName>>
-                    ) {
-                        if (response.body() != null)
-                        viewModel.setActorsForFilter(response.body()!!)
-                    }
-
-                    override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
-                        Log.d("db", "Response = $t")
-                    }
-                })
-
-                val callMakers = webClient.getPeopleForFilm(false, userToken)
-
-                callMakers.enqueue(object : Callback<List<ContentIdName>> {
-                    override fun onResponse(
-                        call: Call<List<ContentIdName>>,
-                        response: Response<List<ContentIdName>>
-                    ) {
-                        if (response.body() != null)
-                        viewModel.setPeopleForFilter(type, response.body()!!)
-                    }
-
-                    override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
-                        Log.d("db", "Response = $t")
-                    }
-                })
-            }
-
-            else -> {
-                val callMakers = webClient.getPeopleByType(type.t, userToken)
-
-                callMakers.enqueue(object : Callback<List<ContentIdName>> {
-                    override fun onResponse(
-                        call: Call<List<ContentIdName>>,
-                        response: Response<List<ContentIdName>>
-                    ) {
-                        if (response.body() != null)
-                            viewModel.setPeopleForFilter(type, response.body()!!)
-                    }
-
-                    override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
-                        Log.d("db", "Response = $t")
-                    }
-                })
-            }
-//            }
-        }
-
-    }
-
-//    private fun checkEmptyList(): Boolean {
-//        var makers = listOf<ContentIdName>()
-//        viewModel.getPeopleForFilter(type).observe(requireActivity(), {
-//            makers = it
-//        })
-//
-//        var makerIsEmpty = makers.isEmpty()
-//
-//        if (type == Type.FILM) {
-//            var actors = listOf<ContentIdName>()
-//            viewModel.getActorsForFilter().observe(requireActivity(), {
-//                actors = it
-//            })
-//
-//            makerIsEmpty = makerIsEmpty && actors.isEmpty()
-//        }
-//        return makerIsEmpty
-//    }
 }

@@ -4,13 +4,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
-import com.example.db_app.MainActivity
 import com.example.db_app.R
+import com.example.db_app.ViewModelContentList
 import com.example.db_app.WebClient
 import com.example.db_app.dataClasses.*
 import kotlinx.android.synthetic.main.content_item.view.*
@@ -18,95 +16,52 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ContentAdapter(private val activity: MainActivity) :
-    RecyclerView.Adapter<ContentAdapter.ContentViewHolder>(), Filterable {
+class ContentAdapter(
+    private val userToken: String,
+    private val viewModel: ViewModelContentList
+) :
+    RecyclerView.Adapter<ContentAdapter.CursorViewHolder>() {
 
     private val webClient = WebClient().getApi()
-    var type = Type.BOOK
-    private val userToken = activity.getUserToken()
-    private var contentList: List<ContentIdName> = listOf()
-    var contentListFull: List<ContentIdName> = listOf()
+    private var type = Type.BOOK
+    private var layoutType = TypeLayout.LIST
     private lateinit var listener: OnItemClickListener
-
-    var filterChanges = true
-
+    private var contentList = listOf<Int>()
+    private var countContent: Int = 0
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContentViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CursorViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.content_item, parent, false)
-        return ContentViewHolder(view, listener)
+        return CursorViewHolder(view, listener)
     }
 
-    override fun onBindViewHolder(holder: ContentViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: CursorViewHolder, position: Int) {
+        if (position == countContent - 11)
+            viewModel.getMoreContent()
         holder.updateViewElement(holder, position)
     }
 
-    override fun getItemCount(): Int = contentList.size
+    override fun getItemCount(): Int = countContent
 
-    fun setContent(type: Type, layout: TypeLayout) {
+    fun setContent(type: Type, layout: TypeLayout, contentNum: Int, newList: List<Int>) {
         this.type = type
-        val call = when (layout) {
-            TypeLayout.LIST -> webClient.getContentListByType(type.t, userToken)
-            TypeLayout.VIEWED -> webClient.getViewedByType(type.t, userToken)
-            TypeLayout.RECOMMEND -> webClient.getRecommend(type.t, userToken)
-        }
-
-        call.enqueue(object : Callback<List<ContentIdName>> {
-            override fun onResponse(
-                call: Call<List<ContentIdName>>,
-                response: Response<List<ContentIdName>>
-            ) {
-                val content = response.body()
-                if (content == null) {
-                    contentList = emptyList()
-                    contentListFull = emptyList()
-                    if (userToken != "")
-                        printEmptyMessage(layout)
-                } else {
-                    contentList = content
-                    contentListFull = content
-                }
-                notifyDataSetChanged()
-            }
-
-            override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
-                contentList = emptyList()
-                contentListFull = emptyList()
-                notifyDataSetChanged()
-                printEmptyMessage(layout)
-                Log.d("db", "Response = $t")
-            }
-        })
+        countContent = contentNum
+        contentList = newList
+        layoutType = layout
+        notifyDataSetChanged()
     }
+
 
     fun getContentByPosition(position: Int) = contentList[position]
-
-    fun printEmptyMessage(layout: TypeLayout) {
-        val msg = when (layout) {
-            TypeLayout.LIST -> "Кажется, тут пусто."
-            TypeLayout.RECOMMEND -> "Вы ещё не выбрали предпочтения в " + when (type) {
-                Type.BOOK -> "книжных жанрах."
-                Type.MUSIC -> "жанрах музыки."
-                Type.FILM -> "жанрах фильмов."
-            }
-            TypeLayout.VIEWED -> "Вы ещё не просмотрели " + when (type) {
-                Type.BOOK -> "ни одну книгу."
-                Type.MUSIC -> "ни одну песню."
-                Type.FILM -> "ни один фильм."
-            }
-        }
-        activity.makeToast(msg)
-    }
-
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.listener = listener
     }
 
-    inner class ContentViewHolder(itemView: View, listener: OnItemClickListener) :
+    inner class CursorViewHolder(itemView: View, listener: OnItemClickListener) :
         ViewHolder(itemView) {
         init {
             itemView.apply {
@@ -118,9 +73,8 @@ class ContentAdapter(private val activity: MainActivity) :
             }
         }
 
-        fun updateViewElement(holder: ContentViewHolder, position: Int) {
-            val contentId = contentList[position].id
-            val call = webClient.getContentById(type.t, contentId, userToken)
+        fun updateViewElement(holder: CursorViewHolder, position: Int) {
+            val call = webClient.getContentById(type.t, contentList[position], userToken)
 
             call.enqueue(object : Callback<Content> {
                 override fun onResponse(call: Call<Content>, response: Response<Content>) {
@@ -155,138 +109,4 @@ class ContentAdapter(private val activity: MainActivity) :
         }
     }
 
-    override fun getFilter(): Filter {
-        return contentFilter
-    }
-
-    private val contentFilter: Filter = object : Filter() {
-        override fun performFiltering(constraint: CharSequence): FilterResults {
-            val filterList = arrayListOf<ContentIdName>()
-
-            if (constraint.isEmpty() && filterChanges) {
-                filterList.addAll(contentListFull)
-            } else {
-                val filterPattern = constraint.toString().toLowerCase().trim()
-
-                for (content in contentListFull) {
-                    if (content.name.toLowerCase().startsWith(filterPattern))
-                        filterList.add(content)
-                }
-            }
-
-            val result = FilterResults()
-            result.values = filterList
-
-            return result
-        }
-
-        override fun publishResults(constraint: CharSequence, results: FilterResults) {
-            contentList = results.values as List<ContentIdName>
-            notifyDataSetChanged()
-        }
-    }
-
-    fun setFilter(
-        genres: List<Genre>,
-        actors: ArrayList<ContentIdName>,
-        makers: ArrayList<ContentIdName>,
-        rangeBars: IntArray,
-        notChanged: Boolean,
-        typeFilter: Type
-    ) {
-        this.type = typeFilter
-
-        val genresId = arrayListOf<Int>()
-        for (genre in genres) {
-            genresId.add(genre.id)
-        }
-
-        val makersId = arrayListOf<Int>()
-        for (maker in makers) {
-            makersId.add(maker.id)
-        }
-
-        this.filterChanges = notChanged
-
-        when (type) {
-            Type.FILM -> {
-                val actorsId = arrayListOf<Int>()
-                for (actor in actors) {
-                    actorsId.add(actor.id)
-                }
-
-                val call = webClient.getFilterFilm(
-                    rangeBars[0],
-                    rangeBars[1],
-                    rangeBars[4],
-                    rangeBars[5],
-                    rangeBars[2],
-                    rangeBars[3],
-                    actorsId,
-                    makersId,
-                    genresId,
-                    userToken
-                )
-
-                call.enqueue(object : Callback<List<ContentIdName>> {
-                    override fun onResponse(
-                        call: Call<List<ContentIdName>>,
-                        response: Response<List<ContentIdName>>
-                    ) {
-                        contentList = response.body()!!
-                        contentListFull = response.body()!!
-                        notifyDataSetChanged()
-                    }
-
-                    override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
-                        Log.d("db", "Response = $t")
-                    }
-                })
-            }
-            Type.BOOK -> {
-
-                val call = webClient.getFilterBook(
-                    rangeBars[0], rangeBars[1],
-                    rangeBars[4], rangeBars[5], makersId, genresId, userToken
-                )
-
-                call.enqueue(object : Callback<List<ContentIdName>> {
-                    override fun onResponse(
-                        call: Call<List<ContentIdName>>,
-                        response: Response<List<ContentIdName>>
-                    ) {
-                        contentList = response.body()!!
-                        contentListFull = response.body()!!
-                        notifyDataSetChanged()
-                    }
-
-                    override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
-                        Log.d("db", "Response = $t")
-                    }
-                })
-            }
-            Type.MUSIC -> {
-                val call = webClient.getFilterMusic(
-                    genresId, makersId, rangeBars[2], rangeBars[3],
-                    rangeBars[0], rangeBars[1], rangeBars[4], rangeBars[5], userToken
-                )
-
-                call.enqueue(object : Callback<List<ContentIdName>> {
-                    override fun onResponse(
-                        call: Call<List<ContentIdName>>,
-                        response: Response<List<ContentIdName>>
-                    ) {
-                        contentList = response.body()!!
-                        contentListFull = response.body()!!
-                        notifyDataSetChanged()
-                    }
-
-                    override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
-                        Log.d("db", "Response = $t")
-                    }
-                })
-            }
-        }
-
-    }
 }

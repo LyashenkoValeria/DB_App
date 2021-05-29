@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.db_app.MainActivity
 import com.example.db_app.R
-import com.example.db_app.adapters.ContentAdapter
+import com.example.db_app.adapters.OldContentAdapter
 import com.example.db_app.dataClasses.Type
 import com.example.db_app.dataClasses.TypeLayout
 import kotlinx.android.synthetic.main.fragment_content_list.*
@@ -33,9 +33,9 @@ class ViewedFragment : Fragment() {
         val userToken = (requireActivity() as MainActivity).getUserToken()
         type = (requireActivity() as MainActivity).typeViewedList ?: Type.BOOK
 
-        val contentAdapter = ContentAdapter(requireActivity() as MainActivity)
+        val contentAdapter = OldContentAdapter(requireActivity() as MainActivity)
 
-        contentAdapter.setOnItemClickListener(object : ContentAdapter.OnItemClickListener {
+        contentAdapter.setOnItemClickListener(object : OldContentAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 val content = contentAdapter.getContentByPosition(position)
                 (requireActivity() as MainActivity).typeViewedList = type
@@ -45,7 +45,7 @@ class ViewedFragment : Fragment() {
 
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = contentAdapter
-        (recycler.adapter as ContentAdapter).setContent(type, TypeLayout.VIEWED)
+        (recycler.adapter as OldContentAdapter).setContent(type, TypeLayout.VIEWED)
 
         // Установка листенеров ни нижную навигацию
         navigationView.setOnNavigationItemReselectedListener {
@@ -57,7 +57,7 @@ class ViewedFragment : Fragment() {
                 resources.getString(R.string.books_str) -> {
                     if (type != Type.BOOK) {
                         type = Type.BOOK
-                        (recycler.adapter as ContentAdapter).setContent(type, TypeLayout.VIEWED)
+                        (recycler.adapter as OldContentAdapter).setContent(type, TypeLayout.VIEWED)
                         (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
                     }
                 }
@@ -65,7 +65,7 @@ class ViewedFragment : Fragment() {
                 resources.getString(R.string.films_str) -> {
                     if (type != Type.FILM) {
                         type = Type.FILM
-                        (recycler.adapter as ContentAdapter).setContent(type, TypeLayout.VIEWED)
+                        (recycler.adapter as OldContentAdapter).setContent(type, TypeLayout.VIEWED)
                         (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
                     }
                 }
@@ -73,7 +73,7 @@ class ViewedFragment : Fragment() {
                 resources.getString(R.string.mus_film_str) -> {
                     if (type != Type.MUSIC) {
                         type = Type.MUSIC
-                        (recycler.adapter as ContentAdapter).setContent(type, TypeLayout.VIEWED)
+                        (recycler.adapter as OldContentAdapter).setContent(type, TypeLayout.VIEWED)
                         (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
                     }
                 }

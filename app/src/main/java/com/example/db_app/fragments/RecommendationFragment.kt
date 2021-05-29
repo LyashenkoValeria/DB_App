@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.db_app.MainActivity
 import com.example.db_app.R
-import com.example.db_app.adapters.ContentAdapter
+import com.example.db_app.adapters.OldContentAdapter
 import com.example.db_app.dataClasses.Type
 import com.example.db_app.dataClasses.TypeLayout
 import kotlinx.android.synthetic.main.fragment_content_list.*
@@ -32,9 +32,9 @@ class RecommendationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         type = (requireActivity() as MainActivity).typeRecommendList ?: Type.BOOK
 
-        val contentAdapter = ContentAdapter(requireActivity() as MainActivity)
+        val contentAdapter = OldContentAdapter(requireActivity() as MainActivity)
 
-        contentAdapter.setOnItemClickListener(object : ContentAdapter.OnItemClickListener {
+        contentAdapter.setOnItemClickListener(object : OldContentAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 val content = contentAdapter.getContentByPosition(position)
                 (requireActivity() as MainActivity).typeRecommendList = type
@@ -44,7 +44,7 @@ class RecommendationFragment : Fragment() {
 
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = contentAdapter
-        (recycler.adapter as ContentAdapter).setContent(type, TypeLayout.RECOMMEND)
+        (recycler.adapter as OldContentAdapter).setContent(type, TypeLayout.RECOMMEND)
 
         // Установка листенеров ни нижную навигацию
         navigationView.setOnNavigationItemReselectedListener {
@@ -56,7 +56,7 @@ class RecommendationFragment : Fragment() {
                 resources.getString(R.string.books_str) -> {
                     if (type != Type.BOOK) {
                         type = Type.BOOK
-                        (recycler.adapter as ContentAdapter).setContent(type, TypeLayout.RECOMMEND)
+                        (recycler.adapter as OldContentAdapter).setContent(type, TypeLayout.RECOMMEND)
                         (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
                     }
                 }
@@ -64,7 +64,7 @@ class RecommendationFragment : Fragment() {
                 resources.getString(R.string.films_str) -> {
                     if (type != Type.FILM) {
                         type = Type.FILM
-                        (recycler.adapter as ContentAdapter).setContent(type, TypeLayout.RECOMMEND)
+                        (recycler.adapter as OldContentAdapter).setContent(type, TypeLayout.RECOMMEND)
                         (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
                     }
                 }
@@ -72,7 +72,7 @@ class RecommendationFragment : Fragment() {
                 resources.getString(R.string.mus_film_str) -> {
                     if (type != Type.MUSIC) {
                         type = Type.MUSIC
-                        (recycler.adapter as ContentAdapter).setContent(type, TypeLayout.RECOMMEND)
+                        (recycler.adapter as OldContentAdapter).setContent(type, TypeLayout.RECOMMEND)
                         (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
                     }
                 }
