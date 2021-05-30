@@ -30,6 +30,7 @@ class ViewModelContentList(application: Application) : AndroidViewModel(applicat
     init {
         val callInitBook = webClient.getNextPartContentByType(Type.BOOK.t, null, 20, userToken)
         callMoreContent(callInitBook, Type.BOOK)
+        newTypeFlag = true
     }
 
     fun getMoreContent() {

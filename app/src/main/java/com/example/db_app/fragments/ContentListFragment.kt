@@ -56,12 +56,20 @@ class ContentListFragment : Fragment() {
 
         // Observer для отслеживания изменений в подгруженном списке контента
         viewModelContentList.currentList.observe(requireActivity() as MainActivity) {
-            cursorAdapter.setContent(type, TypeLayout.LIST, it.size, mutableListOf<Int>().apply { addAll(it) } )
-            if (viewModelContentList.newTypeFlag)
-                (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
-            // TODO: 30.05.2021
-            if (viewModelContentList.emptyFlag && viewModelContentList.newTypeFlag)
-                printEmptyMessage(typeLayout)
+            // Обновляем содержимое recycler
+            cursorAdapter.setContent(
+                type,
+                TypeLayout.LIST,
+                it.size,
+                mutableListOf<Int>().apply { addAll(it) }
+            )
+            if (viewModelContentList.newTypeFlag) {     // При обновлении типа
+                cursorAdapter.notifyDataSetChanged()    // перерисовываем содержимое recycler
+                if (viewModelContentList.emptyFlag)     // Если получили пустой список
+                    printEmptyMessage(typeLayout)       // выводим сообщение
+                else                                    // Иначе - скроллим к 0 позиции
+                    (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+            }
         }
 
         // Установка листенера на toolbar
@@ -137,6 +145,7 @@ class ContentListFragment : Fragment() {
         if (item.itemId == R.id.toolbar_search) {
             val searchView = item.actionView as SearchView
             searchView.queryHint = "Введите название"
+
             // необходимо для того, чтобы SearchView не "сворачивался" в иконку
             searchView.isIconified = false
             searchView.setOnCloseListener {

@@ -39,7 +39,7 @@ class ContentAdapter(
     }
 
     override fun onBindViewHolder(holder: CursorViewHolder, position: Int) {
-        if (position == countContent - 11)
+        if (position == countContent - 11)      // Подгружаем новый список, когда остаётся 10 элементов
             viewModel.getMoreContent()
         holder.updateViewElement(holder, position)
     }
@@ -51,7 +51,6 @@ class ContentAdapter(
         countContent = contentNum
         contentList = newList
         layoutType = layout
-        notifyDataSetChanged()
     }
 
 
