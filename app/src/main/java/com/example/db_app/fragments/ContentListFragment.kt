@@ -41,34 +41,34 @@ class ContentListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         userToken = (requireActivity() as MainActivity).getUserToken()
 
-        val cursorAdapter = ContentAdapter(userToken, viewModelContentList)
-        cursorAdapter.setOnItemClickListener(object : ContentAdapter.OnItemClickListener {
+        val contentAdapter = ContentAdapter(userToken, viewModelContentList)
+        contentAdapter.setOnItemClickListener(object : ContentAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
-                val contentId = cursorAdapter.getContentByPosition(position)
+                val contentId = contentAdapter.getContentByPosition(position)
                 (requireActivity() as MainActivity).typeContentList = type
                 (requireActivity() as MainActivity).toContent(type, contentId)
             }
         })
 
         recycler.layoutManager = LinearLayoutManager(requireContext())
-        recycler.adapter = cursorAdapter
+        recycler.adapter = contentAdapter
 
 
         // Observer для отслеживания изменений в подгруженном списке контента
         viewModelContentList.currentList.observe(requireActivity() as MainActivity) {
             // Обновляем содержимое recycler
-            cursorAdapter.setContent(
+            contentAdapter.setContent(
                 type,
                 TypeLayout.LIST,
-                it.size,
                 mutableListOf<Int>().apply { addAll(it) }
             )
             if (viewModelContentList.newTypeFlag) {     // При обновлении типа
-                cursorAdapter.notifyDataSetChanged()    // перерисовываем содержимое recycler
+                contentAdapter.notifyDataSetChanged()    // перерисовываем содержимое recycler
                 if (viewModelContentList.emptyFlag)     // Если получили пустой список
                     printEmptyMessage(typeLayout)       // выводим сообщение
                 else                                    // Иначе - скроллим к 0 позиции
-                    (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+                    if (!viewModelContentList.initFlag)
+                        (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
             }
         }
 

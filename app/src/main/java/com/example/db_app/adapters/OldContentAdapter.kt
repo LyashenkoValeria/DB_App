@@ -19,7 +19,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class OldContentAdapter(private val activity: MainActivity) :
-    RecyclerView.Adapter<OldContentAdapter.ContentViewHolder>(), Filterable {
+    RecyclerView.Adapter<OldContentAdapter.OldContentViewHolder>(), Filterable {
 
     private val webClient = WebClient().getApi()
     var type = Type.BOOK
@@ -35,12 +35,12 @@ class OldContentAdapter(private val activity: MainActivity) :
         fun onItemClick(position: Int)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContentViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OldContentViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.content_item, parent, false)
-        return ContentViewHolder(view, listener)
+        return OldContentViewHolder(view, listener)
     }
 
-    override fun onBindViewHolder(holder: ContentViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: OldContentViewHolder, position: Int) {
         holder.updateViewElement(holder, position)
     }
 
@@ -106,7 +106,7 @@ class OldContentAdapter(private val activity: MainActivity) :
         this.listener = listener
     }
 
-    inner class ContentViewHolder(itemView: View, listener: OnItemClickListener) :
+    inner class OldContentViewHolder(itemView: View, listener: OnItemClickListener) :
         ViewHolder(itemView) {
         init {
             itemView.apply {
@@ -118,7 +118,7 @@ class OldContentAdapter(private val activity: MainActivity) :
             }
         }
 
-        fun updateViewElement(holder: ContentViewHolder, position: Int) {
+        fun updateViewElement(holder: OldContentViewHolder, position: Int) {
             val contentId = contentList[position].id
             val call = webClient.getContentById(type.t, contentId, userToken)
 

@@ -22,13 +22,6 @@ class WebClient {
 
 interface WebClientService {
 
-    // Получение количества определённого контента
-    @GET("{type}/count")
-    fun getContentInfoByType(
-        @Path("type") type: String,
-        @Header("Authorization") token: String
-    ): Call<Map<String, Int>>
-
     // Получение следующего слайса (из size элементов) контента (если id = null - для первого)
     @GET("{type}/slice")
     fun getNextPartContentByType(
@@ -161,10 +154,12 @@ interface WebClientService {
 
     /** ------------------------------ Работа с топами ------------------------------ **/
 
-    // Получение списка топов по типу контента
+    // Получение следующего слайса (из size элементов) контента (если id = null - для первого)
     @GET("top/{type}")
-    fun getTopsByType(
+    fun getNextPartTopsByType(
         @Path("type") type: String,
+        @Query("id") id: Int?,
+        @Query("size") size: Int,
         @Header("Authorization") token: String
     ): Call<List<ContentIdName>>
 

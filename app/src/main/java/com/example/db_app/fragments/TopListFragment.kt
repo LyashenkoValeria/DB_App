@@ -8,18 +8,22 @@ import android.os.Bundle
 import android.view.*
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.db_app.MainActivity
-import com.example.db_app.R
+import com.example.db_app.*
 import com.example.db_app.adapters.TopsAdapter
+import com.example.db_app.dataClasses.ContentIdName
 import com.example.db_app.dataClasses.Type
+import com.example.db_app.dataClasses.TypeLayout
 import kotlinx.android.synthetic.main.fragment_content_list.*
 
 class TopListFragment : Fragment() {
 
     private var type = Type.BOOK
     private var changeList = MutableLiveData(false)
+    private val viewModel: ViewModelTopsList by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,51 +35,75 @@ class TopListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val userToken = (requireActivity() as MainActivity).getUserToken()
-
-        val topsAdapter = TopsAdapter(userToken)
+        val topsAdapter = TopsAdapter(viewModel)
         topsAdapter.setOnItemClickListener(object : TopsAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 val top = topsAdapter.getTopByPosition(position)
-                (requireActivity() as MainActivity).toTop(type, top.id, top.getTopName(), top.getTopAuthor())
+                (requireActivity() as MainActivity)
+                    .toTop(type, top.id, top.getTopName(), top.getTopAuthor())
             }
         })
 
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = topsAdapter
-        topsAdapter.setContent(Type.BOOK)
 
+        // Observer для отслеживания изменений в подгруженном списке контента
+        viewModel.currentList.observe(requireActivity() as MainActivity) {
+            // Обновляем содержимое recycler
+            topsAdapter.setContent(type, mutableListOf<ContentIdName>().apply { addAll(it) }, it.size)
+
+            if (viewModel.newTypeFlag) {                // При обновлении типа
+                topsAdapter.notifyDataSetChanged()      // перерисовываем содержимое recycler
+                if (viewModel.emptyFlag)                // Если получили пустой список
+                    (requireActivity() as MainActivity) // выводим сообщение
+                        .makeToast("Кажется, тут пусто.")
+                else                                    // Иначе - скроллим к 0 позиции
+                    (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+            }
+        }
+
+        // Установка листенера на toolbar
+        val toolbarListener = View.OnClickListener {
+            if ((requireActivity() as MainActivity).navController.currentDestination?.id == R.id.topListFragment)
+                (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+        }
+        (requireActivity() as MainActivity).setToolbarListener(toolbarListener)
+
+
+        // Установка листенеров ни нижную навигацию
         navigationView.setOnNavigationItemReselectedListener {
             return@setOnNavigationItemReselectedListener
         }
 
         navigationView.setOnNavigationItemSelectedListener {
+            var new = false
             when (it.title) {
-                resources.getString(R.string.books_str) ->
-                {
+                resources.getString(R.string.books_str) -> {
                     if (type != Type.BOOK) {
                         type = Type.BOOK
-                        topsAdapter.setContent(type)
+                        new = true
                     }
                 }
 
-                resources.getString(R.string.films_str) ->
-                {
+                resources.getString(R.string.films_str) -> {
                     if (type != Type.FILM) {
                         type = Type.FILM
-                        topsAdapter.setContent(type)
+                        new = true
                     }
                 }
 
-                resources.getString(R.string.mus_film_str) ->
-                {
+                resources.getString(R.string.mus_film_str) -> {
                     if (type != Type.MUSIC) {
                         type = Type.MUSIC
-                        topsAdapter.setContent(type)
+                        new = true
                     }
                 }
             }
-            changeList.value = true
+
+            if (new) {
+                viewModel.updateTopsForType(type)
+                changeList.value = true
+            }
             true
         }
         super.onViewCreated(view, savedInstanceState)
@@ -114,7 +142,7 @@ class TopListFragment : Fragment() {
                 }
 
                 override fun onQueryTextChange(newText: String): Boolean {
-                   (recycler.adapter as TopsAdapter).filter.filter(newText)
+//                   (recycler.adapter as TopsAdapter).filter.filter(newText)
                     return false
                 }
             })

@@ -20,47 +20,45 @@ class ContentAdapter(
     private val userToken: String,
     private val viewModel: ViewModelContentList
 ) :
-    RecyclerView.Adapter<ContentAdapter.CursorViewHolder>() {
+    RecyclerView.Adapter<ContentAdapter.ContentViewHolder>() {
 
     private val webClient = WebClient().getApi()
     private var type = Type.BOOK
     private var layoutType = TypeLayout.LIST
     private lateinit var listener: OnItemClickListener
     private var contentList = listOf<Int>()
-    private var countContent: Int = 0
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CursorViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContentViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.content_item, parent, false)
-        return CursorViewHolder(view, listener)
+        return ContentViewHolder(view, listener)
     }
 
-    override fun onBindViewHolder(holder: CursorViewHolder, position: Int) {
-        if (position == countContent - 11)      // Подгружаем новый список, когда остаётся 10 элементов
+    override fun onBindViewHolder(holder: ContentViewHolder, position: Int) {
+        if (position == contentList.size - 11)      // Подгружаем новый список, когда остаётся 10 элементов
             viewModel.getMoreContent()
         holder.updateViewElement(holder, position)
     }
 
-    override fun getItemCount(): Int = countContent
-
-    fun setContent(type: Type, layout: TypeLayout, contentNum: Int, newList: List<Int>) {
-        this.type = type
-        countContent = contentNum
-        contentList = newList
-        layoutType = layout
-    }
-
+    override fun getItemCount(): Int = contentList.size
 
     fun getContentByPosition(position: Int) = contentList[position]
+
+    fun setContent(type: Type, layout: TypeLayout, newList: List<Int>) {
+        this.type = type
+        contentList = newList
+        layoutType = layout
+//        notifyDataSetChanged()
+    }
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.listener = listener
     }
 
-    inner class CursorViewHolder(itemView: View, listener: OnItemClickListener) :
+    inner class ContentViewHolder(itemView: View, listener: OnItemClickListener) :
         ViewHolder(itemView) {
         init {
             itemView.apply {
@@ -72,7 +70,7 @@ class ContentAdapter(
             }
         }
 
-        fun updateViewElement(holder: CursorViewHolder, position: Int) {
+        fun updateViewElement(holder: ContentViewHolder, position: Int) {
             val call = webClient.getContentById(type.t, contentList[position], userToken)
 
             call.enqueue(object : Callback<Content> {
