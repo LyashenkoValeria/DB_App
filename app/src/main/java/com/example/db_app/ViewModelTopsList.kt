@@ -26,6 +26,7 @@ class ViewModelTopsList(application: Application) : AndroidViewModel(application
     val currentList = MutableLiveData<MutableList<ContentIdName>>(mutableListOf())
     var emptyFlag = false       // Флаг пустого полученного из бд списка
     var newTypeFlag = false     // Флаг изменённого типа списка
+    var filterPattern = ""
 
     init {
         val callInitTopsBook = webClient.getNextPartTopsByType(Type.BOOK.t, null, 20, userToken)
@@ -34,29 +35,41 @@ class ViewModelTopsList(application: Application) : AndroidViewModel(application
     }
 
     fun getMoreTops() {
-        newTypeFlag = false
+        val callMore = if (filterPattern.isEmpty()) {
+            newTypeFlag = false
 
-        val callMore = webClient.getNextPartTopsByType(
-            this.type.t,
-            currentList.value?.last()?.id,
-            countNewIds,
-            userToken
-        )
-
+            webClient.getNextPartTopsByType(
+                this.type.t,
+                currentList.value?.last()?.id,
+                countNewIds,
+                userToken
+            )
+        } else {
+            filterCallTops(this.type, currentList.value?.last()?.id)
+        }
         callMoreTops(callMore)
     }
 
     fun updateTopsForType(type: Type) {
         this.type = type
         currentList.value?.clear()
-        val callMore = webClient.getNextPartTopsByType(this.type.t, null, countNewIds, userToken)
-        callMoreTops(callMore)
-        newTypeFlag = true
+        if (filterPattern.isEmpty()) {
+            val callMore =
+                webClient.getNextPartTopsByType(this.type.t, null, countNewIds, userToken)
+            callMoreTops(callMore)
+            newTypeFlag = true
+        } else {
+            val call = filterCallTops(type, null)
+            callMoreTops(call)
+        }
     }
 
     private fun callMoreTops(call: Call<List<ContentIdName>>) {
         call.enqueue(object : Callback<List<ContentIdName>> {
-            override fun onResponse(call: Call<List<ContentIdName>>, response: Response<List<ContentIdName>>) {
+            override fun onResponse(
+                call: Call<List<ContentIdName>>,
+                response: Response<List<ContentIdName>>
+            ) {
                 val moreIds = response.body()
                 if (moreIds != null) {
                     emptyFlag = moreIds.isEmpty()
@@ -73,5 +86,9 @@ class ViewModelTopsList(application: Application) : AndroidViewModel(application
                 throw IllegalArgumentException("При callMoreTops() произошла ошибка.")
             }
         })
+    }
+
+    private fun filterCallTops(type: Type, firstId: Int?): Call<List<ContentIdName>> {
+        return webClient.getFilterForTops(type.t, filterPattern,firstId, countNewIds, userToken)
     }
 }

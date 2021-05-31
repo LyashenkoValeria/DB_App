@@ -24,7 +24,6 @@ class ContentAdapter(
 
     private val webClient = WebClient().getApi()
     private var type = Type.BOOK
-    private var layoutType = TypeLayout.LIST
     private lateinit var listener: OnItemClickListener
     private var contentList = listOf<Int>()
 
@@ -47,11 +46,9 @@ class ContentAdapter(
 
     fun getContentByPosition(position: Int) = contentList[position]
 
-    fun setContent(type: Type, layout: TypeLayout, newList: List<Int>) {
+    fun setContent(type: Type, newList: List<Int>) {
         this.type = type
         contentList = newList
-        layoutType = layout
-//        notifyDataSetChanged()
     }
 
     fun setOnItemClickListener(listener: OnItemClickListener) {

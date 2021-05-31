@@ -228,15 +228,19 @@ interface WebClientService {
     @GET("user/{type}")
     fun getViewedByType(
         @Path("type") type: String,
+        @Query("id") id: Int?,
+        @Query("size") size: Int,
         @Header("Authorization") token: String
-    ): Call<List<ContentIdName>>
+    ): Call<List<Int>>
 
     //Получение списка рекомендации
     @GET("user/recommended/{type}")
-    fun getRecommend(
+    fun getRecommendByType(
         @Path("type") type: String,
+        @Query("id") id: Int?,
+        @Query("size") size: Int,
         @Header("Authorization") token: String
-    ): Call<List<ContentIdName>>
+    ): Call<List<Int>>
 
     /** ------------------------------ Работа с фильтраией ------------------------------ **/
 
@@ -247,44 +251,64 @@ interface WebClientService {
         @Query("year_up") year_up: Int,
         @Query("rating_down") rating_down: Int,
         @Query("rating_up") rating_up: Int,
-        @Query("authors") authorsId: List<Int>?,
         @Query("genres") genresId: List<Int>?,
+        @Query("authors") authorsId: List<Int>?,
+        @Query("query") query: String?,
+        @Query("id") id: Int?,
+        @Query("size") size: Int,
         @Header("Authorization") token: String
-    ): Call<List<ContentIdName>>
+    ): Call<List<Int>>
 
     //Получение списка фильтрации для фильмов
     @GET("film/filter")
     fun getFilterFilm(
         @Query("year_down") year_down: Int,
         @Query("year_up") year_up: Int,
-        @Query("rating_down") rating_down: Int,
-        @Query("rating_up") rating_up: Int,
         @Query("duration_down") duration_down: Int,
         @Query("duration_up") duration_up: Int,
+        @Query("rating_down") rating_down: Int,
+        @Query("rating_up") rating_up: Int,
+        @Query("genres") genresId: List<Int>?,
         @Query("actors") actorsId: List<Int>?,
         @Query("creators") creatorsId: List<Int>?,
-        @Query("genres") genresId: List<Int>?,
+        @Query("query") query: String?,
+        @Query("id") id: Int?,
+        @Query("size") size: Int,
         @Header("Authorization") token: String
-    ): Call<List<ContentIdName>>
+    ): Call<List<Int>>
 
     //Получение списка фильтрации для фильмов
     @GET("music/filter")
     fun getFilterMusic(
-        @Query("genres") genresId: List<Int>?,
-        @Query("artists") artistsId: List<Int>?,
-        @Query("duration_down") duration_down: Int,
-        @Query("duration_up") duration_up: Int,
         @Query("year_down") year_down: Int,
         @Query("year_up") year_up: Int,
+        @Query("duration_down") duration_down: Int,
+        @Query("duration_up") duration_up: Int,
         @Query("rating_down") rating_down: Int,
         @Query("rating_up") rating_up: Int,
+        @Query("genres") genresId: List<Int>?,
+        @Query("artists") artistsId: List<Int>?,
+        @Query("query") query: String?,
+        @Query("id") id: Int?,
+        @Query("size") size: Int,
         @Header("Authorization") token: String
-    ): Call<List<ContentIdName>>
+    ): Call<List<Int>>
 
     // Получение людей фильмов (actor = true - актёры, = false - все остальные)
     @GET("people/film")
     fun getPeopleForFilm(
         @Query("actors") actors: Boolean = true,
+        @Header("Authorization") token: String
+    ): Call<List<ContentIdName>>
+
+
+    //Получение списка фильтрации для фильмов
+    @GET("top/{type}/search")
+    fun getFilterForTops(
+        @Path("type") type: String,
+        @Query("query") query: String?,
+        @Query("id") id: Int?,
+        @Query("size") size: Int,
         @Header("Authorization") token: String
     ): Call<List<ContentIdName>>
 }

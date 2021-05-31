@@ -194,28 +194,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun fromFilter(
-        genres: ArrayList<Genre>,
-        actors: ArrayList<ContentIdName>,
-        makers: ArrayList<ContentIdName>,
-        rangeBars: IntArray,
         type: Type,
         dir: Boolean,
         filterChanges: Boolean
     ) {
         val bundle = Bundle().apply {
-            putParcelableArrayList("genresList", genres)
-
-            when (type) {
-                Type.FILM -> {
-                    putParcelableArrayList("actorsList", actors)
-                    putParcelableArrayList("makersList", makers)
-                }
-                else -> {
-                    putParcelableArrayList("makersList", makers)
-                }
-            }
-
-            putIntArray("seekBars", rangeBars)
             putString("typeFromFilter", type.t)
             putBoolean("fromFilter", dir)
             putBoolean("notChanged", filterChanges)

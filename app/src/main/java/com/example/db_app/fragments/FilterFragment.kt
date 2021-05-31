@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
 import com.example.db_app.FilterViewModel
 import com.example.db_app.MainActivity
+import com.example.db_app.ViewModelContentList
 import com.example.db_app.adapters.SearchActorAdapter
 import com.example.db_app.adapters.SpinnerAdapter
 import com.example.db_app.dataClasses.*
@@ -23,6 +25,7 @@ import kotlinx.android.synthetic.main.fragment_filter.view.*
 
 class FilterFragment : Fragment() {
 
+    private val viewModelContentList: ViewModelContentList by activityViewModels()
     private lateinit var viewModel: FilterViewModel
     var type = Type.BOOK
     private var selectedGenre = arrayListOf<Genre>()
@@ -100,9 +103,12 @@ class FilterFragment : Fragment() {
         spinner_for_genre_filter.adapter = spinnerAdapter
 
         if (arguments?.getBoolean("restore")!!) {
-            viewModel.getGenres().observe(requireActivity(), {
+            viewModelContentList.savedGenres.observe(requireActivity(), {
                 selectedGenre = it
             })
+//            viewModel.getGenres().observe(requireActivity(), {
+//                selectedGenre = it
+//            })
             (spinner_for_genre_filter.adapter as SpinnerAdapter).setGenreList(selectedGenre)
         }
 
@@ -125,9 +131,12 @@ class FilterFragment : Fragment() {
 
                 //Восстановление актёров/создателей
                 if (arguments?.getBoolean("restore")!!) {
-                    viewModel.getActors().observe(requireActivity(), {
+                    viewModelContentList.savedActors.observe(requireActivity(), {
                         selectedActors = it
                     })
+//                    viewModel.getActors().observe(requireActivity(), {
+//                        selectedActors = it
+//                    })
 
                     adapterActors.setSelectedPeople(selectedActors)
                     setChips(selectedActors, search_actors_for_filter)
@@ -146,9 +155,13 @@ class FilterFragment : Fragment() {
                 //Восстановление актёров/создателей
                 if (arguments?.getBoolean("restore")!!) {
 
-                    viewModel.getMakers().observe(requireActivity(), {
+                    viewModelContentList.savedMakers.observe(requireActivity(), {
                         selectedMakers = it
                     })
+
+//                    viewModel.getMakers().observe(requireActivity(), {
+//                        selectedMakers = it
+//                    })
 
                     adapterMakers.setSelectedPeople(selectedMakers)
                     setChips(selectedMakers, search_makers_for_filter)
@@ -168,9 +181,12 @@ class FilterFragment : Fragment() {
 
                 //Восстановление создателей
                 if (arguments?.getBoolean("restore")!!) {
-                    viewModel.getMakers().observe(requireActivity(), {
+                    viewModelContentList.savedMakers.observe(requireActivity(), {
                         selectedMakers = it
                     })
+//                    viewModel.getMakers().observe(requireActivity(), {
+//                        selectedMakers = it
+//                    })
 
                     adapterMakers.setSelectedPeople(selectedMakers)
                     setChips(selectedMakers, search_makers_for_filter)
@@ -197,17 +213,17 @@ class FilterFragment : Fragment() {
         //Восстановаление данных, если повторно открыта фильтрация для того же листа
         if (arguments?.getBoolean("restore")!!) {
 
-            viewModel.getYears().observe(requireActivity(), {
+            viewModelContentList.yearBonds.observe(requireActivity(), {
                 rangeSeekbars[0] = it.first
                 rangeSeekbars[1] = it.second
             })
 
-            viewModel.getDuration().observe(requireActivity(), {
+            viewModelContentList.durBonds.observe(requireActivity(), {
                 rangeSeekbars[2] = it.first
                 rangeSeekbars[3] = it.second
             })
 
-            viewModel.getRating().observe(requireActivity(), {
+            viewModelContentList.ratingBonds.observe(requireActivity(), {
                 rangeSeekbars[4] = it.first
                 rangeSeekbars[5] = it.second
             })
@@ -255,14 +271,15 @@ class FilterFragment : Fragment() {
                     selectedMakers =
                         (search_makers_for_filter.adapter as SearchActorAdapter).getSelectedPeople()
 
-                    viewModel.setActors(selectedActors)
-                    viewModel.setMakers(selectedMakers)
+                    viewModelContentList.savedActors.value = selectedActors
+                    viewModelContentList.savedMakers.value = selectedMakers
+
                 }
                 else -> {
                     selectedMakers =
                         (search_makers_for_filter.adapter as SearchActorAdapter).getSelectedPeople()
 
-                    viewModel.setMakers(selectedMakers)
+                    viewModelContentList.savedMakers.value = selectedMakers
                 }
             }
 
@@ -275,6 +292,8 @@ class FilterFragment : Fragment() {
                 ratingBar.selectedMaxValue.toInt()
             )
 
+
+
             notChanges = isNotExistChanges(
                 selectedGenre,
                 selectedActors,
@@ -283,17 +302,14 @@ class FilterFragment : Fragment() {
                 listOfSliders
             )
 
-            viewModel.setGenres(selectedGenre)
-            viewModel.setYears(Pair(rangeSeekbars[0], rangeSeekbars[1]))
-            viewModel.setDuration(Pair(rangeSeekbars[2], rangeSeekbars[3]))
-            viewModel.setRating(Pair(rangeSeekbars[4], rangeSeekbars[5]))
+            viewModelContentList.savedGenres.value = selectedGenre
+            viewModelContentList.yearBonds.value = Pair(rangeSeekbars[0], rangeSeekbars[1])
+            viewModelContentList.durBonds.value = Pair(rangeSeekbars[2], rangeSeekbars[3])
+            viewModelContentList.ratingBonds.value = Pair(rangeSeekbars[4], rangeSeekbars[5])
 
+            viewModelContentList.filterChanges = !notChanges
 
             (requireActivity() as MainActivity).fromFilter(
-                selectedGenre,
-                selectedActors,
-                selectedMakers,
-                rangeSeekbars,
                 type,
                 true,
                 notChanges
