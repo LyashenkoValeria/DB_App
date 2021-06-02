@@ -10,9 +10,10 @@ import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.db_app.*
+import com.example.db_app.MainActivity
+import com.example.db_app.R
+import com.example.db_app.ViewModelTopsList
 import com.example.db_app.adapters.TopsAdapter
 import com.example.db_app.dataClasses.ContentIdName
 import com.example.db_app.dataClasses.Type
@@ -35,6 +36,9 @@ class TopListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if ((requireActivity() as MainActivity).needInitTops)
+            viewModel.init()
+
         val topsAdapter = TopsAdapter(viewModel)
         topsAdapter.setOnItemClickListener(object : TopsAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
@@ -48,18 +52,22 @@ class TopListFragment : Fragment() {
         recycler.adapter = topsAdapter
 
         // Observer для отслеживания изменений в подгруженном списке контента
-        viewModel.currentList.observe(requireActivity() as MainActivity) {
+        viewModel.currentList.observe(viewLifecycleOwner) {
             // Обновляем содержимое recycler
             topsAdapter.setContent(type, mutableListOf<ContentIdName>().apply { addAll(it) }, it.size)
 
-            if (viewModel.newTypeFlag) {                // При обновлении типа
-                topsAdapter.notifyDataSetChanged()      // перерисовываем содержимое recycler
-                if (viewModel.emptyFlag)                // Если получили пустой список
-                    (requireActivity() as MainActivity) // выводим сообщение
-                        .makeToast("Кажется, тут пусто.")
-                else                                    // Иначе - скроллим к 0 позиции
-                    (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
-            }
+            if ((requireActivity() as MainActivity).needInitTops) {
+                topsAdapter.notifyDataSetChanged()
+                (requireActivity() as MainActivity).needInitTops = false
+            } else
+                if (viewModel.newTypeFlag) {     // При обновлении типа
+                    topsAdapter.notifyDataSetChanged()   // перерисовываем содержимое recycler
+                        // Иначе - скроллим к 0 позиции
+                        if (!viewModel.initFlag) {
+                            (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+                            viewModel.newTypeFlag = false
+                        }
+                }
         }
 
         // Установка листенера на toolbar

@@ -22,6 +22,12 @@ class MainActivity : AppCompatActivity() {
     var typeRecommendList: Type? = null
     var typeViewedList: Type? = null
     var prevFragment: Int = -1
+    var needInit = true
+    var needInitViewed = true
+    var needInitReccom = true
+    var needInitTops = true
+    var needInitTopContent = true
+    var needUpdateFilter = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,18 +57,81 @@ class MainActivity : AppCompatActivity() {
                 else -> {
                     toolbar?.visibility = View.VISIBLE
                     drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+
+//                    if (destination.id != R.id.topContentListFragment)
+//                        needInitTops = true
+//
+//                    if (destination.id != R.id.contentFragment) {
+//                        needInitTopContent = true
+//                        needInitReccom = true
+//                        needInitViewed = true
+//                        needInitTops = true
+//                    }
+//
+//                    if (destination.label != "FilterFragment" && destination.label != "ContentFragment")
+//                        needInit = true
                 }
             }
-            // названия фрагментов
+            // названия фрагментов и формирование неоходимости обновления фрагментов
             toolbar.title = when (destination.id) {
-                R.id.contentListFragment -> resources.getString(R.string.catalog_menu)
-                R.id.profileFragment -> resources.getString(R.string.prof_str)
-                R.id.topListFragment -> resources.getString(R.string.tops_menu)
-                R.id.chooseGenreFragment -> "Жанры книг"
-                R.id.superUserFragment -> "Изменение БД"
-                R.id.viewedFragment -> resources.getString(R.string.viewed_menu)
-                R.id.recommendationFragment -> resources.getString(R.string.recommend_menu)
-                R.id.filterFragment -> "Фильтр"
+                R.id.contentListFragment -> {
+                    needInitReccom = true
+                    needInitViewed = true
+                    needInitTops = true
+                    needInitTopContent = true
+                    resources.getString(R.string.catalog_menu)
+                }
+                R.id.profileFragment -> {
+                    needInitReccom = true
+                    needInitViewed = true
+                    needInitTops = true
+                    needInitTopContent = true
+                    needInit = true
+                    resources.getString(R.string.prof_str)
+                }
+                R.id.topListFragment -> {
+                    needInitReccom = true
+                    needInitViewed = true
+                    needInit = true
+                    resources.getString(R.string.tops_menu)
+                }
+                R.id.chooseGenreFragment -> {
+                    needInitReccom = true
+                    needInitViewed = true
+                    needInitTops = true
+                    needInitTopContent = true
+                    needInit = true
+                    "Жанры книг"
+                }
+                R.id.superUserFragment -> {
+                    needInitReccom = true
+                    needInitViewed = true
+                    needInitTops = true
+                    needInitTopContent = true
+                    needInit = true
+                    "Изменение БД"
+                }
+                R.id.viewedFragment -> {
+                    needInitReccom = true
+                    needInitTops = true
+                    needInitTopContent = true
+                    needInit = true
+                    resources.getString(R.string.viewed_menu)
+                }
+                R.id.recommendationFragment -> {
+                    needInitViewed = true
+                    needInitTops = true
+                    needInitTopContent = true
+                    needInit = true
+                    resources.getString(R.string.recommend_menu)
+                }
+                R.id.filterFragment -> {
+                    needInitReccom = true
+                    needInitViewed = true
+                    needInitTops = true
+                    needInitTopContent = true
+                    "Фильтр"
+                }
                 else -> ""
             }
         }
@@ -152,6 +221,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun toContentList() {
+        needInit = true
         navController.navigate(R.id.contentListFragment)
     }
 
@@ -203,7 +273,10 @@ class MainActivity : AppCompatActivity() {
             putBoolean("fromFilter", dir)
             putBoolean("notChanged", filterChanges)
         }
+        needInit = false
+        needUpdateFilter = true
         navController.navigate(R.id.action_filterFragment_to_contentListFragment, bundle)
+//        navController.navigate(R.id.contentListFragment, bundle)
     }
 
     fun toAddContent(type: Type) {
@@ -223,29 +296,103 @@ class MainActivity : AppCompatActivity() {
 
     // Обработчик нажатия кнопки назад
     override fun onBackPressed() {
-        val fragmentId = navController.currentBackStackEntry!!.destination.id
-        val previousId = navController.previousBackStackEntry?.destination?.id
+        val current = navController.currentBackStackEntry!!.destination
+        val previous = navController.previousBackStackEntry?.destination
 
-        when (fragmentId) {
+        when (current.id) {
             R.id.contentListFragment ->
-                if (previousId == R.id.authorisationFragment || previousId == R.id.registrationFragment || previousId == R.id.chooseGenreFragment)
+                if (previous?.id == R.id.authorisationFragment || previous?.id == R.id.registrationFragment || previous?.id == R.id.chooseGenreFragment || previous?.id == R.id.filterFragment)
                     finish()
                 else
                     super.onBackPressed()
 
-            R.id.authorisationFragment ->
-                if (previousId == R.id.contentListFragment)
+            R.id.contentFragment -> {
+                needInit = previous?.id != R.id.contentListFragment ||  previous.label != "ContentListFragment"
+                needInitViewed = previous?.id != R.id.viewedFragment ||  previous.label != "ViewedFragment"
+                needInitReccom = previous?.id != R.id.recommendationFragment ||  previous.label != "RecommendationFragment"
+                needInitTops = true
+                needInitTopContent = previous?.id != R.id.topContentListFragment ||  previous.label != "TopContentListFragment"
+                super.onBackPressed()
+                }
+
+            R.id.filterFragment -> {
+                needInit = false
+                needInitViewed = true
+                needInitReccom = true
+                needInitTops = true
+                needInitTopContent = true
+                super.onBackPressed()
+            }
+
+            R.id.authorisationFragment -> {
+                needInit = true
+                needInitViewed = true
+                needInitReccom = true
+                needInitTops = true
+                needInitTopContent = true
+                if (previous?.id == R.id.contentListFragment)
                     finish()
                 else
                     super.onBackPressed()
+            }
 
-            R.id.chooseGenreFragment ->
-                if (previousId == R.id.registrationFragment)
+            R.id.topContentListFragment -> {
+                needInit = true
+                needInitViewed = true
+                needInitReccom = true
+                needInitTops = false
+                needInitTopContent = true
+                super.onBackPressed()
+            }
+
+            R.id.chooseGenreFragment -> {
+                needInit = true
+                needInitViewed = true
+                needInitReccom = true
+                needInitTops = true
+                needInitTopContent = true
+                if (previous?.id == R.id.registrationFragment)
                     toContentList()
                 else
                     super.onBackPressed()
+            }
 
-            else -> super.onBackPressed()
+            else -> {
+                when (current.label) {
+                    "ContentListFragment" -> {
+                        needInit = true
+                        needInitViewed = true
+                        needInitReccom = true
+                        needInitTops = true
+                        needInitTopContent = true
+                        if (previous?.id == R.id.authorisationFragment || previous?.id == R.id.registrationFragment || previous?.id == R.id.chooseGenreFragment ||
+                            previous?.label == "FilterContent"
+                        )
+                            finish()
+                        else
+                            super.onBackPressed()
+                    }
+
+                    "ContentFragment" -> {
+                        needInit = previous?.id != R.id.contentListFragment ||  previous.label != "ContentListFragment"
+                        needInitViewed = previous?.id != R.id.viewedFragment ||  previous.label != "ViewedFragment"
+                        needInitReccom = previous?.id != R.id.recommendationFragment ||  previous.label != "RecommendationFragment"
+                        needInitTops = true
+                        needInitTopContent = previous?.id != R.id.topContentListFragment ||  previous.label != "TopContentListFragment"
+                        super.onBackPressed()
+                    }
+                    else -> {
+                        needInit = true
+                        needInitViewed = true
+                        needInitReccom = true
+                        needInitTops = true
+                        needInitTopContent = true
+                        super.onBackPressed()
+
+                    }
+
+                }
+            }
         }
     }
 

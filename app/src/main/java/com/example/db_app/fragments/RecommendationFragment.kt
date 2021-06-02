@@ -18,7 +18,6 @@ class RecommendationFragment : Fragment() {
 
     private val viewModelContentList: ViewModelContentList by activityViewModels()
     private var type = Type.BOOK
-    private var typeLayout = TypeLayout.RECOMMEND
     var userToken = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,13 +34,16 @@ class RecommendationFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        userToken = (requireActivity() as MainActivity).getUserToken()
-
         viewModelContentList.filterPattern = ""
         viewModelContentList.filterChanges = false
+        viewModelContentList.layoutType = TypeLayout.RECOMMEND
+        if ((requireActivity() as MainActivity).needInitReccom) {
+            viewModelContentList.init()
+        }
 
-        viewModelContentList.layoutType = typeLayout
-        viewModelContentList.updateContentForType(type)
+        userToken = (requireActivity() as MainActivity).getUserToken()
+
+//        viewModelContentList.updateContentForType(type)
 
         val contentAdapter = ContentAdapter(userToken, viewModelContentList)
         contentAdapter.setOnItemClickListener(object : ContentAdapter.OnItemClickListener {
@@ -57,20 +59,26 @@ class RecommendationFragment : Fragment() {
 
 
         // Observer для отслеживания изменений в подгруженном списке контента
-        viewModelContentList.currentRecommendList.observe(requireActivity() as MainActivity) {
+        viewModelContentList.currentRecommendList.observe(viewLifecycleOwner) {
             // Обновляем содержимое recycler
             contentAdapter.setContent(
                 type,
                 mutableListOf<Int>().apply { addAll(it) }
             )
-            if (viewModelContentList.newTypeFlag) {     // При обновлении типа
-                contentAdapter.notifyDataSetChanged()   // перерисовываем содержимое recycler
-//                if (viewModelContentList.emptyFlag)     // Если получили пустой список
-//                    printEmptyMessage()                 // выводим сообщение
-//                else                                    // Иначе - скроллим к 0 позиции
-                    if (!viewModelContentList.initFlag && recycler != null)
-                        (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
-            }
+            if ((requireActivity() as MainActivity).needInitReccom) {
+                contentAdapter.notifyDataSetChanged()
+                (requireActivity() as MainActivity).needInitReccom = false
+            } else
+                if (viewModelContentList.newTypeFlag) {     // При обновлении типа
+                    contentAdapter.notifyDataSetChanged()   // перерисовываем содержимое recycler
+                    if (viewModelContentList.emptyFlag)     // Если получили пустой список
+                        printEmptyMessage()                 // выводим сообщение
+                    else                                    // Иначе - скроллим к 0 позиции
+                        if (!viewModelContentList.initFlag) {
+                            (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+                            viewModelContentList.newTypeFlag = false
+                        }
+                }
         }
 
 
@@ -104,6 +112,8 @@ class RecommendationFragment : Fragment() {
                 }
             }
             if (new) {
+                viewModelContentList.filterPattern = ""
+                viewModelContentList.filterChanges = false
                 viewModelContentList.updateContentForType(type)
             }
             true

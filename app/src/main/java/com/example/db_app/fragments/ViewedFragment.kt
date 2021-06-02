@@ -18,7 +18,6 @@ class ViewedFragment : Fragment() {
 
     private val viewModelContentList: ViewModelContentList by activityViewModels()
     private var type = Type.BOOK
-    private var typeLayout = TypeLayout.VIEWED
     var userToken = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,13 +34,17 @@ class ViewedFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        userToken = (requireActivity() as MainActivity).getUserToken()
-
+        viewModelContentList.layoutType = TypeLayout.VIEWED
         viewModelContentList.filterPattern = ""
         viewModelContentList.filterChanges = false
 
-        viewModelContentList.layoutType = typeLayout
-        viewModelContentList.updateContentForType(type)
+        if ((requireActivity() as MainActivity).needInitViewed) {
+            viewModelContentList.init()
+        }
+
+        userToken = (requireActivity() as MainActivity).getUserToken()
+
+//        viewModelContentList.updateContentForType(type)
 
         val contentAdapter = ContentAdapter(userToken, viewModelContentList)
         contentAdapter.setOnItemClickListener(object : ContentAdapter.OnItemClickListener {
@@ -57,20 +60,26 @@ class ViewedFragment : Fragment() {
 
 
         // Observer для отслеживания изменений в подгруженном списке контента
-        viewModelContentList.currentViewedList.observe(requireActivity() as MainActivity) {
+        viewModelContentList.currentViewedList.observe(viewLifecycleOwner) {
             // Обновляем содержимое recycler
             contentAdapter.setContent(
                 type,
                 mutableListOf<Int>().apply { addAll(it) }
             )
-            if (viewModelContentList.newTypeFlag) {     // При обновлении типа
-                contentAdapter.notifyDataSetChanged()   // перерисовываем содержимое recycler
-//                if (viewModelContentList.emptyFlag)     // Если получили пустой список
-//                    printEmptyMessage()                 // выводим сообщение
-//                else                                    // Иначе - скроллим к 0 позиции
-                    if (!viewModelContentList.initFlag && recycler != null)
-                        (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
-            }
+            if ((requireActivity() as MainActivity).needInitViewed) {
+                contentAdapter.notifyDataSetChanged()
+                (requireActivity() as MainActivity).needInitViewed = false
+            } else
+                if (viewModelContentList.newTypeFlag) {     // При обновлении типа
+                    contentAdapter.notifyDataSetChanged()   // перерисовываем содержимое recycler
+                    if (viewModelContentList.emptyFlag)     // Если получили пустой список
+                        printEmptyMessage()                 // выводим сообщение
+                    else                                    // Иначе - скроллим к 0 позиции
+                        if (!viewModelContentList.initFlag) {
+                            (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+                            viewModelContentList.newTypeFlag = false
+                        }
+                }
         }
 
 
@@ -104,6 +113,8 @@ class ViewedFragment : Fragment() {
                 }
             }
             if (new) {
+                viewModelContentList.filterPattern = ""
+                viewModelContentList.filterChanges = false
                 viewModelContentList.updateContentForType(type)
             }
             true
@@ -114,10 +125,10 @@ class ViewedFragment : Fragment() {
 
     private fun printEmptyMessage() {
         val msg = "Вы ещё не просмотрели " + when (type) {
-                Type.BOOK -> "ни одну книгу."
-                Type.MUSIC -> "ни одну песню."
-                Type.FILM -> "ни один фильм."
-            }
+            Type.BOOK -> "ни одну книгу."
+            Type.MUSIC -> "ни одну песню."
+            Type.FILM -> "ни один фильм."
+        }
 
         (requireActivity() as MainActivity).makeToast(msg)
     }

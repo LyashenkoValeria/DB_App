@@ -25,12 +25,19 @@ import retrofit2.Response
 class TopContentListFragment : Fragment() {
 
     private val webClient = WebClient().getApi()
+//    private lateinit var llManager: RecyclerView.LayoutManager
+    private var position = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+//        llManager = LinearLayoutManager(requireContext())
+//        if (savedInstanceState != null && savedInstanceState.containsKey("ll"))
+//            llManager.onRestoreInstanceState(savedInstanceState.getParcelable("ll"))
+        if (savedInstanceState != null && savedInstanceState.containsKey("pos"))
+            position = savedInstanceState.getInt("pos")
         return inflater.inflate(R.layout.fragment_top, container, false)
     }
 
@@ -38,7 +45,7 @@ class TopContentListFragment : Fragment() {
         val userToken = (requireActivity() as MainActivity).getUserToken()
         val topId = arguments?.getInt("id") ?: 1
         val topName = arguments?.getString("name")
-        (requireActivity() as MainActivity).setToolbarTitle(topName?:"")
+        (requireActivity() as MainActivity).setToolbarTitle(topName ?: "")
         val type = when (arguments?.getString("type")) {
             Type.FILM.t -> Type.FILM
             Type.MUSIC.t -> Type.MUSIC
@@ -48,33 +55,48 @@ class TopContentListFragment : Fragment() {
         top_name.text = topName
         top_author.text = arguments?.getString("author")
 
-        val call = webClient.getTopByTypeAndId(type.t, topId, userToken)
+//        if ((requireActivity() as MainActivity).needInitTopContent) {
+            val call = webClient.getTopByTypeAndId(type.t, topId, userToken)
 
-        call.enqueue(object : Callback<Top> {
-            override fun onResponse(call: Call<Top>, response: Response<Top>) {
-                val top = response.body()!!
-                val topContentAdapter = TopContentAdapter(
-                    top.content.sortedBy { it.position },
-                    type,
-                    userToken
-                )
+            call.enqueue(object : Callback<Top> {
+                override fun onResponse(call: Call<Top>, response: Response<Top>) {
+                    val top = response.body()!!
+                    val topContentAdapter = TopContentAdapter(
+                        top.content.sortedBy { it.position },
+                        type,
+                        userToken
+                    )
 
-                topContentAdapter.setOnItemClickListener(object :
-                    TopContentAdapter.OnItemClickListener {
-                    override fun onItemClick(position: Int) {
-                        val content = topContentAdapter.getContentByPosition(position)
-                        (requireActivity() as MainActivity).toContent(type, content.id)
-                    }
-                })
+                    topContentAdapter.setOnItemClickListener(object :
+                        TopContentAdapter.OnItemClickListener {
+                        override fun onItemClick(position: Int) {
+                            this@TopContentListFragment.position = position
+                            val content = topContentAdapter.getContentByPosition(position)
+                            (requireActivity() as MainActivity).toContent(type, content.id)
+                        }
+                    })
 
-                top_recycler.layoutManager = LinearLayoutManager(requireContext())
-                top_recycler.adapter = topContentAdapter
-            }
+                    top_recycler.layoutManager = LinearLayoutManager(requireContext())
+//                    top_recycler.layoutManager = llManager
+                    top_recycler.adapter = topContentAdapter
+                    if (!(requireActivity() as MainActivity).needInitTopContent)
+                        (top_recycler.layoutManager as LinearLayoutManager).scrollToPosition(position)
+                }
 
-            override fun onFailure(call: Call<Top>, t: Throwable) {
-                Log.d("db", "Response = $t")
-            }
-        })
+                override fun onFailure(call: Call<Top>, t: Throwable) {
+                    Log.d("db", "Response = $t")
+                }
+            })
+//            (requireActivity() as MainActivity).needInitTopContent = false
+//        }
 
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+//        if (this :: llManager.isInitialized)
+//            outState.putParcelable("ll", llManager.onSaveInstanceState())
+         outState.putInt("pos", position)
+        super.onSaveInstanceState(outState)
+    }
+
 }

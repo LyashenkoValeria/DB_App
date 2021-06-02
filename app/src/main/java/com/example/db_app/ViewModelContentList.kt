@@ -24,7 +24,7 @@ class ViewModelContentList(application: Application) : AndroidViewModel(applicat
         application.getSharedPreferences("settings", AppCompatActivity.MODE_PRIVATE)
             .getString("userToken", "")!!
     private val countNewIds = 20
-    private var type = Type.BOOK
+    var type = Type.BOOK
     var layoutType = TypeLayout.LIST
 
     val currentList = MutableLiveData<MutableList<Int>>(mutableListOf())
@@ -44,16 +44,32 @@ class ViewModelContentList(application: Application) : AndroidViewModel(applicat
     var durBonds = MutableLiveData<Pair<Int, Int>>()
     var ratingBonds = MutableLiveData<Pair<Int, Int>>()
 
+    var count = 0
 
-    init {
+
+//    init {
+//       init()
+//    }
+
+    fun init() {
         val callInitBook = when (layoutType) {
-            TypeLayout.LIST -> {webClient.getNextPartContentByType(Type.BOOK.t, null, 20, userToken)}
-            TypeLayout.VIEWED -> {webClient.getViewedByType(Type.BOOK.t, null, 20, userToken)}
-            TypeLayout.RECOMMEND -> {webClient.getRecommendByType(Type.BOOK.t, null, 20, userToken)}
+            TypeLayout.LIST -> {
+                currentList.value?.clear()
+                webClient.getNextPartContentByType(Type.BOOK.t, null, 20, userToken)
+            }
+            TypeLayout.VIEWED -> {
+                currentViewedList.value?.clear()
+                webClient.getViewedByType(Type.BOOK.t, null, 20, userToken)
+            }
+            TypeLayout.RECOMMEND -> {
+                currentRecommendList.value?.clear()
+                webClient.getRecommendByType(Type.BOOK.t, null, 20, userToken)
+            }
         }
-        callMoreContent(callInitBook)
+        initFlag = count == 0
         newTypeFlag = true
-        initFlag = true
+        callMoreContent(callInitBook)
+        count++
     }
 
     fun getMoreContent() {
@@ -89,9 +105,8 @@ class ViewModelContentList(application: Application) : AndroidViewModel(applicat
             }
 
 
-        } else {
+        } else
             filterCall(this.type, currentList.value?.last())
-        }
 
         callMoreContent(callMore)
     }
@@ -99,35 +114,29 @@ class ViewModelContentList(application: Application) : AndroidViewModel(applicat
     // TODO: 31.05.2021 clear не срабатывает
     fun updateContentForType(type: Type) {
         this.type = type
+        initFlag = false
+        newTypeFlag = true
 
         if (filterPattern.isEmpty() && !filterChanges) {
             val callMore = when (layoutType) {
                 TypeLayout.LIST -> {
-//                    currentList.value?.clear()
-
-                    currentList.value = mutableListOf()
+                    currentList.value?.clear()
                     webClient.getNextPartContentByType(this.type.t, null, countNewIds, userToken)
                 }
                 TypeLayout.VIEWED -> {
-//                    currentViewedList.value?.clear()
-
-                    currentViewedList.value = mutableListOf()
+                    currentViewedList.value?.clear()
                     webClient.getViewedByType(this.type.t, null, countNewIds, userToken)
                 }
                 TypeLayout.RECOMMEND -> {
-//                    currentRecommendList.value?.clear()
-
-                    currentRecommendList.value = mutableListOf()
-                    webClient.getRecommendByType(this.type.t, null, countNewIds, userToken)}
+                    currentRecommendList.value?.clear()
+                    webClient.getRecommendByType(this.type.t, null, countNewIds, userToken)
+                }
             }
 //            val callMore =
 //                webClient.getNextPartContentByType(this.type.t, null, countNewIds, userToken)
             callMoreContent(callMore)
-            newTypeFlag = true
         } else {
-//                    currentList.value?.clear()
-
-            currentList.value = mutableListOf()
+            currentList.value?.clear()
             val call = filterCall(type, null)
             callMoreContent(call)
         }
@@ -137,31 +146,37 @@ class ViewModelContentList(application: Application) : AndroidViewModel(applicat
         call.enqueue(object : Callback<List<Int>> {
             override fun onResponse(call: Call<List<Int>>, response: Response<List<Int>>) {
                 val moreIds = response.body()
-                if (moreIds != null) {
-                    emptyFlag = moreIds.isEmpty()
-                    if (!emptyFlag) {
-                        val list = mutableListOf<Int>()
-                        when(layoutType){
-                            TypeLayout.VIEWED ->{
-                                list.addAll(currentViewedList.value!!)
-                                list.addAll(moreIds)
-                                currentViewedList.value = list
-                            }
+                emptyFlag = moreIds.isNullOrEmpty()
+                if (!emptyFlag) {
+                    val list = mutableListOf<Int>()
+                    when (layoutType) {
+                        TypeLayout.VIEWED -> {
+                            list.addAll(currentViewedList.value!!)
+                            list.addAll(moreIds!!)
+                            currentViewedList.value = list
+                        }
 
-                            TypeLayout.RECOMMEND ->{
-                                list.addAll(currentRecommendList.value!!)
-                                list.addAll(moreIds)
-                                currentRecommendList.value = list
-                            }
+                        TypeLayout.RECOMMEND -> {
+                            list.addAll(currentRecommendList.value!!)
+                            list.addAll(moreIds!!)
+                            currentRecommendList.value = list
+                        }
 
-                            else -> {
-                                list.addAll(currentList.value!!)
-                                list.addAll(moreIds)
-                                currentList.value = list
-                            }
+                        else -> {
+                            list.addAll(currentList.value!!)
+                            list.addAll(moreIds!!)
+                            currentList.value = list
                         }
                     }
-                }
+                } else
+                    when (layoutType) {
+                        TypeLayout.VIEWED ->
+                            currentViewedList.value = mutableListOf()
+                        TypeLayout.RECOMMEND ->
+                            currentRecommendList.value = mutableListOf()
+                        else ->
+                            currentList.value = mutableListOf()
+                    }
             }
 
             override fun onFailure(call: Call<List<Int>>, t: Throwable) {

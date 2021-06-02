@@ -23,7 +23,7 @@ class ContentAdapter(
     RecyclerView.Adapter<ContentAdapter.ContentViewHolder>() {
 
     private val webClient = WebClient().getApi()
-    private var type = Type.BOOK
+    var type = Type.BOOK
     private lateinit var listener: OnItemClickListener
     private var contentList = listOf<Int>()
 

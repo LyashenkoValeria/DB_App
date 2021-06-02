@@ -27,7 +27,6 @@ class ContentListFragment : Fragment() {
     private lateinit var viewModel: FilterViewModel
     private val viewModelContentList: ViewModelContentList by activityViewModels()
     private var type = Type.BOOK
-    private var typeLayout = TypeLayout.LIST
     private var changeList = MutableLiveData(false)
     var userToken = ""
 
@@ -46,9 +45,14 @@ class ContentListFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        userToken = (requireActivity() as MainActivity).getUserToken()
+        viewModelContentList.layoutType = TypeLayout.LIST
+        if ((requireActivity() as MainActivity).needInit) {
+            type = Type.BOOK
+            viewModelContentList.init()
+        } else
+            type = viewModelContentList.type
 
-        viewModelContentList.layoutType = typeLayout
+        userToken = (requireActivity() as MainActivity).getUserToken()
 
         if (arguments?.getBoolean("fromFilter") != null && arguments?.getBoolean("fromFilter") == true) {
             arguments?.putBoolean("fromFilter", false)
@@ -64,13 +68,15 @@ class ContentListFragment : Fragment() {
                 }
             }
 
-            when(type) {
+            when (type) {
                 Type.BOOK -> navigationView.selectedItemId = R.id.navigation_book
                 Type.FILM -> navigationView.selectedItemId = R.id.navigation_film
                 Type.MUSIC -> navigationView.selectedItemId = R.id.navigation_music
             }
 
+//            if ((requireActivity() as MainActivity).needUpdateFilter)
             viewModelContentList.updateContentForType(type)
+//            (requireActivity() as MainActivity).needUpdateFilter = false
         }
 
 
@@ -87,25 +93,25 @@ class ContentListFragment : Fragment() {
         recycler.adapter = contentAdapter
 
         // Observer для отслеживания изменений в подгруженном списке контента
-        viewModelContentList.currentList.observe(requireActivity() as MainActivity) {
+        viewModelContentList.currentList.observe(viewLifecycleOwner) {
             // Обновляем содержимое recycler
             contentAdapter.setContent(
                 type,
-//                TypeLayout.LIST,
                 mutableListOf<Int>().apply { addAll(it) }
             )
-            if (viewModelContentList.newTypeFlag) {     // При обновлении типа
-                contentAdapter.notifyDataSetChanged()   // перерисовываем содержимое recycler
-//                if (viewModelContentList.emptyFlag)     // Если получили пустой список
-//                    printEmptyMessage()                 // выводим сообщение
-//                else                                    // Иначе - скроллим к 0 позиции
+            if ((requireActivity() as MainActivity).needUpdateFilter || (requireActivity() as MainActivity).needInit) {
+                contentAdapter.notifyDataSetChanged()
+                (requireActivity() as MainActivity).needUpdateFilter = false
+                (requireActivity() as MainActivity).needInit = false
+            } else
+                if (viewModelContentList.newTypeFlag) {     // При обновлении типа
+                    contentAdapter.notifyDataSetChanged()   // перерисовываем содержимое recycler
 
-                // TODO: 31.05.2021 Пока что при возращении из другого лэйаута в контент лист черещ кнопку назад
-                //  мы приходим к проскроленному листу (то есть к такому, из которого вышли)
-                //  Нужно ли что-то с этим делать?
-                    if (!viewModelContentList.initFlag && recycler != null)
+                    if (!viewModelContentList.initFlag) {
                         (recycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
-            }
+                        viewModelContentList.newTypeFlag = false
+                    }
+                }
         }
 
         // Установка листенера на toolbar
@@ -149,6 +155,7 @@ class ContentListFragment : Fragment() {
             }
             if (new) {
                 loadDataForFilter()
+                viewModelContentList.filterPattern = ""
                 viewModelContentList.filterChanges = false
                 viewModelContentList.updateContentForType(type)
                 changeList.value = true
@@ -157,11 +164,6 @@ class ContentListFragment : Fragment() {
         }
 
         super.onViewCreated(view, savedInstanceState)
-    }
-
-    private fun printEmptyMessage() {
-        val msg = "Кажется, тут пусто."
-        (requireActivity() as MainActivity).makeToast(msg)
     }
 
     /** =================================    Работа с toolbar   ================================ **/
@@ -231,7 +233,8 @@ class ContentListFragment : Fragment() {
             val callGenre = webClient.getGenreByType(type.t, userToken)
             callGenre.enqueue(object : Callback<List<Genre>> {
                 override fun onResponse(call: Call<List<Genre>>, response: Response<List<Genre>>) {
-                    viewModel.setGenresForFilter(type, response.body()!!)
+                    if (response.body() != null)
+                        viewModel.setGenresForFilter(type, response.body()!!)
                 }
 
                 override fun onFailure(call: Call<List<Genre>>, t: Throwable) {
@@ -248,7 +251,8 @@ class ContentListFragment : Fragment() {
                         call: Call<List<ContentIdName>>,
                         response: Response<List<ContentIdName>>
                     ) {
-                        viewModel.setActorsForFilter(response.body()!!)
+                        if (response.body() != null)
+                            viewModel.setActorsForFilter(response.body()!!)
                     }
 
                     override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
@@ -261,7 +265,8 @@ class ContentListFragment : Fragment() {
                         call: Call<List<ContentIdName>>,
                         response: Response<List<ContentIdName>>
                     ) {
-                        viewModel.setPeopleForFilter(type, response.body()!!)
+                        if (response.body() != null)
+                            viewModel.setPeopleForFilter(type, response.body()!!)
                     }
 
                     override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
@@ -276,7 +281,8 @@ class ContentListFragment : Fragment() {
                         call: Call<List<ContentIdName>>,
                         response: Response<List<ContentIdName>>
                     ) {
-                        viewModel.setPeopleForFilter(type, response.body()!!)
+                        if (response.body() != null)
+                            viewModel.setPeopleForFilter(type, response.body()!!)
                     }
 
                     override fun onFailure(call: Call<List<ContentIdName>>, t: Throwable) {
